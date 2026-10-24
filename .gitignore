@@ -1,0 +1,195 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+.npm
+.bower_components/
+
+# testing
+/coverage
+*.lcov
+.nyc_output
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+/dist
+/tmp
+/temp
+
+# package lock files (optional)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# misc
+.DS_Store
+*.pem
+Thumbs.db
+desktop.ini
+*.bak
+*.backup
+*.tmp
+*.temp
+*.orig
+*.rej
+*.patch
+
+# debug & logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# env files
+.env
+.env*.local
+.env.development
+.env.test
+.env.production
+.env.staging
+supabase/.temp
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE & editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+*.komodoproject
+.komodotools
+*.kate-swp
+.history/
+.ionide/
+*.code-workspace
+.project
+.classpath
+.settings/
+*.launch
+.buildpath
+.factorypath
+.tm_properties
+.editorconfig~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+ehthumbs_vista.db
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+Icon?
+Network Trash Folder
+Temporary Items
+.apdisk
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# docker
+docker-compose.override.yml
+
+# storybook
+storybook-static/
+
+# cypress & playwright
+/cypress/videos
+/cypress/screenshots
+/playwright-report/
+/test-results/
+/blob-report/
+
+# sentry
+.sentryclirc
+
+# turbo
+.turbo
+
+# eslint & prettier cache
+.eslintcache
+.prettiercache
+.stylelintcache
+
+# misc caches
+.cache
+.parcel-cache
+.sass-cache/
+*.css.map
+*.js.map
+
+# compiled output
+*.js.map
+*.d.ts.map
+
+# archives (shouldn't be in repos)
+*.zip
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+*.gz
+*.tgz
+
+# binaries & executables
+*.exe
+*.dll
+*.so
+*.dylib
+*.bin
+*.out
+*.app
+*.com
+*.class
+*.jar
+
+# images that are often generated/large
+*.psd
+*.ai
+
+# database files
+*.sqlite
+*.sqlite3
+*.db
+
+# source video is too large for GitHub; the site uses the compressed mp4
+public/kairo/herobgvideo.mov
+
+# secrets & credentials
+*.key
+*.cert
+*.crt
+*.csr
+*.p12
+*.pfx
+*.jks
+credentials.json
+service-account.json
+.env*
+!.env.example

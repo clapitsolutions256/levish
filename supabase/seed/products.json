@@ -1,0 +1,65 @@
+[
+  {
+    "id": "226b543a-60de-4717-9518-648187bad026",
+    "name": "GUESS Women's Vintage-Wash Wide-Leg Jeans.",
+    "slug": "guess-women-s-vintage-wash-wide-leg-jeans",
+    "price": 8999,
+    "compare_at_price": null,
+    "category_id": "women",
+    "subcategory": "Jeans",
+    "color": "—",
+    "image": "{{STORAGE}}/19846e1f-c3e4-4492-8249-b596b9ee90db.jpg",
+    "description": "Upgrade your denim collection with these stylish GUESS wide-leg jeans. Easy to style with fitted tops, shirts, or casual tees, these jeans bring a timeless yet contemporary touch to any outfit.",
+    "featured": false,
+    "is_new": true,
+    "active": true,
+    "created_at": "2026-10-22T16:13:51.2625+00:00",
+    "updated_at": "2026-10-23T07:38:23.511+00:00",
+    "images": [
+      "{{STORAGE}}/19846e1f-c3e4-4492-8249-b596b9ee90db.jpg",
+      "{{STORAGE}}/d8b5e228-8ee4-48d6-947f-0aca9a48b4d4.jpg",
+      "{{STORAGE}}/618b6db4-b1cb-42d8-9905-d59ca9e64b49.png"
+    ],
+    "variants": [],
+    "color_images": [],
+    "brand": "GUESS",
+    "sale_percent": 0
+  },
+  {
+    "id": "8661ac88-8edc-49a3-9fa9-2d7833a127dc",
+    "name": "White Hoddie Croppsy",
+    "slug": "white-hoddie-croppsy",
+    "price": 12499,
+    "compare_at_price": null,
+    "category_id": "women",
+    "subcategory": "Hoodie",
+    "color": "White",
+    "image": "{{STORAGE}}/4595f283-3f72-4398-8eba-1181aa3ff50a.jpg",
+    "description": "",
+    "featured": false,
+    "is_new": true,
+    "active": true,
+    "created_at": "2026-10-22T22:23:08.64808+00:00",
+    "updated_at": "2026-10-23T16:39:18.699+00:00",
+    "images": [
+      "{{STORAGE}}/17c1d6ea-a8df-44c9-8279-40019c26bfac.jpg",
+      "{{STORAGE}}/4595f283-3f72-4398-8eba-1181aa3ff50a.jpg",
+      "{{STORAGE}}/30e27b72-ac8f-4c3a-8b92-0c570c6acd10.png",
+      "{{STORAGE}}/7c119df7-44b3-438d-8886-ba39beba9c67.png"
+    ],
+    "variants": [],
+    "color_images": [
+      {
+        "color": "White",
+        "images": [
+          "{{STORAGE}}/4595f283-3f72-4398-8eba-1181aa3ff50a.jpg",
+          "{{STORAGE}}/17c1d6ea-a8df-44c9-8279-40019c26bfac.jpg",
+          "{{STORAGE}}/30e27b72-ac8f-4c3a-8b92-0c570c6acd10.png",
+          "{{STORAGE}}/7c119df7-44b3-438d-8886-ba39beba9c67.png"
+        ]
+      }
+    ],
+    "brand": "Croppsy",
+    "sale_percent": 20
+  }
+]
