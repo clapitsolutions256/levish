@@ -157,7 +157,7 @@ export function BannersManager() {
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <ImageField
                 label="Web banner"
-                hint="Wide picture for laptops"
+                hint="Full screen on laptops: 1920 × 1080 (16:9). Edges may be cropped."
                 url={form.image}
                 wide
                 uploading={uploadingField === "image"}
@@ -165,7 +165,7 @@ export function BannersManager() {
               />
               <ImageField
                 label="Mobile banner"
-                hint="Tall picture for phones"
+                hint="Full screen on phones: 1080 × 2280 (9:19). Edges may be cropped."
                 url={form.mobileImage}
                 wide={false}
                 uploading={uploadingField === "mobileImage"}
@@ -244,7 +244,7 @@ function ImageField({
     <div>
       <p className="text-sm font-medium text-gray-700">{label}</p>
       <p className="text-xs text-gray-500">{hint}</p>
-      <div className={`relative mt-2 overflow-hidden rounded-xl bg-gray-100 ${wide ? "aspect-[2029/775]" : "mx-auto aspect-[1122/1402] w-28"}`}>
+      <div className={`relative mt-2 overflow-hidden rounded-xl bg-gray-100 ${wide ? "aspect-video" : "mx-auto aspect-[9/19] w-28"}`}>
         {url ? <Image src={url} alt="" fill className="object-cover" sizes="320px" /> : <span className="absolute inset-0 flex items-center justify-center px-3 text-center text-xs text-gray-400">No picture yet</span>}
       </div>
       <div className="mt-2 flex flex-wrap gap-2">

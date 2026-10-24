@@ -1,7 +1,7 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
-import { BottomTab } from "@/components/BottomTab";
+import { FloatingNav } from "@/components/FloatingNav";
 
 export default function StoreLayout({
   children,
@@ -11,9 +11,9 @@ export default function StoreLayout({
   return (
     <div className="contents" suppressHydrationWarning>
       <Header />
-      <main className="flex-1 pb-14 md:pb-0">{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer />
-      <BottomTab />
+      <FloatingNav />
       <CartDrawer />
     </div>
   );

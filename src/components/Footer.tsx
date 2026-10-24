@@ -21,7 +21,7 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="bg-[var(--foreground)] text-[var(--cream)] mt-0 relative overflow-hidden">
+    <footer className="bg-[var(--foreground)] text-[var(--cream)] mt-0 pb-16 relative overflow-hidden">
       <div className="absolute inset-0 opacity-[0.03]">
         <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full bg-[var(--accent)]" />
         <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full bg-[var(--accent-soft)]" />
@@ -47,12 +47,12 @@ export function Footer() {
             </p>
             <ul className="mt-5 space-y-2 text-sm text-[var(--cream)]/80">
               <li>
-                <a href={`mailto:${contact.email}`} className="hover:text-[var(--accent-soft)] transition-colors">
+                <a href={`mailto:${contact.email}`} className="hover:!text-white transition-colors">
                   {contact.email}
                 </a>
               </li>
               <li>
-                <a href={contact.whatsappHref} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--accent-soft)] transition-colors">
+                <a href={contact.whatsappHref} target="_blank" rel="noopener noreferrer" className="hover:!text-white transition-colors">
                   WhatsApp {contact.whatsapp}
                 </a>
               </li>
@@ -105,7 +105,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-[var(--cream)]/70 hover:text-[var(--accent-soft)] transition-colors duration-200"
+                    className="text-sm text-[var(--cream)]/70 hover:!text-white transition-colors duration-200"
                   >
                     {link.label}
                   </Link>
@@ -124,7 +124,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-[var(--cream)]/70 hover:text-[var(--accent-soft)] transition-colors duration-200"
+                    className="text-sm text-[var(--cream)]/70 hover:!text-white transition-colors duration-200"
                   >
                     {link.label}
                   </Link>
@@ -146,16 +146,16 @@ export function Footer() {
                 href="https://www.clapit.solutions/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[var(--cream)]/80 hover:text-[var(--accent-soft)] transition-colors"
+                className="text-[var(--cream)]/80 hover:!text-white transition-colors"
               >
                 Clapit Solutions
               </a>
             </p>
           </div>
           <div className="flex items-center gap-6 text-xs text-[var(--muted)]">
-            <Link href="/privacy" className="hover:text-[var(--accent-soft)] transition-colors">Privacy</Link>
-            <Link href="/returns" className="hover:text-[var(--accent-soft)] transition-colors">Returns</Link>
-            <Link href="/faqs" className="hover:text-[var(--accent-soft)] transition-colors">FAQs</Link>
+            <Link href="/privacy" className="hover:!text-white transition-colors">Privacy</Link>
+            <Link href="/returns" className="hover:!text-white transition-colors">Returns</Link>
+            <Link href="/faqs" className="hover:!text-white transition-colors">FAQs</Link>
           </div>
         </div>
       </div>
