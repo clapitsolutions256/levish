@@ -77,7 +77,7 @@ function DesktopPills({ activeId }: { activeId: string }) {
                   }}
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className={`relative block whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                  className={`relative block whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-medium lg:px-6 lg:py-3 lg:text-[15px] transition-colors duration-300 ${
                     active ? "text-white [&:hover]:!text-white" : "text-[var(--muted)] [&:hover]:!text-[var(--foreground)]"
                   }`}
                 >
@@ -209,7 +209,7 @@ export function FloatingNav() {
       // Lift above the WhatsApp button while a mobile dropdown is open.
       className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[calc(1rem+env(safe-area-inset-bottom))] [&:has([aria-expanded=true])]:z-[60]"
     >
-      <div className="pointer-events-auto w-full max-w-[24rem] rounded-full border border-black/5 bg-white/80 p-1 shadow-[0_8px_30px_rgba(44,40,37,0.14)] backdrop-blur-xl md:w-auto md:max-w-full">
+      <div className="pointer-events-auto w-full max-w-[24rem] rounded-full border border-black/5 bg-white/80 p-1 md:p-1.5 shadow-[0_8px_30px_rgba(44,40,37,0.14)] backdrop-blur-xl md:w-auto md:max-w-full">
         <Suspense fallback={<NavPills searchParams={null} />}>
           <NavPillsWithParams />
         </Suspense>
