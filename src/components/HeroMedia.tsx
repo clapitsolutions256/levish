@@ -30,7 +30,7 @@ export function HeroMedia({ banners }: { banners: Banner[] }) {
 
   return (
     <div
-      className="relative mx-auto aspect-[1122/1402] h-auto w-full overflow-hidden rounded-[28px] bg-[#f4e6ec] md:aspect-[2029/775]"
+      className="relative h-[100svh] w-full overflow-hidden bg-[#f4e6ec]"
       onPointerDown={(event) => {
         if (slides.length < 2) return;
         const start = event.clientX;
@@ -116,7 +116,7 @@ export function HeroMedia({ banners }: { banners: Banner[] }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 6l6 6-6 6" />
             </svg>
           </button>
-          <div className="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-2">
+          <div className="absolute bottom-[calc(5.5rem+env(safe-area-inset-bottom))] left-0 right-0 z-20 flex justify-center gap-2">
             {slides.map((slide, slideIndex) => (
               <button
                 key={slide.id}
