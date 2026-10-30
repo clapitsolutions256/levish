@@ -118,12 +118,6 @@ function GenderPanel({ section, onNavigate }: { section: Section; onNavigate: ()
               <Arrow />
             </Link>
           </li>
-          <li>
-            <Link href="/brands" onClick={onNavigate} className={menuLink}>
-              Brands
-              <Arrow />
-            </Link>
-          </li>
         </ul>
       </div>
     </div>

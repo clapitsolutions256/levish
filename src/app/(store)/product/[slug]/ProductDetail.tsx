@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { brandHref } from "@/lib/brands";
 import type { Product } from "@/types";
 import { ProductPurchase } from "@/components/ProductPurchase";
 import { SwipeGallery } from "@/components/SwipeGallery";
@@ -66,9 +64,7 @@ export function ProductDetail({ product, initialColor }: { product: Product; ini
         <p className="text-sm uppercase tracking-wider text-[var(--muted)]">
           {product.brand ? (
             <>
-              <Link href={brandHref(product.brand)} className="font-semibold text-[var(--accent)] hover:underline">
-                {product.brand}
-              </Link>
+              <span className="font-semibold text-[var(--accent)]">{product.brand}</span>
               <span className="mx-2">·</span>
             </>
           ) : null}
