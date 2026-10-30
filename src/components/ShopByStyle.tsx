@@ -103,7 +103,7 @@ export function ShopByStyle({ categories }: { categories: StyleCategory[] }) {
               type="button"
               aria-label="Previous styles"
               onClick={() => scrollByCard(-1)}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e4ddd2] bg-white text-[#4a142a] transition hover:border-[#4a142a] disabled:opacity-35"
+              className="clay flex h-11 w-11 items-center justify-center rounded-full text-[var(--accent)] transition disabled:opacity-35"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 6l-6 6 6 6" />
@@ -113,7 +113,7 @@ export function ShopByStyle({ categories }: { categories: StyleCategory[] }) {
               type="button"
               aria-label="Next styles"
               onClick={() => scrollByCard(1)}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-[#4a142a] text-white shadow-[0_8px_20px_rgba(74,20,42,0.22)] transition hover:bg-[#350e1e] disabled:opacity-35"
+              className="skeuo-ink flex h-11 w-11 items-center justify-center rounded-full disabled:opacity-35"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 6l6 6-6 6" />
@@ -144,8 +144,8 @@ export function ShopByStyle({ categories }: { categories: StyleCategory[] }) {
               className="group w-[72vw] shrink-0 sm:w-[230px] md:w-[250px]"
             >
               <div
-                className={`relative aspect-[3/4] overflow-hidden rounded-[1.5rem] shadow-[0_10px_30px_rgba(44,40,37,0.08)] ${
-                  category.name === "Shoes" ? "bg-white" : "bg-[#efe8dc]"
+                className={`relative aspect-[3/4] overflow-hidden rounded-[1.5rem] shadow-[0_10px_30px_rgba(11,11,11,0.08)] ${
+                  category.name === "Shoes" ? "bg-white" : "bg-[var(--cream)]"
                 }`}
               >
                 <Image
@@ -160,7 +160,7 @@ export function ShopByStyle({ categories }: { categories: StyleCategory[] }) {
                   sizes="250px"
                   loading="eager"
                 />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#2c2825]/80 via-[#2c2825]/25 to-transparent px-4 pb-4 pt-20">
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[var(--foreground)]/80 via-[var(--foreground)]/25 to-transparent px-4 pb-4 pt-20">
                   <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">
                     {String(index + 1).padStart(2, "0")}
                   </p>

@@ -9,10 +9,8 @@ import type { Product } from "@/types";
 export const revalidate = 3600;
 
 const stylePaths = ["/jackets", "/hoodies", "/sweatshirts", "/trousers", "/jeans"];
-const apparelTypes = ["trouser", "sweatshirt", "jeans", "hoodie", "jacket", "undergarments"];
 const subcategoryPaths = [
   ...["tops", "dresses", "tshirts", "bottoms", "blazers", "sweaters", "jackets"].map((slug) => `/women/${slug}`),
-  "/shoes/women",
   "/accessories/eyewear",
 ];
 
@@ -34,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Keep the sitemap available if the live catalog is unreachable.
   }
 
-  const genderPaths = ["/women?filter=new", ...apparelTypes.map((type) => `/women?type=${type}`)];
+  const genderPaths = ["/women?filter=new", "/men?filter=new"];
 
   return [
     entry("", 1),

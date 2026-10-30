@@ -26,7 +26,7 @@ export default function BlogsPage() {
         ))}
       </div>
       <p className="mt-12 text-sm text-[var(--muted)]">
-        <Link href="/" className="text-[#4a142a] hover:underline">
+        <Link href="/" className="text-[var(--accent)] hover:underline">
           Back to home
         </Link>
       </p>

@@ -109,7 +109,7 @@ export default function OrderDetailPage({
             href="/admin/orders"
             className="text-sm text-gray-500 hover:text-amber-600 mb-2 inline-flex items-center gap-1"
           >
-            <svg className="w-4 h-4 text-[#4a142a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Back to orders
@@ -270,7 +270,7 @@ export default function OrderDetailPage({
           {order.orderItems.map((item, i) => (
             <div key={i} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
               <div className="flex items-center gap-3">
-                <div className="relative w-14 h-16 rounded-lg bg-[#4a142a]/10 overflow-hidden shrink-0 flex items-center justify-center text-[#4a142a]">
+                <div className="relative w-14 h-16 rounded-lg bg-[var(--accent)]/10 overflow-hidden shrink-0 flex items-center justify-center text-[var(--accent)]">
                   {item.image ? (
                     <Image src={item.image} alt={item.name} fill className="object-cover" sizes="56px" />
                   ) : (
@@ -330,7 +330,7 @@ export default function OrderDetailPage({
           <button
             type="submit"
             disabled={isAddingNote || !noteText.trim()}
-            className="px-4 py-2.5 bg-[#4a142a] text-white text-sm font-medium rounded-lg hover:bg-[#350e1e] disabled:opacity-50 transition-colors"
+            className="px-4 py-2.5 bg-[var(--accent)] text-white text-sm font-medium rounded-lg hover:bg-[var(--accent-hover)] disabled:opacity-50 transition-colors"
           >
             {isAddingNote ? "Adding…" : "Add Note"}
           </button>
@@ -346,7 +346,7 @@ export default function OrderDetailPage({
                 </div>
                 <button
                   onClick={() => deleteNote({ orderId: order._id, noteId: n._id })}
-                  className="p-1 rounded text-[#4a142a] hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
+                  className="p-1 rounded text-[var(--accent)] hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
                   title="Delete note"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

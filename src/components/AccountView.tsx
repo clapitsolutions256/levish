@@ -254,7 +254,7 @@ export function AccountView() {
                     </p>
                     <p className="mt-0.5 text-xs text-[var(--muted)]">Order #{order._id.slice(-6)}</p>
                   </div>
-                  <p className="text-xs uppercase tracking-wider text-[#4a142a]">
+                  <p className="text-xs uppercase tracking-wider text-[var(--accent)]">
                     {statusLabel[order.status] ?? order.status}
                   </p>
                 </div>

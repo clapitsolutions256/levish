@@ -24,7 +24,7 @@ export function flyProductToCart(from: HTMLElement, image: string) {
   flyer.style.objectFit = "cover";
   flyer.style.borderRadius = "22px";
   flyer.style.pointerEvents = "none";
-  flyer.style.boxShadow = "0 16px 32px rgba(74, 20, 42, 0.22)";
+  flyer.style.boxShadow = "0 16px 32px rgba(11,11,11, 0.22)";
   flyer.style.willChange = "transform, opacity";
   document.body.appendChild(flyer);
 

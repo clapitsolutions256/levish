@@ -62,7 +62,7 @@ export function ImageMagnifier({ src }: { src: string }) {
           }}
         />
       ) : (
-        <span className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-medium text-[#4a142a] shadow-sm">
+        <span className="pointer-events-none absolute bottom-4 right-4 hidden items-center gap-1.5 rounded-full md:flex bg-white/90 px-3 py-1.5 text-xs font-medium text-[var(--accent)] shadow-sm">
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="11" cy="11" r="7" strokeWidth={1.8} />
             <path strokeLinecap="round" strokeWidth={1.8} d="M20 20l-3.5-3.5M11 8v6M8 11h6" />

@@ -30,13 +30,13 @@ export function WhyChooseUs() {
       </div>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {reasons.map((reason) => (
-          <article key={reason.title} className="card-warm p-6">
-            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#f7f3ec] text-[#4a142a]">
+          <article key={reason.title} className="card-warm p-7">
+            <div className="neu-inset mb-5 flex h-14 w-14 items-center justify-center rounded-full text-[var(--sage-deep)]">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={reason.icon} />
               </svg>
             </div>
-            <h3 className="section-heading text-[#2c2825]">{reason.title}</h3>
+            <h3 className="section-heading text-[var(--foreground)]">{reason.title}</h3>
             <p className="type-copy mt-2 text-[var(--muted)]">{reason.text}</p>
           </article>
         ))}

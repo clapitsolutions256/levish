@@ -1,37 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf8f5;
-  --foreground: #2c2825;
-  --muted: #6b6560;
-  --accent: #4a142a;
-  --accent-soft: #c989a3;
-  --accent-hover: #350e1e;
-  --cream: #f5f0e8;
-  --cream-dark: #ebe4d8;
-  --border: #e8e2d9;
+  /* Theme: ink black, white and sage (#a6cdab). */
+  --background: #f5f7f4;
+  --foreground: #0b0b0b;
+  --muted: #5d655f;
+  --accent: #0b0b0b;
+  --accent-soft: #a6cdab;
+  --accent-hover: #262826;
+  --sage: #a6cdab;
+  --sage-deep: #4f7d57;
+  --sage-tint: #e4efe5;
+  --sage-line: #cbe1ce;
+  --cream: #eef2ed;
+  --cream-dark: #e0e6df;
+  --border: #e1e6e0;
   --card: #ffffff;
-  --card-hover: #fdfcfa;
-  --shadow-warm: rgba(74, 20, 42, 0.08);
-  --shadow-warm-md: rgba(74, 20, 42, 0.12);
-  --radius: 12px;
-  --radius-lg: 20px;
+  --card-hover: #fbfcfb;
+  --shadow-warm: rgba(11, 11, 11, 0.06);
+  --shadow-warm-md: rgba(11, 11, 11, 0.1);
+  --radius: 14px;
+  --radius-lg: 22px;
+
+  /* Neumorphic light and shade, tuned to --background. */
+  --neu-light: rgba(255, 255, 255, 0.95);
+  --neu-shade: rgba(163, 177, 165, 0.45);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-sage: var(--sage);
+  --color-sage-deep: var(--sage-deep);
+  --color-sage-tint: var(--sage-tint);
+  --color-ink: var(--accent);
   --font-sans: var(--font-poppins);
   --font-serif: var(--font-poppins);
-  --color-amber-50: #f8f1f4;
-  --color-amber-100: #f0e0e7;
-  --color-amber-200: #e0c2cf;
-  --color-amber-300: #c48aa3;
-  --color-amber-400: #8d4a66;
-  --color-amber-500: #4a142a;
-  --color-amber-600: #3d1023;
-  --color-amber-700: #320d1c;
-  --color-amber-800: #2a0b18;
+  /* Admin screens use the amber scale; it now runs sage tints into ink. */
+  --color-amber-50: #f3f8f3;
+  --color-amber-100: #e4efe5;
+  --color-amber-200: #cbe1ce;
+  --color-amber-300: #a6cdab;
+  --color-amber-400: #6f9e77;
+  --color-amber-500: #0b0b0b;
+  --color-amber-600: #1c1d1c;
+  --color-amber-700: #262826;
+  --color-amber-800: #333633;
 }
 
 * {
@@ -95,15 +109,15 @@ img {
 
 /* Soft card styling */
 .card-warm {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: var(--background);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: var(--radius-lg);
-  box-shadow: 0 1px 3px var(--shadow-warm), 0 4px 16px var(--shadow-warm);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 10px 10px 24px var(--neu-shade), -10px -10px 24px var(--neu-light);
+  transition: box-shadow 0.35s ease, transform 0.35s ease;
 }
 .card-warm:hover {
-  box-shadow: 0 2px 8px var(--shadow-warm-md), 0 8px 32px var(--shadow-warm-md);
-  transform: translateY(-2px);
+  box-shadow: 14px 14px 32px var(--neu-shade), -14px -14px 32px var(--neu-light);
+  transform: translateY(-3px);
 }
 
 /* Decorative divider */
@@ -129,7 +143,7 @@ img {
   letter-spacing: 0.28em;
   line-height: 1.4;
   text-transform: uppercase;
-  color: #4a142a;
+  color: var(--sage-deep);
 }
 
 .section-heading {
@@ -146,23 +160,33 @@ img {
   }
 }
 
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
 .type-copy {
   font-family: var(--font-poppins), system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.75rem;
 }
 
-/* Warm button styles */
+/* Button styles */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   padding: 14px 32px;
-  background: #4a142a;
+  background: linear-gradient(180deg, #2b2d2b 0%, #0b0b0b 100%);
   color: white;
   font-weight: 500;
-  border-radius: var(--radius);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.4),
+    0 6px 16px rgba(11, 11, 11, 0.22);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -171,15 +195,22 @@ img {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.06) 100%);
+  background: linear-gradient(135deg, transparent 0%, rgba(166, 205, 171, 0.22) 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 .btn-primary:hover {
-  background: #350e1e;
   color: white;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(74, 20, 42, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.4),
+    0 10px 24px rgba(11, 11, 11, 0.24),
+    0 0 0 4px rgba(166, 205, 171, 0.35);
+}
+.btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 .btn-primary:hover::before {
   opacity: 1;
@@ -194,14 +225,14 @@ img {
   border: 1.5px solid var(--border);
   color: var(--foreground);
   font-weight: 500;
-  border-radius: var(--radius);
+  border-radius: 999px;
   background: transparent;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .btn-outline:hover {
   border-color: var(--accent);
   color: var(--accent);
-  background: var(--cream);
+  background: var(--sage-tint);
   transform: translateY(-1px);
 }
 
@@ -211,17 +242,23 @@ img {
   justify-content: center;
   gap: 8px;
   padding: 14px 32px;
-  background: var(--accent);
-  color: white;
-  font-weight: 500;
-  border-radius: var(--radius);
+  background: linear-gradient(180deg, #bcdcc0 0%, var(--sage) 100%);
+  color: var(--foreground);
+  font-weight: 600;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -2px 0 rgba(79, 125, 87, 0.35),
+    0 6px 16px rgba(79, 125, 87, 0.28);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .btn-accent:hover {
-  background: var(--accent-hover);
-  color: white;
+  color: var(--foreground);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(74, 20, 42, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -2px 0 rgba(79, 125, 87, 0.35),
+    0 10px 24px rgba(79, 125, 87, 0.34);
 }
 
 /* Input styling */
@@ -241,8 +278,8 @@ img {
 }
 .input-warm:focus {
   outline: none;
-  border-color: var(--accent-soft);
-  box-shadow: 0 0 0 3px rgba(74, 20, 42, 0.1);
+  border-color: var(--sage);
+  box-shadow: 0 0 0 4px rgba(166, 205, 171, 0.3);
 }
 
 /* Subtle grain texture overlay */
@@ -347,7 +384,7 @@ img {
   transform: translateY(-8px) scale(1.22);
 }
 .skeleton {
-  background: linear-gradient(90deg, #f4e6ec 0%, #fbf7f8 45%, #f4e6ec 100%);
+  background: linear-gradient(90deg, var(--sage-tint) 0%, #f7faf7 45%, var(--sage-tint) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.4s ease-in-out infinite;
 }
@@ -358,6 +395,155 @@ img {
   .skeleton {
     animation: none;
   }
+}
+
+/* ---------- Surface styles ---------- */
+
+/* Glassmorphism: frosted overlays such as menus and drawers. */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 18px 50px rgba(11, 11, 11, 0.14);
+  backdrop-filter: blur(22px) saturate(1.6);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+}
+/* Denser glass for panels that sit on a dimmed backdrop. */
+.glass-solid {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 0 #ffffff, 0 24px 60px rgba(11, 11, 11, 0.2);
+  backdrop-filter: blur(26px) saturate(1.6);
+  -webkit-backdrop-filter: blur(26px) saturate(1.6);
+}
+.glass-dark {
+  background: rgba(11, 11, 11, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 50px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  color: white;
+}
+
+/* Claymorphism: puffy, soft-edged pills, badges and chips. */
+.clay {
+  background: #ffffff;
+  box-shadow:
+    0 8px 18px rgba(11, 11, 11, 0.08),
+    inset -3px -4px 8px rgba(163, 177, 165, 0.28),
+    inset 3px 4px 8px rgba(255, 255, 255, 0.95);
+}
+.clay-sage {
+  background: var(--sage);
+  color: var(--foreground);
+  box-shadow:
+    0 8px 18px rgba(79, 125, 87, 0.28),
+    inset -3px -4px 8px rgba(79, 125, 87, 0.32),
+    inset 3px 4px 8px rgba(255, 255, 255, 0.55);
+}
+.clay-ink {
+  background: #111211;
+  color: #ffffff;
+  box-shadow:
+    0 8px 18px rgba(11, 11, 11, 0.26),
+    inset -3px -4px 8px rgba(0, 0, 0, 0.55),
+    inset 3px 4px 8px rgba(255, 255, 255, 0.14);
+}
+
+/* Neumorphism: raised and pressed tiles that share the page colour. */
+.neu {
+  background: var(--background);
+  box-shadow: 8px 8px 18px var(--neu-shade), -8px -8px 18px var(--neu-light);
+}
+.neu-inset {
+  background: var(--background);
+  box-shadow: inset 5px 5px 12px var(--neu-shade), inset -5px -5px 12px var(--neu-light);
+}
+
+/* Skeuomorphism: tactile controls with a bevel and a pressed state. */
+.skeuo {
+  background: linear-gradient(180deg, #ffffff 0%, #eef2ed 100%);
+  border: 1px solid rgba(11, 11, 11, 0.08);
+  box-shadow: inset 0 1px 0 #ffffff, 0 1px 2px rgba(11, 11, 11, 0.12), 0 4px 10px rgba(11, 11, 11, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.skeuo:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(11, 11, 11, 0.14);
+}
+.skeuo-ink {
+  background: linear-gradient(180deg, #2b2d2b 0%, #0b0b0b 100%);
+  color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -2px 0 rgba(0, 0, 0, 0.4), 0 4px 12px rgba(11, 11, 11, 0.24);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.skeuo-ink:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- Admin: crystal glass over scenery ---------- */
+/* Unlayered, so these win over the Tailwind utilities the admin pages are written with. */
+.admin-panel {
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 30px 80px rgba(11, 11, 11, 0.22);
+  backdrop-filter: blur(34px) saturate(1.5);
+  -webkit-backdrop-filter: blur(34px) saturate(1.5);
+}
+.admin-glass[data-tone="dark"] .admin-panel {
+  background: rgba(255, 255, 255, 0.5);
+}
+.admin-glass .bg-white,
+.admin-glass .bg-white\/90 {
+  background-color: rgba(255, 255, 255, 0.62);
+  border-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+}
+.admin-glass .bg-gray-50,
+.admin-glass .bg-gray-50\/80,
+.admin-glass .bg-gray-100 {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+.admin-glass .hover\:bg-gray-50:hover,
+.admin-glass .hover\:bg-gray-50\/50:hover,
+.admin-glass .hover\:bg-gray-100:hover {
+  background-color: rgba(255, 255, 255, 0.55);
+}
+.admin-glass .border-gray-100,
+.admin-glass .border-gray-200,
+.admin-glass .border-gray-300 {
+  border-color: rgba(255, 255, 255, 0.65);
+}
+.admin-glass .divide-gray-50 > :not(:last-child),
+.admin-glass .divide-gray-100 > :not(:last-child) {
+  border-color: rgba(11, 11, 11, 0.06);
+}
+.admin-glass .rounded-xl.border {
+  border-radius: 1.5rem;
+}
+.admin-glass .rounded-xl.border.bg-white {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 10px 30px rgba(11, 11, 11, 0.08);
+}
+.admin-glass input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.admin-glass select,
+.admin-glass textarea {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+.admin-glass input:focus,
+.admin-glass select:focus,
+.admin-glass textarea:focus {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+.admin-glass .text-gray-400 {
+  color: rgba(11, 11, 11, 0.55);
+}
+.admin-glass .text-gray-500 {
+  color: rgba(11, 11, 11, 0.62);
+}
+.admin-glass thead tr {
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Animation utility classes */

@@ -66,7 +66,7 @@ export function ProductDetail({ product, initialColor }: { product: Product; ini
         <p className="text-sm uppercase tracking-wider text-[var(--muted)]">
           {product.brand ? (
             <>
-              <Link href={brandHref(product.brand)} className="font-semibold text-[#4a142a] hover:underline">
+              <Link href={brandHref(product.brand)} className="font-semibold text-[var(--accent)] hover:underline">
                 {product.brand}
               </Link>
               <span className="mx-2">·</span>
@@ -94,7 +94,7 @@ export function ProductDetail({ product, initialColor }: { product: Product; ini
                 type="button"
                 onClick={() => setActive(index)}
                 className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white ${
-                  index === active ? "border-[#4a142a]" : "border-[var(--border)]"
+                  index === active ? "border-[var(--accent)]" : "border-[var(--border)]"
                 }`}
                 aria-label={`Show image ${index + 1}`}
                 aria-pressed={index === active}

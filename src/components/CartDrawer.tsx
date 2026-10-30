@@ -28,11 +28,11 @@ export function CartDrawer() {
         aria-hidden
       />
       <div
-        className={`fixed right-0 top-0 bottom-0 w-full max-w-md max-h-[100dvh] sm:max-h-none bg-[var(--card)] shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "translate-x-full pointer-events-none"}`}
+        className={`fixed right-0 top-0 bottom-0 w-full max-w-md max-h-[100dvh] sm:max-h-none glass-solid rounded-l-[1.75rem] z-50 flex flex-col transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "translate-x-full pointer-events-none"}`}
         aria-hidden={!isOpen}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-[var(--border)] shrink-0 pt-[env(safe-area-inset-top)]">
+        <div className="flex items-center justify-between p-5 border-b border-[var(--border)] shrink-0 pt-[max(1.25rem,env(safe-area-inset-top))]">
           <div>
             <h2 className="section-heading">Your Cart</h2>
             {itemCount > 0 && (
@@ -42,7 +42,7 @@ export function CartDrawer() {
           <button
             type="button"
             onClick={closeCart}
-            className="p-2 rounded-xl text-[#4a142a] hover:bg-[var(--cream)] transition-colors"
+            className="p-2 rounded-xl text-[var(--accent)] hover:bg-[var(--cream)] transition-colors"
             aria-label="Close cart"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +56,7 @@ export function CartDrawer() {
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="w-16 h-16 rounded-full bg-[var(--cream)] flex items-center justify-center mb-4">
-                <svg className="w-7 h-7 text-[#4a142a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-7 h-7 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
               </div>
@@ -128,7 +128,7 @@ export function CartDrawer() {
                     {stock === 0 ? (
                       <p className="mt-1.5 text-xs text-red-700">Out of stock</p>
                     ) : atLimit ? (
-                      <p className="mt-1.5 text-xs text-[#4a142a]">Only {stock} available</p>
+                      <p className="mt-1.5 text-xs text-[var(--accent)]">Only {stock} available</p>
                     ) : null}
                   </div>
                 </li>

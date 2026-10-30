@@ -17,7 +17,7 @@ export function siteGraphJsonLd() {
         sameAs: [contact.facebook, contact.instagram],
         contactPoint: {
           "@type": "ContactPoint",
-          telephone: "+923224036100",
+          telephone: contact.phone,
           contactType: "customer service",
           areaServed: "PK",
           availableLanguage: ["English", "Urdu"],

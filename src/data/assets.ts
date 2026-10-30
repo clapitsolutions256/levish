@@ -6,7 +6,7 @@ const K = "/kairo";
 
 export const assets = {
   logo: "/levish-logo.png",
-  ceo: `${K}/CEO.jpg`,
+  ceo: `${K}/syed-mudasir-hussain-shah.jpg`,
   // Hero & marketing
   saleBanner1: `${K}/Lama-Sale-End-of-Season-2-683x1024.webp`,
   saleBanner2: `${K}/Lama-Sale-End-of-Season-4-683x1024.webp`,

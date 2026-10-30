@@ -50,12 +50,12 @@ export default async function BrandsPage() {
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center bg-[#f4e6ec] p-4 text-center text-2xl font-semibold text-[#4a142a] transition-transform duration-500 group-hover:scale-105">
+                  <div className="flex h-full items-center justify-center bg-[var(--sage-tint)] p-4 text-center text-2xl font-semibold text-[var(--accent)] transition-transform duration-500 group-hover:scale-105">
                     {brand.name}
                   </div>
                 )}
               </div>
-              <h2 className="mt-3 text-lg font-semibold transition-colors group-hover:text-[#4a142a]">{brand.name}</h2>
+              <h2 className="mt-3 text-lg font-semibold transition-colors group-hover:text-[var(--accent)]">{brand.name}</h2>
               <p className="text-sm text-[var(--muted)]">
                 {brand.count ? `${brand.count} product${brand.count !== 1 ? "s" : ""}` : "Coming soon"}
               </p>

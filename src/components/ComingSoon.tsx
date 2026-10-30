@@ -15,12 +15,12 @@ export function ComingSoon({
   if (PRODUCTS_PAUSED) return <ProductsPausedNotice />;
   return (
     <div className="py-16 text-center animate-fade-up">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#4a142a]">Coming Soon</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent)]">Coming Soon</p>
       <h2 className="section-heading mt-3">{title}</h2>
       <p className="type-copy mx-auto mt-3 max-w-md text-[var(--muted)]">{text}</p>
       <Link
         href={href}
-        className="mt-6 inline-block rounded-full border border-[var(--border)] bg-[var(--card)] px-5 py-2 text-sm font-medium hover:border-[#4a142a] hover:text-[#4a142a]"
+        className="mt-6 inline-block rounded-full border border-[var(--border)] bg-[var(--card)] px-5 py-2 text-sm font-medium hover:border-[var(--accent)] hover:text-[var(--accent)]"
       >
         {cta}
       </Link>
@@ -32,7 +32,7 @@ export function ComingSoon({
 export function ProductsPausedNotice() {
   return (
     <div className="py-16 text-center animate-fade-up">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#4a142a]">{PAUSED_NOTICE.label}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent)]">{PAUSED_NOTICE.label}</p>
       <h2 className="section-heading mt-3">{PAUSED_NOTICE.title}</h2>
       <p className="type-copy mx-auto mt-3 max-w-md text-[var(--muted)]">{PAUSED_NOTICE.text}</p>
     </div>
@@ -41,5 +41,6 @@ export function ProductsPausedNotice() {
 
 export function whoLabel(gender: string) {
   if (gender === "women") return "Ladies'";
+  if (gender === "men") return "Men's";
   return "";
 }

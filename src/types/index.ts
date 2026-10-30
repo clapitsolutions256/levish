@@ -1,5 +1,7 @@
 export type CategoryId =
   | "women"
+  | "men"
+  | "unisex"
   | "shoes"
   | "accessories"
   | "belts"

@@ -6,6 +6,7 @@ import { contact } from "@/data/contact";
 const footerLinks = {
   shop: [
     { label: "Women", href: "/women" },
+    { label: "Men", href: "/men" },
     { label: "Shoes", href: "/shoes" },
     { label: "Accessories", href: "/accessories" },
   ],
@@ -21,10 +22,10 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="bg-[var(--foreground)] text-[var(--cream)] mt-0 pb-16 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.03]">
-        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full bg-[var(--accent)]" />
-        <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full bg-[var(--accent-soft)]" />
+    <footer className="bg-[var(--foreground)] text-[var(--cream)] mt-0 pb-28 md:pb-16 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-[0.12]">
+        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full bg-[var(--sage)] blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full bg-[var(--sage)] blur-3xl" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-14 md:py-20">
@@ -63,7 +64,7 @@ export function Footer() {
                 href={contact.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white border border-[#4a142a]/20 flex items-center justify-center text-[#4a142a] hover:bg-[#f4e6ec] transition-all duration-200"
+                className="glass-dark w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-200 hover:-translate-y-0.5 hover:!text-[var(--sage)]"
                 aria-label="Instagram"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -74,7 +75,7 @@ export function Footer() {
                 href={contact.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white border border-[#4a142a]/20 flex items-center justify-center text-[#4a142a] hover:bg-[#f4e6ec] transition-all duration-200"
+                className="glass-dark w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-200 hover:-translate-y-0.5 hover:!text-[var(--sage)]"
                 aria-label="Facebook"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -85,7 +86,7 @@ export function Footer() {
                 href={contact.whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white border border-[#4a142a]/20 flex items-center justify-center text-[#4a142a] hover:bg-[#f4e6ec] transition-all duration-200"
+                className="glass-dark w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-200 hover:-translate-y-0.5 hover:!text-[var(--sage)]"
                 aria-label="WhatsApp"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -137,10 +138,10 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-14 pt-8 border-t border-white/8 flex flex-col sm:flex-row justify-between items-center gap-4 animate-fade-up animation-delay-300">
           <div className="text-center sm:text-left">
-            <p className="text-xs text-[var(--muted)]">
+            <p className="text-xs text-white/50">
               &copy; {new Date().getFullYear()} Empulse. All rights reserved.
             </p>
-            <p className="mt-1.5 text-xs text-[var(--muted)]">
+            <p className="mt-1.5 text-xs text-white/50">
               Powered by{" "}
               <a
                 href="https://www.clapit.solutions/"
@@ -152,7 +153,7 @@ export function Footer() {
               </a>
             </p>
           </div>
-          <div className="flex items-center gap-6 text-xs text-[var(--muted)]">
+          <div className="flex items-center gap-6 text-xs text-white/50">
             <Link href="/privacy" className="hover:!text-white transition-colors">Privacy</Link>
             <Link href="/returns" className="hover:!text-white transition-colors">Returns</Link>
             <Link href="/faqs" className="hover:!text-white transition-colors">FAQs</Link>

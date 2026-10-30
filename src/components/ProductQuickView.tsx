@@ -110,7 +110,7 @@ export function ProductQuickView({ product, onClose }: { product: Product; onClo
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`relative z-10 grid max-h-[calc(100dvh-6.25rem)] w-full max-w-6xl grid-cols-1 grid-rows-[auto_auto] overflow-y-auto rounded-2xl bg-white shadow-[0_24px_80px_rgba(44,40,37,0.18)] [scrollbar-width:none] md:h-[min(780px,90dvh)] md:max-h-none md:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)] md:grid-rows-1 md:overflow-hidden md:rounded-[1.6rem] [&::-webkit-scrollbar]:hidden ${
+        className={`relative z-10 grid max-h-[calc(100dvh-6.25rem)] w-full max-w-6xl grid-cols-1 grid-rows-[auto_auto] overflow-y-auto rounded-2xl bg-white shadow-[0_24px_80px_rgba(11,11,11,0.18)] [scrollbar-width:none] md:h-[min(780px,90dvh)] md:max-h-none md:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)] md:grid-rows-1 md:overflow-hidden md:rounded-[1.6rem] [&::-webkit-scrollbar]:hidden ${
           closing ? "quick-view-panel-out" : "quick-view-panel"
         }`}
       >
@@ -118,7 +118,7 @@ export function ProductQuickView({ product, onClose }: { product: Product; onClo
           type="button"
           onClick={requestClose}
           aria-label="Close"
-          className="absolute top-3 right-3 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-[#4a142a] transition hover:bg-[#f4e6ec] md:top-4 md:right-4"
+          className="absolute top-3 right-3 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-[var(--accent)] transition hover:bg-[var(--sage-tint)] md:top-4 md:right-4"
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 6l12 12M18 6L6 18" />
@@ -140,7 +140,7 @@ export function ProductQuickView({ product, onClose }: { product: Product; onClo
             }}
           >
             {product.new ? (
-              <span className="pointer-events-none absolute top-4 left-4 z-10 rounded-full bg-[#f4e6ec] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#4a142a]">
+              <span className="pointer-events-none absolute top-4 left-4 z-10 rounded-full bg-[var(--sage-tint)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--accent)]">
                 New
               </span>
             ) : null}
@@ -155,7 +155,7 @@ export function ProductQuickView({ product, onClose }: { product: Product; onClo
                   type="button"
                   onClick={() => setActive(index)}
                   className={`relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border md:h-14 md:w-14 md:rounded-xl ${
-                    index === active ? "border-[#4a142a]" : "border-black/10"
+                    index === active ? "border-[var(--accent)]" : "border-black/10"
                   }`}
                   style={{ backgroundColor: frameColor }}
                   aria-label={`Show image ${index + 1}`}
@@ -169,14 +169,14 @@ export function ProductQuickView({ product, onClose }: { product: Product; onClo
         </div>
 
         <div className="flex min-h-0 flex-col px-5 pt-4 md:h-full md:px-8 md:py-8">
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#4a142a]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--accent)]">
             {[product.subcategory, product.categoryId].filter(Boolean).join(" · ")}
           </p>
           <h2 id={titleId} className="section-heading mt-1.5 text-[var(--foreground)]">
             {product.name}
           </h2>
           <div className="mt-2 flex items-baseline gap-3">
-            <p className="text-2xl font-semibold text-[#4a142a]">{formatPrice(product.price)}</p>
+            <p className="text-2xl font-semibold text-[var(--accent)]">{formatPrice(product.price)}</p>
             {product.compareAtPrice ? (
               <p className="text-sm text-[var(--muted)] line-through">{formatPrice(product.compareAtPrice)}</p>
             ) : null}
@@ -192,7 +192,7 @@ export function ProductQuickView({ product, onClose }: { product: Product; onClo
             <ProductPurchase compact product={product} onAdded={requestClose} onColorChange={onColorChange} />
             <div className="mt-3 flex items-center justify-between gap-3">
               <p className="text-xs text-[var(--muted)]">Free shipping above Rs. 5,000</p>
-              <Link href={`/product/${product.slug}`} className="shrink-0 text-sm font-medium text-[#4a142a] underline-offset-4 hover:underline">
+              <Link href={`/product/${product.slug}`} className="shrink-0 text-sm font-medium text-[var(--accent)] underline-offset-4 hover:underline">
                 View full details
               </Link>
             </div>

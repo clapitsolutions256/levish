@@ -178,7 +178,7 @@ export default function CheckoutPage() {
         </p>
         <Link
           href="/"
-          className="inline-block mt-6 px-6 py-3 bg-[#4a142a] text-white font-medium rounded-lg hover:bg-[#350e1e] transition"
+          className="inline-block mt-6 px-6 py-3 skeuo-ink font-medium rounded-full"
         >
           Continue shopping
         </Link>
@@ -189,7 +189,7 @@ export default function CheckoutPage() {
   if (placed) {
     return (
       <div className="max-w-lg mx-auto px-4 py-20 text-center animate-fade-up">
-        <div className="inline-flex w-16 h-16 rounded-full bg-[var(--accent)]/20 text-[var(--accent)] items-center justify-center mb-6">
+        <div className="inline-flex w-16 h-16 rounded-full bg-[var(--sage-tint)] text-[var(--sage-deep)] items-center justify-center mb-6">
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
@@ -207,14 +207,14 @@ export default function CheckoutPage() {
           {orderId && (
             <Link
               href={`/order/${orderId}`}
-              className="inline-block px-6 py-3 bg-[var(--accent)] text-white font-medium rounded-lg hover:opacity-90 transition"
+              className="inline-block px-6 py-3 skeuo-ink font-medium rounded-full"
             >
               View order details
             </Link>
           )}
           <Link
             href="/"
-            className="inline-block px-6 py-3 bg-[#4a142a] text-white font-medium rounded-lg hover:bg-[#350e1e] transition"
+            className="inline-block px-6 py-3 skeuo-ink font-medium rounded-full"
           >
             Continue shopping
           </Link>
@@ -258,7 +258,7 @@ export default function CheckoutPage() {
                     ) : (
                       <>
                         Place this order as a guest, or{" "}
-                        <Link href="/login" className="text-[#4a142a] font-medium hover:text-[#350e1e]">
+                        <Link href="/login" className="text-[var(--accent)] font-medium hover:text-[var(--accent-hover)]">
                           sign in
                         </Link>{" "}
                         to keep it on your account.
@@ -363,7 +363,7 @@ export default function CheckoutPage() {
                 <div className="flex gap-4">
                   <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition ${paymentMethod === "card" ? "border-[var(--accent)] bg-[var(--accent)]/5 text-[var(--accent)]" : "border-[var(--border)] hover:border-[var(--muted)]"}`}>
                     <input type="radio" name="paymentMethod" value="card" checked={paymentMethod === "card"} onChange={() => { setPaymentMethod("card"); if (!paymentTracked.current) { paymentTracked.current = true; trackAddPaymentInfo(metaContents, orderTotal); } }} className="sr-only" />
-                    <svg className="w-5 h-5 text-[#4a142a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                    <svg className="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                     <span className="font-medium">Card</span>
                   </label>
                   <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition ${paymentMethod === "cod" ? "border-[var(--accent)] bg-[var(--accent)]/5 text-[var(--accent)]" : "border-[var(--border)] hover:border-[var(--muted)]"}`}>
@@ -476,7 +476,7 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-6 py-4 bg-[var(--accent)] text-white font-medium rounded-lg hover:opacity-90 transition disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full mt-6 py-4 skeuo-ink font-medium rounded-full disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {loading ? "Processing…" : paymentMethod === "card" ? "Pay now" : "Place order"}
               </button>

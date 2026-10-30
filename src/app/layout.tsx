@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { Poppins } from "next/font/google";
+import { Instrument_Serif, Poppins } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { CartProvider, type CartItem } from "@/context/CartContext";
@@ -8,7 +8,16 @@ import { MetaPixelPageView } from "@/components/MetaPixel";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { readCartCookie } from "@/lib/cartToken";
 import { ReduxProvider } from "@/store/ReduxProvider";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SHARE_IMAGE } from "@/lib/site";
+
+// Editorial serif for the large display words on the home page.
+const display = Instrument_Serif({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
+});
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -42,9 +51,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: [{ url: "/favicon.png?v=4", type: "image/png", sizes: "512x512" }],
-    apple: [{ url: "/apple-icon.png?v=4", sizes: "180x180" }],
-    shortcut: "/favicon.ico?v=4",
+    icon: [{ url: "/favicon.png?v=5", type: "image/png", sizes: "512x512" }],
+    apple: [{ url: "/apple-icon.png?v=5", sizes: "180x180" }],
+    shortcut: "/favicon.ico?v=5",
   },
   openGraph: {
     title: defaultTitle,
@@ -53,20 +62,13 @@ export const metadata: Metadata = {
     type: "website",
     url: SITE_URL,
     locale: "en_PK",
-    images: [
-      {
-        url: "/og.png?v=4",
-        width: 1200,
-        height: 630,
-        alt: "Empulse fashion, shoes and accessories",
-      },
-    ],
+    images: [SHARE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: defaultTitle,
     description: SITE_DESCRIPTION,
-    images: ["/og.png?v=4"],
+    images: [SHARE_IMAGE.url],
   },
 };
 
@@ -81,7 +83,7 @@ export default async function RootLayout({
   const initialItems = readCartCookie(cookieStore.get("empulse_cart_items")?.value) as CartItem[];
 
   return (
-    <html lang="en-PK" className={poppins.variable} suppressHydrationWarning>
+    <html lang="en-PK" className={`${poppins.variable} ${display.variable}`} suppressHydrationWarning>
       <head>
         <Script id="meta-pixel" strategy="beforeInteractive">{`
           !function(f,b,e,v,n,t,s)

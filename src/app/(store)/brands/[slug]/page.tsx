@@ -55,8 +55,8 @@ export default async function BrandPage({ params, searchParams }: Props) {
   const chip = (selected: boolean) =>
     `rounded-full px-4 py-1.5 text-sm transition-colors ${
       selected
-        ? "bg-[#4a142a] font-medium text-white"
-        : "border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:border-[#4a142a] hover:text-[#4a142a]"
+        ? "bg-[var(--accent)] font-medium text-white"
+        : "border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
     }`;
 
   return (

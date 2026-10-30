@@ -93,7 +93,7 @@ export function BannersManager() {
           <h1 className="text-2xl font-semibold text-gray-900">Banners</h1>
           <p className="mt-1 text-sm text-gray-500">Each banner has a web picture and a mobile picture. Phones show the mobile one.</p>
         </div>
-        <button type="button" onClick={startCreate} className="px-4 py-2.5 rounded-lg bg-[#4a142a] text-white text-sm font-semibold hover:bg-[#350e1e]">
+        <button type="button" onClick={startCreate} className="px-4 py-2.5 rounded-lg bg-[var(--accent)] text-white text-sm font-semibold hover:bg-[var(--accent-hover)]">
           Add banner
         </button>
       </div>
@@ -201,7 +201,7 @@ export function BannersManager() {
               <button type="button" onClick={() => setOpen(false)} className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium">
                 Cancel
               </button>
-              <button type="submit" disabled={creating || Boolean(uploadingField) || !form.image} className="rounded-lg bg-[#4a142a] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
+              <button type="submit" disabled={creating || Boolean(uploadingField) || !form.image} className="rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
                 {creating ? "Saving…" : "Save banner"}
               </button>
             </div>

@@ -14,7 +14,7 @@ const partners = [
 
 export function BrandPartners() {
   return (
-    <section className="bg-[#f3f3f3] py-8 md:py-10" aria-label="Our partners">
+    <section className="bg-[var(--cream)] py-8 md:py-10" aria-label="Our partners">
       <div className="overflow-hidden">
         <div className="partners-scroll flex w-max items-center">
           {[0, 1].map((copy) => (

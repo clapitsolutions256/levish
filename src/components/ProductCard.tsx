@@ -146,14 +146,14 @@ function CardActions({
   onView: () => void;
 }) {
   const button =
-    "flex h-10 w-10 items-center justify-center rounded-full shadow-sm transition duration-200 hover:scale-105 active:scale-90 sm:h-9 sm:w-9";
+    "flex h-10 w-10 items-center justify-center rounded-full transition duration-200 hover:scale-105 active:scale-90 sm:h-9 sm:w-9";
   return (
     <div className="flex items-center gap-1.5">
       <button
         type="button"
         aria-label={`View ${product.name}`}
         onClick={onView}
-        className={`${button} bg-white text-[#4a142a] hover:bg-[#f4e6ec]`}
+        className={`${button} clay text-[var(--accent)]`}
       >
         <svg className="h-[18px] w-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
@@ -164,7 +164,7 @@ function CardActions({
         type="button"
         aria-label={`Add ${product.name} to cart`}
         onClick={onAdd}
-        className={`${button} bg-[#4a142a] text-white hover:bg-[#350e1e]`}
+        className={`${button} skeuo-ink`}
       >
         <svg className="h-[18px] w-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -211,7 +211,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     <article className={`group flex h-full flex-col animate-fade-up ${delayClass}`}>
       <div
         ref={frameRef}
-        className="relative aspect-[3/4] select-none overflow-hidden rounded-[1.7rem] transition-transform duration-200 active:scale-[0.985] [-webkit-touch-callout:none]"
+        className="relative aspect-[3/4] select-none overflow-hidden rounded-[1.7rem] shadow-[0_14px_34px_rgba(11,11,11,0.08)] transition-[transform,box-shadow] duration-300 group-hover:shadow-[0_20px_44px_rgba(11,11,11,0.14)] active:scale-[0.985] [-webkit-touch-callout:none]"
         style={{ backgroundColor: frameColor }}
         {...preview.handlers}
       >
@@ -241,7 +241,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           )}
         </Link>
         {product.new && (
-          <span className="absolute top-3 left-3 z-20 rounded-full bg-[#f4e6ec] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#4a142a]">
+          <span className="clay-sage absolute top-3 left-3 z-20 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide">
             New
           </span>
         )}
@@ -271,18 +271,18 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       </div>
       {detailsOpen ? <ProductQuickView product={product} onClose={closeDetails} /> : null}
       <Link href={`/product/${product.slug}`} className="mt-3 flex flex-1 flex-col">
-        <span className="inline-flex w-fit max-w-full truncate rounded-full bg-[#f4e6ec] px-2.5 py-0.5 text-[11px] font-medium text-[#4a142a]">
+        <span className="inline-flex w-fit max-w-full truncate rounded-full bg-[var(--sage-tint)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--sage-deep)]">
           {product.color}
         </span>
         {product.brand ? (
-          <span className="mt-2 block truncate text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">
+          <span className="mt-2 block truncate text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--foreground)]">
             {product.brand}
           </span>
         ) : null}
-        <h3 className={`${product.brand ? "mt-0.5" : "mt-2"} h-10 overflow-hidden text-[15px] font-medium leading-5 text-[var(--foreground)] line-clamp-2 transition-colors duration-200 group-hover:text-[#4a142a]`}>
+        <h3 className={`${product.brand ? "mt-0.5" : "mt-2"} h-10 overflow-hidden text-[15px] font-medium leading-5 text-[var(--foreground)] line-clamp-2 transition-colors duration-200 group-hover:text-[var(--accent)]`}>
           {product.name}
         </h3>
-        <p className="mt-1.5 flex flex-wrap items-baseline gap-x-2 text-[15px] font-semibold text-[#4a142a]">
+        <p className="mt-1.5 flex flex-wrap items-baseline gap-x-2 text-[15px] font-semibold text-[var(--accent)]">
           {formatPrice(product.price)}
           {product.compareAtPrice && product.compareAtPrice > product.price ? (
             <>

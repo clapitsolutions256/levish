@@ -67,7 +67,7 @@ export function ProductPurchase({
                 onClick={() => chooseColor(item)}
                 className={`rounded-full border px-3 py-1.5 text-sm ${
                   item === activeColor
-                    ? "border-[#4a142a] bg-[#4a142a] text-white"
+                    ? "border-[var(--accent)] bg-[var(--accent)] text-white"
                     : "border-[var(--border)] bg-white text-[var(--foreground)]"
                 }`}
               >
@@ -95,7 +95,7 @@ export function ProductPurchase({
                   }}
                   className={`min-w-11 rounded-lg border px-3 py-2 text-sm ${
                     item === activeSize
-                      ? "border-[#4a142a] bg-[#f4e6ec] text-[#4a142a]"
+                      ? "border-[var(--accent)] bg-[var(--sage-tint)] text-[var(--accent)]"
                       : "border-[var(--border)] bg-white text-[var(--foreground)]"
                   } ${unavailable ? "line-through opacity-50" : ""}`}
                 >
@@ -134,7 +134,7 @@ export function ProductPurchase({
           flyProductToCart(event.currentTarget, galleryFor(product, activeColor)[0] || product.image);
           onAdded?.();
         }}
-        className={`${compact ? "mt-2 py-3" : "mt-4 py-4"} w-full rounded-lg bg-[#4a142a] px-10 font-medium text-white transition hover:bg-[#350e1e] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto`}
+        className={`${compact ? "mt-2 py-3" : "mt-4 py-4"} skeuo-ink w-full rounded-full px-10 font-medium disabled:cursor-not-allowed disabled:opacity-50 md:w-auto`}
       >
         {out ? "Out of stock" : atLimit ? `Only ${stock} available` : "Add to cart"}
       </button>

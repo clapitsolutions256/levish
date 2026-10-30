@@ -5,7 +5,7 @@ import { sameType } from "@/lib/productTypes";
 export type StyleCard = { name: string; href: string; image: string };
 
 // Types on these categories become style cards and style pages (/jackets, /shorts, ...).
-const CLOTHING = new Set(["women"]);
+const CLOTHING = new Set(["women", "men", "unisex"]);
 
 // Built-in styles keep their order and their existing pages.
 const BUILT_IN = [
@@ -18,6 +18,11 @@ const BUILT_IN = [
 
 function clothingType(product: Product) {
   return CLOTHING.has(product.categoryId) ? product.subcategory?.trim() ?? "" : "";
+}
+
+// The page that lists a clothing type for everyone, e.g. "hoodie" -> "/hoodies".
+export function typePath(type: string) {
+  return BUILT_IN.find((style) => sameType(style.key, type))?.href ?? `/${slugify(type)}`;
 }
 
 export function isBuiltInStyle(label: string) {

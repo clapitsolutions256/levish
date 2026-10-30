@@ -54,7 +54,7 @@ function sizeGuide(categoryId: string) {
       hint: "Shoes use 40, 41, 42 and so on. Tap a size or type another number.",
     };
   }
-  if (categoryId === "women" || categoryId === "belts") {
+  if (categoryId === "women" || categoryId === "men" || categoryId === "unisex" || categoryId === "belts") {
     return {
       label: "Waist",
       sizes: waistSizes,
@@ -449,7 +449,7 @@ export function ProductsManager() {
         <button
           type="button"
           onClick={openCreate}
-          className="px-4 py-2.5 rounded-lg bg-[#4a142a] text-white text-sm font-semibold hover:bg-[#350e1e]"
+          className="px-4 py-2.5 rounded-lg bg-[var(--accent)] text-white text-sm font-semibold hover:bg-[var(--accent-hover)]"
         >
           Add product
         </button>
@@ -459,7 +459,7 @@ export function ProductsManager() {
         <button
           type="button"
           onClick={() => setCategory("all")}
-          className={`shrink-0 px-3 py-2 rounded-lg text-xs font-semibold ${category === "all" ? "bg-[#4a142a] text-white" : "bg-white border border-gray-200 text-gray-600"}`}
+          className={`shrink-0 px-3 py-2 rounded-lg text-xs font-semibold ${category === "all" ? "bg-[var(--accent)] text-white" : "bg-white border border-gray-200 text-gray-600"}`}
         >
           All
         </button>
@@ -468,7 +468,7 @@ export function ProductsManager() {
             key={item.id}
             type="button"
             onClick={() => setCategory(item.id)}
-            className={`shrink-0 px-3 py-2 rounded-lg text-xs font-semibold ${category === item.id ? "bg-[#4a142a] text-white" : "bg-white border border-gray-200 text-gray-600"}`}
+            className={`shrink-0 px-3 py-2 rounded-lg text-xs font-semibold ${category === item.id ? "bg-[var(--accent)] text-white" : "bg-white border border-gray-200 text-gray-600"}`}
           >
             {item.name}
           </button>
@@ -555,16 +555,16 @@ export function ProductsManager() {
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1">
                         {product.active === false ? <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px]">Hidden</span> : <span className="rounded-full bg-green-50 px-2 py-0.5 text-[11px] text-green-700">Live</span>}
-                        {isSold(product) ? <span className="rounded-full bg-[#4a142a] px-2 py-0.5 text-[11px] text-white">Sold</span> : null}
+                        {isSold(product) ? <span className="rounded-full bg-[var(--accent)] px-2 py-0.5 text-[11px] text-white">Sold</span> : null}
                         {product.salePercent ? <span className="rounded-full bg-red-50 px-2 py-0.5 text-[11px] text-red-700">Sale {product.salePercent}% off</span> : null}
-                        {product.new ? <span className="rounded-full bg-[#f4e6ec] px-2 py-0.5 text-[11px] text-[#4a142a]">New</span> : null}
+                        {product.new ? <span className="rounded-full bg-[var(--sage-tint)] px-2 py-0.5 text-[11px] text-[var(--accent)]">New</span> : null}
                         {product.featured ? <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] text-amber-800">Featured</span> : null}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-right whitespace-nowrap">
                       {product.variants?.length && !isSold(product) ? (
                         soldId === product.id ? (
-                          <button type="button" disabled={markingSold} onClick={() => markSold(product.id)} className="inline-flex items-center gap-1.5 text-[#4a142a] font-semibold mr-3 disabled:opacity-60">
+                          <button type="button" disabled={markingSold} onClick={() => markSold(product.id)} className="inline-flex items-center gap-1.5 text-[var(--accent)] font-semibold mr-3 disabled:opacity-60">
                             {markingSold ? <><Spinner className="h-3.5 w-3.5" /> Marking…</> : "Confirm sold"}
                           </button>
                         ) : (
@@ -574,7 +574,7 @@ export function ProductsManager() {
                       <button type="button" onClick={() => openSale(product)} className="text-red-700 font-medium mr-3">
                         {product.salePercent ? "Edit sale" : "Sale"}
                       </button>
-                      <button type="button" onClick={() => openEdit(product)} className="text-[#4a142a] font-medium mr-3">Edit</button>
+                      <button type="button" onClick={() => openEdit(product)} className="text-[var(--accent)] font-medium mr-3">Edit</button>
                       {deleteId === product.id ? (
                         <button type="button" disabled={deleting} onClick={() => remove(product.id)} className="inline-flex items-center gap-1.5 text-red-700 font-medium disabled:opacity-60">
                           {deleting ? <><Spinner className="h-3.5 w-3.5" /> Deleting…</> : "Confirm"}
@@ -622,11 +622,11 @@ export function ProductsManager() {
             </Field>
             {salePreview != null ? (
               <p className="mt-3 text-sm">
-                Sale price: <span className="font-semibold text-[#4a142a]">Rs. {salePreview.toLocaleString()}</span>
+                Sale price: <span className="font-semibold text-[var(--accent)]">Rs. {salePreview.toLocaleString()}</span>
               </p>
             ) : null}
             {saleError ? <p className="mt-3 text-sm text-red-700">{saleError}</p> : null}
-            <button type="submit" disabled={savingSale || salePreview == null} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#4a142a] py-3 font-semibold text-white disabled:opacity-50">
+            <button type="submit" disabled={savingSale || salePreview == null} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] py-3 font-semibold text-white disabled:opacity-50">
               {savingSale ? <><Spinner /> Saving…</> : saleProduct.salePercent ? "Update sale" : "Add sale"}
             </button>
             {saleProduct.salePercent ? (
@@ -701,7 +701,7 @@ export function ProductsManager() {
                         setDraft({ ...draft, subcategory: draft.subcategory.trim().replace(/\s+/g, " ") });
                         setTypingType(false);
                       }}
-                      className="shrink-0 rounded-xl bg-[#f4e6ec] px-3 py-2 text-sm font-medium text-[#4a142a]"
+                      className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]"
                     >
                       Done
                     </button>
@@ -757,7 +757,7 @@ export function ProductsManager() {
                         setDraft({ ...draft, brand: draft.brand.trim().replace(/\s+/g, " ") });
                         setTypingBrand(false);
                       }}
-                      className="shrink-0 rounded-xl bg-[#f4e6ec] px-3 py-2 text-sm font-medium text-[#4a142a]"
+                      className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]"
                     >
                       Done
                     </button>
@@ -811,14 +811,14 @@ export function ProductsManager() {
                     placeholder="Color, e.g. Black"
                     className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm"
                   />
-                  <button type="button" onClick={() => addColor(colorInput)} className="shrink-0 rounded-xl bg-[#f4e6ec] px-3 py-2 text-sm font-medium text-[#4a142a]">
+                  <button type="button" onClick={() => addColor(colorInput)} className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]">
                     Add color
                   </button>
                 </div>
                 {palette.length > 0 ? (
                   <div className="mb-4 flex flex-wrap gap-1.5">
                     {palette.map((color) => (
-                      <span key={color} className="inline-flex items-center gap-1 rounded-full bg-[#4a142a] px-2.5 py-1 text-xs font-medium text-white">
+                      <span key={color} className="inline-flex items-center gap-1 rounded-full bg-[var(--accent)] px-2.5 py-1 text-xs font-medium text-white">
                         {color}
                         <button type="button" onClick={() => removeColor(color)} className="text-white/80" aria-label={`Remove ${color}`}>
                           ×
@@ -838,7 +838,7 @@ export function ProductsManager() {
                           type="button"
                           onClick={() => addVariantSize(size)}
                           className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
-                            selected ? "border-[#4a142a] bg-[#4a142a] text-white" : "border-gray-200 text-[#4a142a]"
+                            selected ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "border-gray-200 text-[var(--accent)]"
                           }`}
                         >
                           {size}
@@ -868,7 +868,7 @@ export function ProductsManager() {
                   <button
                     type="button"
                     onClick={() => addVariantSize(customSize)}
-                    className="shrink-0 rounded-xl bg-[#f4e6ec] px-3 py-2 text-sm font-medium text-[#4a142a]"
+                    className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]"
                   >
                     Add size
                   </button>
@@ -879,7 +879,7 @@ export function ProductsManager() {
                     const rows = draft.variants.filter((variant) => variant.color.trim().toLowerCase() === color.toLowerCase() && variant.size.trim());
                     return (
                       <div key={color} className="rounded-xl border border-gray-200 p-3">
-                        <p className="text-sm font-semibold text-[#4a142a]">{color}</p>
+                        <p className="text-sm font-semibold text-[var(--accent)]">{color}</p>
                         {rows.length === 0 ? (
                           <p className="mt-2 text-xs text-gray-500">Add a size and it will show here for this color.</p>
                         ) : (
@@ -919,7 +919,7 @@ export function ProductsManager() {
                           ))}
                           {uploadingColor === color ? <Skeleton className="h-16 w-full rounded-lg" /> : null}
                         </div>
-                        <label className="mt-2 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-[#4a142a]">
+                        <label className="mt-2 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-[var(--accent)]">
                           {uploadingColor === color ? <><Spinner className="h-3.5 w-3.5" /> Uploading…</> : `Upload ${color} photos`}
                           <input
                             type="file"
@@ -948,7 +948,7 @@ export function ProductsManager() {
                     <div key={`${url}-${index}`} className="relative">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={url} alt="" className="h-24 w-full rounded-lg object-cover bg-gray-100" />
-                      <span className="absolute left-1 top-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-[#4a142a]">
+                      <span className="absolute left-1 top-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
                         {index === 0 ? "Cover" : index + 1}
                       </span>
                       <button
@@ -974,7 +974,7 @@ export function ProductsManager() {
                               return { ...current, images, image: images[0] };
                             })
                           }
-                          className="absolute bottom-1 left-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-[#4a142a]"
+                          className="absolute bottom-1 left-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]"
                         >
                           Make cover
                         </button>
@@ -983,7 +983,7 @@ export function ProductsManager() {
                   ))}
                   {uploading && !uploadingColor ? <Skeleton className="h-24 w-full rounded-lg" /> : null}
                 </div>
-                <label className="mt-3 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-[#4a142a]">
+                <label className="mt-3 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-[var(--accent)]">
                   {uploading && !uploadingColor ? <><Spinner className="h-3.5 w-3.5" /> Uploading…</> : "Upload images"}
                   <input
                     type="file"
@@ -1015,7 +1015,7 @@ export function ProductsManager() {
                 <label className="flex items-center gap-2"><input type="checkbox" checked={draft.featured} onChange={(event) => setDraft({ ...draft, featured: event.target.checked })} /> Featured</label>
               </div>
               {formError ? <p className="text-sm text-red-700">{formError}</p> : null}
-              <button type="submit" disabled={saving || uploading} className="w-full py-3 rounded-xl bg-[#4a142a] text-white font-semibold disabled:opacity-50">
+              <button type="submit" disabled={saving || uploading} className="w-full py-3 rounded-xl bg-[var(--accent)] text-white font-semibold disabled:opacity-50">
                 {saving ? <span className="inline-flex items-center gap-2"><Spinner /> Saving…</span> : "Save product"}
               </button>
             </div>

@@ -50,7 +50,7 @@ export default function FAQsPage() {
     <div className="bg-warm-radial">
       <JsonLd data={faqJsonLd(faqs)} />
       {/* Header */}
-      <section className="bg-[#f4e6ec] py-16 md:py-20 border-b border-[#e7d0da]">
+      <section className="bg-[var(--sage-tint)] py-16 md:py-20 border-b border-[var(--sage-line)]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <p className="eyebrow mb-3 animate-fade-down">Help Center</p>
           <h1 className="section-heading animate-fade-up">
@@ -91,7 +91,7 @@ export default function FAQsPage() {
           <p className="type-copy mb-5 text-[var(--muted)]">Still have questions?</p>
           <Link href="/contact" className="btn-outline">
             Contact Us
-            <svg className="w-4 h-4 text-[#4a142a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </Link>

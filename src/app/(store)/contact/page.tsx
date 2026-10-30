@@ -44,7 +44,7 @@ const channels = [
 export default function ContactPage() {
   return (
     <div className="bg-warm-radial">
-      <section className="border-b border-[#e7d0da] bg-[#f4e6ec] py-16 md:py-20">
+      <section className="border-b border-[var(--sage-line)] bg-[var(--sage-tint)] py-16 md:py-20">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
           <p className="eyebrow mb-3 animate-fade-down">Get in Touch</p>
           <h1 className="section-heading animate-fade-up">Contact Us</h1>
@@ -59,11 +59,11 @@ export default function ContactPage() {
           {channels.map((item) => {
             const card = (
               <>
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#f4e6ec] text-[#4a142a]">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--sage-tint)] text-[var(--accent)]">
                   <ChannelIcon name={item.icon} />
                 </span>
                 <span className="min-w-0">
-                  <span className="block text-xs font-medium uppercase tracking-[0.18em] text-[#4a142a]">
+                  <span className="block text-xs font-medium uppercase tracking-[0.18em] text-[var(--accent)]">
                     {item.title}
                   </span>
                   <span className="mt-1 block text-sm text-[var(--foreground)]">{item.text}</span>
@@ -71,7 +71,7 @@ export default function ContactPage() {
               </>
             );
             const className =
-              "card-warm flex items-center gap-4 p-4 transition-colors hover:border-[#4a142a]/25";
+              "card-warm flex items-center gap-4 p-4 transition-colors hover:border-[var(--accent)]/25";
             return item.href ? (
               <a
                 key={item.title}

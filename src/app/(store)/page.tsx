@@ -5,6 +5,13 @@ import { ProductCard } from "@/components/ProductCard";
 import { Reels } from "@/components/Reels";
 import { BlogCard } from "@/components/BlogCard";
 import { ShopByStyle } from "@/components/ShopByStyle";
+import { Spotlight } from "@/components/showcase/Spotlight";
+import { StackedSections, type StackPanel } from "@/components/showcase/StackedSections";
+import { OrbitShowcase } from "@/components/showcase/OrbitShowcase";
+import { ShopTheLook } from "@/components/showcase/ShopTheLook";
+import { buildLooks, orbitPieces, sectionPieces, wornBy } from "@/lib/showcase";
+import type { Product } from "@/types";
+import { isSold } from "@/lib/variants";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { AboutUs } from "@/components/AboutUs";
 import { blogs } from "@/data/blogs";
@@ -31,19 +38,63 @@ export default async function HomePage() {
   const newProducts = catalog.filter((product) => product.new);
   const saleProducts = catalog.filter((product) => product.salePercent);
   const styles = styleCards(catalog);
+  const spotlight = catalog.find((product) => product.featured && !isSold(product)) ?? catalog[0];
+  const pieces = (list: Product[]) => list.map(({ id, slug, name, image }) => ({ id, slug, name, image }));
+  const panels: StackPanel[] = [
+    {
+      word: "Women",
+      href: "/women",
+      line: "Relaxed sweatshirts, wide-leg denim and everyday layers, all original.",
+      count: catalog.filter(wornBy("women")).length,
+      links: [
+        { label: "Sweatshirts", href: "/sweatshirts?gender=women" },
+        { label: "Trousers", href: "/trousers?gender=women" },
+        { label: "Undergarments", href: "/undergarments?gender=women" },
+      ],
+      pieces: pieces(sectionPieces(catalog, wornBy("women"))),
+      tone: "sage",
+    },
+    {
+      word: "Men",
+      href: "/men",
+      line: "Jackets, hoodies and denim from Lacoste, Polo Ralph Lauren, Levi's and more.",
+      count: catalog.filter(wornBy("men")).length,
+      links: [
+        { label: "Jackets", href: "/jackets?gender=men" },
+        { label: "Hoodies", href: "/hoodies?gender=men" },
+        { label: "Jeans", href: "/jeans?gender=men" },
+      ],
+      pieces: pieces(sectionPieces(catalog, wornBy("men"))),
+      tone: "ink",
+    },
+    {
+      word: "Shoes",
+      href: "/shoes",
+      line: "Sneakers and runners from On and the labels you know.",
+      count: catalog.filter((product) => product.categoryId === "shoes").length,
+      links: [
+        { label: "Men's shoes", href: "/shoes?gender=men" },
+        { label: "All shoes", href: "/shoes" },
+      ],
+      pieces: pieces(sectionPieces(catalog, (product) => product.categoryId === "shoes")),
+      tone: "paper",
+    },
+  ];
 
   return (
     <div className="grain-overlay">
       <JsonLd data={siteGraphJsonLd()} />
       <HeroSlider />
 
-      <section className="mx-auto max-w-[90rem] px-4 pt-10 sm:px-6 md:pt-14">
-        <h1 className="section-heading">Original fashion, shoes and accessories</h1>
-        <p className="type-copy mt-3 max-w-2xl text-[var(--muted)]">
-          Empulse is a Pakistan store for women&apos;s clothing, shoes, belts, caps and bags.
-          Original brands, nationwide delivery, and free shipping on orders above Rs. 5,000.
-        </p>
-      </section>
+      {spotlight ? (
+        <Spotlight product={spotlight} pieceCount={catalog.length} />
+      ) : (
+        <section className="mx-auto max-w-[90rem] px-4 pt-10 sm:px-6 md:pt-14">
+          <h1 className="section-heading">Original fashion, shoes and accessories</h1>
+        </section>
+      )}
+
+      {PRODUCTS_PAUSED ? null : <StackedSections panels={panels} />}
 
       <ShopByStyle categories={styles} />
 
@@ -91,7 +142,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <div className="bg-[#F9F7F5]">
+      {PRODUCTS_PAUSED ? null : <OrbitShowcase products={orbitPieces(catalog)} />}
+      {PRODUCTS_PAUSED ? null : <ShopTheLook looks={buildLooks(catalog)} />}
+
+      <div className="bg-[var(--background)]">
       <WhyChooseUs />
       <AboutUs />
 

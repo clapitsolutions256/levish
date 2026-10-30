@@ -25,7 +25,9 @@ export const productCategories: {
   subcategories: string[];
 }[] = [
   { id: "women", name: "Woman", subcategories: clothingTypes },
-  { id: "shoes", name: "Shoes", subcategories: ["Woman"] },
+  { id: "men", name: "Men", subcategories: clothingTypes },
+  { id: "unisex", name: "Unisex", subcategories: clothingTypes },
+  { id: "shoes", name: "Shoes", subcategories: ["Woman", "Men"] },
   { id: "accessories", name: "Accessories", subcategories: ["Eyewear"] },
   { id: "belts", name: "Belts", subcategories: [] },
   { id: "caps", name: "Caps & Headwear", subcategories: [] },

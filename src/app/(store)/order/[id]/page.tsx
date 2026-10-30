@@ -60,7 +60,7 @@ export default function OrderDetailPage({
   if (error || !order) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <svg className="w-16 h-16 text-[#4a142a] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-16 h-16 text-[var(--accent)] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <h1 className="section-heading">Order not found</h1>
@@ -69,7 +69,7 @@ export default function OrderDetailPage({
         </p>
         <Link
           href="/"
-          className="inline-block mt-6 px-6 py-3 bg-[#4a142a] text-white font-medium rounded-lg hover:bg-[#350e1e] transition"
+          className="inline-block mt-6 px-6 py-3 skeuo-ink font-medium rounded-full"
         >
           Go to homepage
         </Link>
@@ -213,7 +213,7 @@ export default function OrderDetailPage({
           {order.orderItems.map((item, i) => (
             <div key={i} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-lg bg-[var(--cream)] flex items-center justify-center text-[#4a142a]">
+                <div className="w-12 h-12 rounded-lg bg-[var(--cream)] flex items-center justify-center text-[var(--accent)]">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
@@ -260,7 +260,7 @@ export default function OrderDetailPage({
       <div className="mt-8 text-center animate-fade-up animation-delay-200">
         <Link
           href="/"
-          className="inline-block px-6 py-3 bg-[#4a142a] text-white font-medium rounded-lg hover:bg-[#350e1e] transition"
+          className="inline-block px-6 py-3 skeuo-ink font-medium rounded-full"
         >
           Continue shopping
         </Link>

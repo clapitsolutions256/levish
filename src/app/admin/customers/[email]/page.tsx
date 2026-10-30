@@ -53,7 +53,7 @@ export default function CustomerDetailPage({
   return (
     <div className="p-6 lg:p-8 max-w-5xl">
       <Link href="/admin/customers" className="text-sm text-gray-500 hover:text-amber-600 mb-4 inline-flex items-center gap-1">
-        <svg className="w-4 h-4 text-[#4a142a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
         Back to customers

@@ -11,7 +11,7 @@ export const metadata: Metadata = privateMeta({
 
 export default function ComingSoonPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#faf8f5] px-6 py-16 text-center">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-[var(--background)] px-6 py-16 text-center">
       <Image
         src={assets.logo}
         alt="Levish"
@@ -21,8 +21,8 @@ export default function ComingSoonPage() {
         className="h-12 w-auto md:h-16"
       />
       <p className="eyebrow mt-12">Opening soon</p>
-      <h1 className="section-heading mt-4 text-[#2c2825]">Coming soon</h1>
-      <p className="type-copy mt-5 max-w-md text-[#6b6560]">
+      <h1 className="section-heading mt-4 text-[var(--foreground)]">Coming soon</h1>
+      <p className="type-copy mt-5 max-w-md text-[var(--muted)]">
         Fashion, footwear, and lifestyle. A new Empulse store is on the way.
       </p>
     </main>

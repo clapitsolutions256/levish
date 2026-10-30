@@ -15,7 +15,7 @@ export default function AboutPage() {
   return (
     <div className="bg-warm-radial">
       {/* Hero banner */}
-      <section className="relative overflow-hidden bg-[#f4e6ec] py-20 md:py-28">
+      <section className="relative overflow-hidden bg-[var(--sage-tint)] py-20 md:py-28">
         <div className="absolute inset-0 opacity-[0.03]">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[var(--accent)]" />
         </div>
@@ -69,7 +69,7 @@ export default function AboutPage() {
             <div className="relative w-full sm:w-52 aspect-square rounded-2xl overflow-hidden bg-[var(--cream)] shrink-0 shadow-md shadow-[var(--shadow-warm)]">
               <Image
                 src={assets.ceo}
-                alt="Arsal Ali – CEO, Empulse"
+                alt="Syed Mudasir Hussain Shah – CEO, Empulse"
                 fill
                 className="object-cover"
                 sizes="(max-width: 640px) 100vw, 208px"
@@ -79,18 +79,18 @@ export default function AboutPage() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="section-heading text-[var(--foreground)]">
-                Arsal Ali
+                Syed Mudasir Hussain Shah
               </h3>
               <p className="eyebrow mt-2">Chief Executive Officer</p>
               <p className="type-copy mt-5 text-[var(--muted)]">
-                Arsal Ali leads Empulse from Lahore, bringing a clear vision for
-                accessible, quality fashion. Under his leadership, Empulse has grown
-                around the idea of cozy, always — offering thoughtful clothing,
-                shoes and accessories for women.
+                Syed Mudasir Hussain Shah leads Empulse from Lahore, bringing a clear
+                vision for accessible, quality fashion. Empulse has grown around the
+                idea of cozy, always — offering thoughtful, original clothing, shoes
+                and accessories for men and women.
               </p>
               <p className="type-copy mt-3 text-[var(--muted)]">
-                From Lahore to the rest of Pakistan, Arsal is focused on making
-                everyday style easy and enjoyable for everyone.
+                From Lahore to the rest of Pakistan, the focus is on making everyday
+                style easy and enjoyable for everyone.
               </p>
             </div>
           </div>

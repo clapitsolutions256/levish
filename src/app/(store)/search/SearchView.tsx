@@ -79,7 +79,7 @@ export function SearchView({
       />
       {splitType && (
         <div className="mt-4 flex flex-wrap gap-2">
-          <Link href={`/women?type=${splitType}`} className="rounded-full bg-[#4a142a] px-5 py-2 text-sm font-medium text-white hover:bg-[#350e1e]">
+          <Link href={`/${splitType === "jeans" ? "jeans" : `${splitType}s`}`} className="skeuo-ink rounded-full px-5 py-2 text-sm font-medium">
             Shop all {splitType === "jeans" ? "jeans" : `${splitType}s`}
           </Link>
         </div>

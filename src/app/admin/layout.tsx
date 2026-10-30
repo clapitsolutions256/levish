@@ -12,7 +12,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-gray-50 text-gray-900 min-h-screen">
+    <div className="min-h-screen text-gray-900">
       <AdminAppShell>{children}</AdminAppShell>
     </div>
   );

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { BrandSections } from "@/components/BrandSections";
+import { ProductList } from "@/components/ProductList";
 import { ComingSoon, whoLabel } from "@/components/ComingSoon";
-import { GenderShopNav } from "@/components/GenderShopNav";
 import { getProductsByCategoryAndSubcategory } from "@/lib/catalog";
 import { categories } from "@/data/categories";
 import { MetaCatalogView } from "@/components/MetaPixel";
@@ -13,7 +12,6 @@ import { pageMeta } from "@/lib/site";
 
 type Props = {
   params: Promise<{ category: string; subcategory: string }>;
-  searchParams: Promise<{ brand?: string }>;
 };
 
 const categorySlugs = ["women", "shoes", "accessories"] as const;
@@ -30,6 +28,7 @@ const subcategoryTitles: Record<string, Record<string, string>> = {
   },
   shoes: {
     women: "Women's Shoes",
+    men: "Men's Shoes",
   },
   accessories: {
     eyewear: "Eyewear",
@@ -38,7 +37,7 @@ const subcategoryTitles: Record<string, Record<string, string>> = {
 
 const validSubcategories: Record<string, string[]> = {
   women: ["tops", "dresses", "tshirts", "bottoms", "blazers", "sweaters", "jackets"],
-  shoes: ["women"],
+  shoes: ["women", "men"],
   accessories: ["eyewear"],
 };
 
@@ -61,9 +60,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-export default async function SubcategoryPage({ params, searchParams }: Props) {
+export default async function SubcategoryPage({ params }: Props) {
   const { category: categorySlug, subcategory: subcategorySlug } = await params;
-  const { brand } = await searchParams;
   const cat = categorySlug.toLowerCase();
   const sub = subcategorySlug.toLowerCase();
 
@@ -74,7 +72,8 @@ export default async function SubcategoryPage({ params, searchParams }: Props) {
   const category = categories.find((c) => c.slug === cat);
   if (!category) notFound();
 
-  const womenShoes = cat === "shoes" && sub === "women";
+  // Men's and women's shoes are a filter on /shoes now.
+  if (cat === "shoes" && (sub === "women" || sub === "men")) redirect(`/shoes?gender=${sub}`);
   const title = subcategoryTitle(cat, sub);
 
   const list = await getProductsByCategoryAndSubcategory(category.id, sub);
@@ -82,7 +81,7 @@ export default async function SubcategoryPage({ params, searchParams }: Props) {
   const emptyState = shoeWho
     ? {
         title: `${shoeWho} shoes are on their way`,
-        text: "We're putting together a new range of women's sneakers, sandals and more. Check back soon.",
+        text: `We're putting together a new range of ${sub === "men" ? "men's" : "women's"} sneakers, sandals and more. Check back soon.`,
       }
     : {
         title: `${whoLabel(cat)} ${title.toLowerCase()} ${title.endsWith("s") ? "are on their way" : "is on its way"}`.trim(),
@@ -120,12 +119,11 @@ export default async function SubcategoryPage({ params, searchParams }: Props) {
         {category.description && (
           <p className="type-copy mt-2 text-[var(--muted)]">{category.description}</p>
         )}
-        {womenShoes && <GenderShopNav active="shoes" />}
       </div>
       {list.length === 0 ? (
         <ComingSoon {...emptyState} />
       ) : (
-        <BrandSections products={list} basePath={`/${cat}/${sub}`} brand={brand} heading={title} />
+        <ProductList products={list} heading={title} />
       )}
     </div>
   );

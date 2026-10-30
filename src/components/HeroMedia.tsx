@@ -30,7 +30,7 @@ export function HeroMedia({ banners }: { banners: Banner[] }) {
 
   return (
     <div
-      className="relative h-[100svh] w-full overflow-hidden bg-[#f4e6ec]"
+      className="relative mx-3 mt-[calc(var(--header-h,7.5rem)+0.25rem)] h-[calc(100svh-var(--header-h,7.5rem)-6.25rem)] min-h-[30rem] overflow-hidden rounded-[2rem] bg-[var(--sage-tint)] md:mx-0 md:mt-0 md:h-[100svh] md:min-h-0 md:rounded-none"
       onPointerDown={(event) => {
         if (slides.length < 2) return;
         const start = event.clientX;
@@ -100,7 +100,7 @@ export function HeroMedia({ banners }: { banners: Banner[] }) {
             type="button"
             aria-label="Previous banner"
             onClick={() => go(index - 1)}
-            className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#4a142a] shadow"
+            className="glass absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-[var(--accent)]"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 6l-6 6 6 6" />
@@ -110,7 +110,7 @@ export function HeroMedia({ banners }: { banners: Banner[] }) {
             type="button"
             aria-label="Next banner"
             onClick={() => go(index + 1)}
-            className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#4a142a] shadow"
+            className="glass absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-[var(--accent)]"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 6l6 6-6 6" />
@@ -123,7 +123,7 @@ export function HeroMedia({ banners }: { banners: Banner[] }) {
                 type="button"
                 aria-label={`Show banner ${slideIndex + 1}`}
                 onClick={() => go(slideIndex)}
-                className={`h-2 rounded-full shadow transition-all ${slideIndex === index ? "w-6 bg-[#4a142a]" : "w-2 bg-white"}`}
+                className={`h-2 rounded-full shadow transition-all ${slideIndex === index ? "w-7 bg-[var(--sage)]" : "w-2 bg-white/80"}`}
               />
             ))}
           </div>

@@ -36,7 +36,7 @@ export default function CartPage() {
         </p>
         <Link
           href="/"
-          className="inline-block mt-6 px-6 py-3 bg-[#4a142a] text-white font-medium rounded-lg hover:bg-[#350e1e]"
+          className="inline-block mt-6 px-6 py-3 skeuo-ink font-medium rounded-full"
         >
           Continue shopping
         </Link>
@@ -119,7 +119,7 @@ export default function CartPage() {
                   {stock === 0 ? (
                     <p className="mt-2 text-sm text-red-700">Out of stock</p>
                   ) : atLimit ? (
-                    <p className="mt-2 text-sm text-[#4a142a]">Only {stock} available</p>
+                    <p className="mt-2 text-sm text-[var(--accent)]">Only {stock} available</p>
                   ) : null}
                 </div>
               </li>
@@ -141,7 +141,7 @@ export default function CartPage() {
             </div>
             <Link
               href="/checkout"
-              className="block w-full mt-6 py-4 bg-[#4a142a] text-white font-medium rounded-lg hover:bg-[#350e1e] transition text-center"
+              className="block w-full mt-6 py-4 skeuo-ink font-medium rounded-full text-center"
             >
               Check out
             </Link>

@@ -45,7 +45,7 @@ export function Reels() {
             type="button"
             aria-label="Previous reels"
             onClick={() => scrollByCard(-1)}
-            className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#2c2825] shadow-[0_8px_24px_rgba(44,40,37,0.16)] transition hover:bg-[#f4e6ec]"
+            className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[var(--foreground)] shadow-[0_8px_24px_rgba(11,11,11,0.16)] transition hover:bg-[var(--sage-tint)]"
           >
             <Chevron direction="left" />
           </button>
@@ -63,7 +63,7 @@ export function Reels() {
             type="button"
             aria-label="Next reels"
             onClick={() => scrollByCard(1)}
-            className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#2c2825] shadow-[0_8px_24px_rgba(44,40,37,0.16)] transition hover:bg-[#f4e6ec]"
+            className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[var(--foreground)] shadow-[0_8px_24px_rgba(11,11,11,0.16)] transition hover:bg-[var(--sage-tint)]"
           >
             <Chevron direction="right" />
           </button>
@@ -97,7 +97,7 @@ function ReelCard({ src, label }: { src: string; label: string }) {
   return (
     <article
       ref={frame}
-      className="relative aspect-[3/4] w-[72vw] max-w-[280px] shrink-0 overflow-hidden rounded-2xl bg-[#ece7e2] sm:w-[240px] md:w-[270px]"
+      className="relative aspect-[3/4] w-[72vw] max-w-[280px] shrink-0 overflow-hidden rounded-2xl bg-[var(--border)] sm:w-[240px] md:w-[270px]"
     >
       <video
         ref={video}
@@ -120,7 +120,7 @@ function ReelCard({ src, label }: { src: string; label: string }) {
           setMuted(next);
           media.play().catch(() => undefined);
         }}
-        className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#2c2825] shadow-sm"
+        className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[var(--foreground)] shadow-sm"
       >
         {muted ? <MutedIcon /> : <SoundIcon />}
       </button>

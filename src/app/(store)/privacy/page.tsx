@@ -40,7 +40,7 @@ export default function PrivacyPage() {
   return (
     <div className="bg-warm-radial">
       {/* Header */}
-      <section className="bg-[#f4e6ec] py-16 md:py-20 border-b border-[#e7d0da]">
+      <section className="bg-[var(--sage-tint)] py-16 md:py-20 border-b border-[var(--sage-line)]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <p className="eyebrow mb-3 animate-fade-down">Legal</p>
           <h1 className="section-heading animate-fade-up">
