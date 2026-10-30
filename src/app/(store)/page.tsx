@@ -18,19 +18,18 @@ import { blogs } from "@/data/blogs";
 import { getActiveProducts } from "@/lib/catalog";
 import { JsonLd } from "@/components/JsonLd";
 import { siteGraphJsonLd } from "@/lib/seo";
-import { pageMeta } from "@/lib/site";
+import { pageMeta, SITE_DESCRIPTION, SITE_TITLE } from "@/lib/site";
 import { styleCards } from "@/lib/styles";
 import { PRODUCTS_PAUSED } from "@/lib/storeStatus";
 import { ProductsPausedNotice } from "@/components/ComingSoon";
 
 export const metadata: Metadata = {
   ...pageMeta({
-    title: "Original Fashion, Shoes & Accessories in Pakistan",
-    description:
-      "Shop original women's clothing, shoes, belts, caps and bags at Empulse. Nationwide delivery in Pakistan. Free shipping over Rs. 5,000.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     path: "/",
   }),
-  title: { absolute: "Empulse | Premium   By Origin" },
+  title: { absolute: SITE_TITLE },
 };
 
 export default async function HomePage() {

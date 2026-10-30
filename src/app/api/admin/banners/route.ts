@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       cleaned.value.sort_order = max + 1;
     }
     if (cleaned.value.active === undefined) cleaned.value.active = true;
-    if (cleaned.value.alt === undefined || cleaned.value.alt === "") cleaned.value.alt = "Empulse banner";
+    if (cleaned.value.alt === undefined || cleaned.value.alt === "") cleaned.value.alt = "Levish banner";
 
     const { data, error } = await supabase.from("banners").insert(cleaned.value).select("id").single();
     if (error) throw error;

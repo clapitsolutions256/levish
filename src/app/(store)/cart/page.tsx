@@ -119,7 +119,7 @@ export default function CartPage() {
                   {stock === 0 ? (
                     <p className="mt-2 text-sm text-red-700">Out of stock</p>
                   ) : atLimit ? (
-                    <p className="mt-2 text-sm text-[var(--accent)]">Only {stock} available</p>
+                    <p className="mt-2 text-sm text-[var(--muted)]">No more available</p>
                   ) : null}
                 </div>
               </li>

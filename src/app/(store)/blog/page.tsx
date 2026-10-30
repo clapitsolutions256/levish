@@ -6,7 +6,7 @@ import { pageMeta } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta({
   title: "Blogs",
-  description: "Style notes from Empulse on hoodies, trousers, jeans and shoes, and how to wear them.",
+  description: "Style notes from Levish on hoodies, trousers, jeans and shoes, and how to wear them.",
   path: "/blog",
 });
 

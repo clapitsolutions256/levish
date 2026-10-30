@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import Link from "next/link";
 import type { Banner } from "@/lib/banners";
 
@@ -10,6 +10,7 @@ export function HeroMedia({ banners }: { banners: Banner[] }) {
   const [index, setIndex] = useState(0);
   const [ready, setReady] = useState<Record<string, boolean>>({});
   const current = slides[index] ?? slides[0];
+  const markReady = (id: string) => setReady((value) => (value[id] ? value : { ...value, [id]: true }));
 
   useEffect(() => {
     setIndex(0);
@@ -46,27 +47,28 @@ export function HeroMedia({ banners }: { banners: Banner[] }) {
     >
       {slides.map((slide, slideIndex) => {
         const visible = slideIndex === index;
+        // One <picture> per slide so each device downloads only its own banner.
+        const common = { alt: slide.alt, fill: true, sizes: "100vw" };
+        const { props: { srcSet: desktopSet } } = getImageProps({ ...common, src: slide.image, quality: 80 });
+        const { props: mobileProps } = getImageProps({ ...common, src: slide.mobileImage || slide.image, quality: 75 });
+        const first = slideIndex === 0;
         const picture = (
-          <>
-            <Image
-              src={slide.mobileImage || slide.image}
-              alt={slide.alt}
-              fill
-              priority={slideIndex === 0}
-              className="object-cover object-center md:hidden"
-              sizes="100vw"
-              onLoad={() => setReady((value) => ({ ...value, [`${slide.id}-mobile`]: true }))}
+          <picture>
+            <source media="(min-width: 768px)" srcSet={desktopSet} sizes="100vw" />
+            {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+            <img
+              {...mobileProps}
+              loading={first ? "eager" : "lazy"}
+              fetchPriority={first ? "high" : "auto"}
+              decoding={first ? "sync" : "async"}
+              className="object-cover object-center"
+              // A cached banner can finish before hydration, when onLoad has already passed.
+              ref={(img) => {
+                if (img?.complete && img.naturalWidth > 0) markReady(slide.id);
+              }}
+              onLoad={() => markReady(slide.id)}
             />
-            <Image
-              src={slide.image}
-              alt={slide.alt}
-              fill
-              priority={slideIndex === 0}
-              className="hidden object-cover object-center md:block"
-              sizes="100vw"
-              onLoad={() => setReady((value) => ({ ...value, [`${slide.id}-desktop`]: true }))}
-            />
-          </>
+          </picture>
         );
         return (
           <div
@@ -91,8 +93,7 @@ export function HeroMedia({ banners }: { banners: Banner[] }) {
         );
       })}
 
-      {!ready[`${current.id}-mobile`] ? <div className="skeleton absolute inset-0 z-10 md:hidden" aria-hidden /> : null}
-      {!ready[`${current.id}-desktop`] ? <div className="skeleton absolute inset-0 z-10 hidden md:block" aria-hidden /> : null}
+      {!ready[current.id] ? <div className="skeleton absolute inset-0 z-10" aria-hidden /> : null}
 
       {slides.length > 1 ? (
         <>

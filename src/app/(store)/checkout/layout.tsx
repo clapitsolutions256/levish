@@ -3,7 +3,7 @@ import { privateMeta } from "@/lib/site";
 
 export const metadata: Metadata = privateMeta({
   title: "Checkout",
-  description: "Complete your Empulse order.",
+  description: "Complete your Levish order.",
   path: "/checkout",
 });
 

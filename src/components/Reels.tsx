@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const reels = [{ src: "/kairo/herobgvideo.mp4", label: "Empulse" }];
+const reels = [{ src: "/kairo/herobgvideo.mp4", label: "Levish" }];
 
 export function Reels() {
   const scroller = useRef<HTMLDivElement>(null);

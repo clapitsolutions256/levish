@@ -27,7 +27,7 @@ export function BrandPartners() {
                     width={partner.width}
                     height={partner.height}
                     className="partner-logo h-11 w-auto max-w-[9.5rem] object-contain"
-                    unoptimized
+                    sizes="152px"
                   />
                 </li>
               ))}

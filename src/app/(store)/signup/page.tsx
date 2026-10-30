@@ -5,7 +5,7 @@ import { privateMeta } from "@/lib/site";
 
 export const metadata: Metadata = privateMeta({
   title: "Sign up",
-  description: "Create your Empulse account for faster checkout and order tracking.",
+  description: "Create your Levish account for faster checkout and order tracking.",
   path: "/signup",
 });
 

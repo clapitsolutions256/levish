@@ -64,6 +64,7 @@ function toProduct(row: ProductRow): Product {
     featured: row.featured,
     new: row.is_new,
     active: row.active,
+    updatedAt: row.updated_at ?? row.created_at,
   };
 }
 

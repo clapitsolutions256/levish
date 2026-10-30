@@ -33,6 +33,10 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: __dirname,
   turbopack: { root: __dirname },
   images: {
+    formats: ["image/avif", "image/webp"],
+    qualities: [75, 80],
+    // Product and banner uploads get new file names, so optimised copies can be kept for a month.
+    minimumCacheTTL: 2678400,
     remotePatterns: [
       {
         protocol: "https",

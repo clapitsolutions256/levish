@@ -53,11 +53,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!validSubcategories[cat]?.includes(sub)) return { title: "Shop" };
   const category = categories.find((item) => item.slug === cat);
   const title = subcategoryTitle(cat, sub);
-  return pageMeta({
+  const meta = pageMeta({
     title,
-    description: `Shop ${title} at Empulse${category ? ` in ${category.name}` : ""}. Original styles with delivery across Pakistan.`,
+    description: `Shop original ${title.toLowerCase()} at Levish. Check before you pay, delivery across Pakistan and free shipping over Rs. 5,000.`,
     path: `/${cat}/${sub}`,
   });
+  // Empty listings stay out of the index until they have products.
+  const stocked = category ? (await getProductsByCategoryAndSubcategory(category.id, sub)).length > 0 : false;
+  return stocked ? meta : { ...meta, robots: { index: false, follow: true } };
 }
 
 export default async function SubcategoryPage({ params }: Props) {

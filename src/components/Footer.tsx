@@ -39,7 +39,7 @@ export function Footer() {
                 width={1595}
                 height={541}
                 className="h-14 w-auto object-contain brightness-0 invert"
-                unoptimized
+                sizes="170px"
               />
             </Link>
             <p className="type-copy mt-5 max-w-xs text-[var(--cream)]/70">
@@ -139,7 +139,7 @@ export function Footer() {
         <div className="mt-14 pt-8 border-t border-white/8 flex flex-col sm:flex-row justify-between items-center gap-4 animate-fade-up animation-delay-300">
           <div className="text-center sm:text-left">
             <p className="text-xs text-white/50">
-              &copy; {new Date().getFullYear()} Empulse. All rights reserved.
+              &copy; {new Date().getFullYear()} Levish. All rights reserved.
             </p>
             <p className="mt-1.5 text-xs text-white/50">
               Powered by{" "}

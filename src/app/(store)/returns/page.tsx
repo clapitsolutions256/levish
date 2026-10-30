@@ -4,7 +4,7 @@ import { pageMeta } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta({
   title: "Returns and Exchanges",
-  description: "Return or exchange most unused Empulse items within 14 days of delivery in Pakistan.",
+  description: "Return or exchange most unused Levish items within 14 days of delivery in Pakistan.",
   path: "/returns",
 });
 

@@ -25,7 +25,7 @@ function toBanner(row: BannerRow): Banner {
     id: row.id,
     image: row.image,
     mobileImage: row.mobile_image || "",
-    alt: row.alt || "Empulse banner",
+    alt: row.alt || "Levish banner",
     href: row.href || "",
     sortOrder: row.sort_order,
     active: row.active,

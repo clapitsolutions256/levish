@@ -7,7 +7,7 @@ import { ProductsPausedNotice } from "@/components/ComingSoon";
 
 export const metadata: Metadata = privateMeta({
   title: "Search",
-  description: "Search the Empulse catalog.",
+  description: "Search the Levish catalog.",
   path: "/search",
 });
 

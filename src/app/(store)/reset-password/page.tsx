@@ -5,7 +5,7 @@ import { privateMeta } from "@/lib/site";
 
 export const metadata: Metadata = privateMeta({
   title: "Reset password",
-  description: "Choose a new Empulse password.",
+  description: "Choose a new Levish password.",
   path: "/reset-password",
 });
 
@@ -15,7 +15,7 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="section-heading">New password</h1>
-          <p className="type-copy mt-2 text-[var(--muted)]">Choose a password for your Empulse account.</p>
+          <p className="type-copy mt-2 text-[var(--muted)]">Choose a password for your Levish account.</p>
         </div>
         <div className="card-warm p-8">
           <ResetPasswordForm />

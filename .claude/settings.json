@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "ClaudeInChromeDomain(www.instagram.com)",
+      "ClaudeInChromeDomain(127.0.0.1:8765)"
+    ]
+  }
+}

@@ -8,7 +8,7 @@ import { pageMeta } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta({
   title: "Brands",
-  description: "Shop original Zara, Polo Ralph Lauren, On and more at Empulse. Every brand in one place, with delivery across Pakistan.",
+  description: "Shop original Zara, Polo Ralph Lauren, On and more at Levish. Every brand in one place, with delivery across Pakistan.",
   path: "/brands",
 });
 

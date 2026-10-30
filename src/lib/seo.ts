@@ -3,6 +3,52 @@ import { assets } from "@/data/assets";
 import { contact } from "@/data/contact";
 import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 
+const FREE_SHIPPING_FROM = 5000;
+const SHIPPING_FEE = 300;
+
+const CATEGORY_LABELS: Record<string, string> = { men: "Men", women: "Women", unisex: "Unisex", shoes: "Shoes" };
+
+/** "Men" for men, "Shoes" for shoes, and so on, for breadcrumbs and structured data. */
+export function categoryLabel(categoryId: string) {
+  return CATEGORY_LABELS[categoryId] ?? categoryId.charAt(0).toUpperCase() + categoryId.slice(1);
+}
+
+/** Plain-text summary of an admin-written description (drops bullets, markdown and extra spaces). */
+export function plainDescription(text: string | undefined, max = 160) {
+  const clean = (text ?? "").replace(/[*#_>`]+/g, " ").replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max - 1);
+  return `${cut.slice(0, cut.lastIndexOf(" ") > 80 ? cut.lastIndexOf(" ") : cut.length)}…`;
+}
+
+/** Search snippet for a product: what it is, its price, then the store promise. */
+export function productSummary(product: Product) {
+  const brand = product.brand && !product.name.toLowerCase().includes(product.brand.toLowerCase()) ? ` by ${product.brand}` : "";
+  const color = product.color && product.color !== "—" ? ` in ${product.color}` : "";
+  return `${product.name.replace(/\.$/, "")}${brand}${color}, Rs. ${product.price.toLocaleString()}. 100% original, check before you pay, delivery across Pakistan.`;
+}
+
+const returnPolicy = {
+  "@type": "MerchantReturnPolicy",
+  applicableCountry: "PK",
+  returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+  merchantReturnDays: 14,
+  returnMethod: "https://schema.org/ReturnByMail",
+};
+
+function shippingDetails(price: number) {
+  return {
+    "@type": "OfferShippingDetails",
+    shippingRate: { "@type": "MonetaryAmount", value: price >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE, currency: "PKR" },
+    shippingDestination: { "@type": "DefinedRegion", addressCountry: "PK" },
+    deliveryTime: {
+      "@type": "ShippingDeliveryTime",
+      handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
+      transitTime: { "@type": "QuantitativeValue", minValue: 3, maxValue: 7, unitCode: "DAY" },
+    },
+  };
+}
+
 export function siteGraphJsonLd() {
   return {
     "@context": "https://schema.org",
@@ -11,9 +57,13 @@ export function siteGraphJsonLd() {
         "@type": "Organization",
         "@id": `${SITE_URL}/#organization`,
         name: SITE_NAME,
+        alternateName: "Empulse",
         url: SITE_URL,
         logo: absoluteUrl(assets.logo),
         email: contact.email,
+        telephone: contact.phone,
+        address: { "@type": "PostalAddress", addressLocality: "Lahore", addressCountry: "PK" },
+        hasMerchantReturnPolicy: returnPolicy,
         sameAs: [contact.facebook, contact.instagram],
         contactPoint: {
           "@type": "ContactPoint",
@@ -40,7 +90,7 @@ export function siteGraphJsonLd() {
         "@id": `${SITE_URL}/#store`,
         name: SITE_NAME,
         url: SITE_URL,
-        image: absoluteUrl("/og.png"),
+        image: absoluteUrl("/og.png?v=5"),
         currenciesAccepted: "PKR",
         paymentAccepted: "Cash, Credit Card",
         areaServed: "PK",
@@ -96,19 +146,17 @@ function productInStock(product: Product) {
 }
 
 export function productJsonLd(product: Product) {
-  const description =
-    product.description?.trim() ||
-    `${product.name}${product.color ? ` in ${product.color}` : ""}. Shop original fashion at Empulse with delivery across Pakistan.`;
+  const description = plainDescription(product.description, 5000) || productSummary(product);
   return {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: product.name,
+    name: product.name.replace(/\.$/, ""),
     sku: product.id,
     image: productImages(product),
     description,
-    color: product.color || undefined,
-    category: product.categoryId,
-    brand: { "@type": "Brand", name: SITE_NAME },
+    color: product.color && product.color !== "—" ? product.color : undefined,
+    category: [categoryLabel(product.categoryId), product.subcategory].filter(Boolean).join(" > "),
+    brand: { "@type": "Brand", name: product.brand?.trim() || SITE_NAME },
     offers: {
       "@type": "Offer",
       url: absoluteUrl(`/product/${product.slug}`),
@@ -117,6 +165,8 @@ export function productJsonLd(product: Product) {
       availability: productInStock(product) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
       seller: { "@id": `${SITE_URL}/#organization` },
+      shippingDetails: shippingDetails(product.price),
+      hasMerchantReturnPolicy: returnPolicy,
     },
   };
 }

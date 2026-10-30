@@ -5,7 +5,7 @@ import { privateMeta } from "@/lib/site";
 
 export const metadata: Metadata = privateMeta({
   title: "Forgot password",
-  description: "Reset your Empulse account password.",
+  description: "Reset your Levish account password.",
   path: "/forgot-password",
 });
 

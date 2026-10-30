@@ -39,7 +39,7 @@ export async function reserveStock(lines: StockLine[]) {
     }
     if (match.stock < qty) {
       return {
-        error: match.stock < 1 ? `${label} is out of stock.` : `Only ${match.stock} left for ${label}.`,
+        error: match.stock < 1 ? `${label} is out of stock.` : `We don't have that many of ${label}. Please lower the quantity.`,
         applied,
       };
     }

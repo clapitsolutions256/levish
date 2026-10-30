@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { Instrument_Serif, Poppins } from "next/font/google";
 import Script from "next/script";
@@ -8,7 +8,7 @@ import { MetaPixelPageView } from "@/components/MetaPixel";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { readCartCookie } from "@/lib/cartToken";
 import { ReduxProvider } from "@/store/ReduxProvider";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SHARE_IMAGE } from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SHARE_IMAGE, SITE_TITLE } from "@/lib/site";
 
 // Editorial serif for the large display words on the home page.
 const display = Instrument_Serif({
@@ -25,7 +25,7 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
 });
 
-const defaultTitle = "Empulse | Premium   By Origin";
+const defaultTitle = SITE_TITLE;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -70,6 +70,11 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [SHARE_IMAGE.url],
   },
+};
+
+// Browser chrome (Safari's top bar, Android's status bar) matches the sage strip at the top of the page.
+export const viewport: Viewport = {
+  themeColor: "#a6cdab",
 };
 
 export const dynamic = "force-dynamic";

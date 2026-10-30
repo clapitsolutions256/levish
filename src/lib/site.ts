@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 
-export const SITE_URL = "https://www.empulse.store";
-export const SITE_NAME = "Empulse";
+export const SITE_URL = "https://www.levish.store";
+export const SITE_NAME = "Levish";
+
+export const SITE_TITLE = "Levish | Original Men's & Women's Fashion in Pakistan";
 
 export const SITE_DESCRIPTION =
-  "Shop original women's clothing, shoes, belts, caps and bags at Empulse. Nationwide delivery in Pakistan. Free shipping over Rs. 5,000.";
+  "Original men's and women's fashion and sneakers from Lacoste, Ralph Lauren, Levi's and On. Delivery across Pakistan, free shipping over Rs. 5,000.";
 
 // Link preview for shared pages. Page metadata replaces the root openGraph object, so pages repeat it.
 export const SHARE_IMAGE = {
@@ -39,6 +41,7 @@ export function pageMeta({
       url: path,
       siteName: SITE_NAME,
       type: "website",
+      locale: "en_PK",
       images: [SHARE_IMAGE],
     },
     twitter: {

@@ -31,13 +31,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const brand = await getBrand(slug);
   if (!brand) return { title: "Brand" };
   const name = brand.name;
-  return pageMeta({
-    title: name,
+  const meta = pageMeta({
+    title: `Original ${name} in Pakistan`,
     description: brand.count
-      ? `Shop original ${name} at Empulse. ${brand.count} styles with delivery across Pakistan and free shipping over Rs. 5,000.`
-      : `Original ${name} is coming soon to Empulse. Delivery across Pakistan and free shipping over Rs. 5,000.`,
+      ? `Shop ${brand.count} original ${name} styles at Levish. Check before you pay, delivery across Pakistan and free shipping over Rs. 5,000.`
+      : `Original ${name} is coming soon to Levish. Delivery across Pakistan and free shipping over Rs. 5,000.`,
     path: `/brands/${slug}`,
   });
+  return brand.count ? meta : { ...meta, robots: { index: false, follow: true } };
 }
 
 export default async function BrandPage({ params, searchParams }: Props) {

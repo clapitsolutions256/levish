@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
+import { SITE_URL } from "@/lib/site";
 
 export async function POST(request: Request) {
   try {
@@ -8,7 +9,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please enter a valid email." }, { status: 400 });
     }
 
-    const origin = request.headers.get("origin") || "https://www.empulse.store";
+    const origin = request.headers.get("origin") || SITE_URL;
     const supabase = getSupabase();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${origin}/reset-password`,

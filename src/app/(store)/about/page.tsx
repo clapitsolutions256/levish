@@ -7,7 +7,7 @@ import { pageMeta } from "@/lib/site";
 export const metadata: Metadata = pageMeta({
   title: "About Us",
   description:
-    "Empulse is a Pakistan fashion store for clothing, shoes and accessories. Read our story and how we choose original brands.",
+    "Levish is a Pakistan fashion store for clothing, shoes and accessories. Read our story and how we choose original brands.",
   path: "/about",
 });
 
@@ -22,7 +22,7 @@ export default function AboutPage() {
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <p className="eyebrow mb-4 animate-fade-down">Our Story</p>
           <h1 className="section-heading animate-fade-up">
-            About Empulse
+            About Levish
           </h1>
           <p className="type-copy mt-5 max-w-xl mx-auto text-[var(--muted)] animate-fade-up animation-delay-100">
             Built around one idea: cozy, always. We believe everyone
@@ -69,12 +69,11 @@ export default function AboutPage() {
             <div className="relative w-full sm:w-52 aspect-square rounded-2xl overflow-hidden bg-[var(--cream)] shrink-0 shadow-md shadow-[var(--shadow-warm)]">
               <Image
                 src={assets.ceo}
-                alt="Syed Mudasir Hussain Shah – CEO, Empulse"
+                alt="Syed Mudasir Hussain Shah – CEO, Levish"
                 fill
                 className="object-cover"
                 sizes="(max-width: 640px) 100vw, 208px"
-                priority
-                unoptimized
+                preload
               />
             </div>
             <div className="flex-1 min-w-0">
@@ -83,8 +82,8 @@ export default function AboutPage() {
               </h3>
               <p className="eyebrow mt-2">Chief Executive Officer</p>
               <p className="type-copy mt-5 text-[var(--muted)]">
-                Syed Mudasir Hussain Shah leads Empulse from Lahore, bringing a clear
-                vision for accessible, quality fashion. Empulse has grown around the
+                Syed Mudasir Hussain Shah leads Levish from Lahore, bringing a clear
+                vision for accessible, quality fashion. Levish has grown around the
                 idea of cozy, always — offering thoughtful, original clothing, shoes
                 and accessories for men and women.
               </p>

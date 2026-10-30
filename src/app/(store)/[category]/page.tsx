@@ -57,41 +57,104 @@ function forGender(product: Product, gender: Gender) {
   );
 }
 
+// "Lacoste, Polo Ralph Lauren and Levis" from the brands most stocked in a list.
+function brandLine(list: Product[]) {
+  const counts = new Map<string, number>();
+  for (const product of list) {
+    const brand = product.brand?.trim();
+    if (brand) counts.set(brand, (counts.get(brand) ?? 0) + 1);
+  }
+  const top = [...counts.entries()].sort((x, y) => y[1] - x[1]).slice(0, 3).map(([brand]) => brand);
+  if (top.length < 2) return top[0] ?? "";
+  return `${top.slice(0, -1).join(", ")} and ${top[top.length - 1]}`;
+}
+
+const PROMISE = "Check before you pay. Free shipping over Rs. 5,000 across Pakistan.";
+
+function listingMeta(input: { title: string; lead: string; path: string; list: Product[] }) {
+  const brands = brandLine(input.list);
+  const meta = pageMeta({
+    title: input.title,
+    description: `${input.lead}${brands ? ` from ${brands}` : ""} at Levish. ${PROMISE}`,
+    path: input.path,
+  });
+  // Empty listings stay out of the index until they have products.
+  return input.list.length ? meta : { ...meta, robots: { index: false, follow: true } };
+}
+
+const possessive = (gender: Gender) => (gender === "men" ? "men's" : "women's");
+
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const { category: categorySlug } = await params;
+  const { filter, gender: genderParam } = await searchParams;
+  const slug = categorySlug.toLowerCase();
+  const genderFilter = isGender(genderParam) ? genderParam : null;
+  const products = await getActiveProducts();
+  const style = stylePages[slug];
+
+  // Type pages, with or without the Women / Men filter.
+  if (style || !categories.some((item) => item.slug === slug)) {
+    const base = style ? styleCanonical[slug] ?? `/${slug}` : `/${slug}`;
+    const heading = style?.heading ?? typeLabel(products, slug);
+    if (!heading) return { title: "Shop" };
+    const all = style ? products.filter((product) => sameType(product.subcategory, style.subcategory)) : productsOfType(products, slug);
+    const list = genderFilter ? all.filter((product) => forGender(product, genderFilter)) : all;
+    return listingMeta({
+      title: genderFilter ? `${genderInfo[genderFilter].who}'s ${heading} in Pakistan` : `${heading} for Men & Women in Pakistan`,
+      lead: `Shop original ${genderFilter ? `${possessive(genderFilter)} ` : ""}${heading.toLowerCase()}`,
+      path: genderFilter ? `${base}?gender=${genderFilter}` : base,
+      list,
+    });
+  }
+
+  const category = categories.find((item) => item.slug === slug)!;
+  const gender = isGender(category.id) ? category.id : null;
+  if (filter === "new") {
+    const list = products.filter((product) => (gender ? forGender(product, gender) : product.categoryId === category.id) && product.new);
+    return listingMeta({
+      title: gender ? `New In for ${genderInfo[gender].who}` : `New In – ${category.name}`,
+      lead: `The latest ${gender ? possessive(gender) : category.name.toLowerCase()} arrivals`,
+      path: `/${slug}?filter=new`,
+      list,
+    });
+  }
+  if (gender) {
+    return listingMeta({
+      title: gender === "men" ? "Men's Clothing & Sneakers in Pakistan" : "Women's Clothing & Shoes in Pakistan",
+      lead: `Shop original ${possessive(gender)} clothing and ${gender === "men" ? "sneakers" : "shoes"}`,
+      path: `/${slug}`,
+      list: products.filter((product) => forGender(product, gender)),
+    });
+  }
+  if (category.id === "shoes") {
+    const all = products.filter((product) => product.categoryId === "shoes");
+    const list = genderFilter ? all.filter((product) => product.subcategory?.toLowerCase() === genderInfo[genderFilter].shoes) : all;
+    return listingMeta({
+      title: genderFilter ? `${genderInfo[genderFilter].who}'s Shoes & Sneakers in Pakistan` : "Shoes & Sneakers in Pakistan",
+      lead: `Shop original ${genderFilter ? `${possessive(genderFilter)} ` : ""}shoes and sneakers`,
+      path: genderFilter ? `/shoes?gender=${genderFilter}` : "/shoes",
+      list,
+    });
+  }
+  return listingMeta({
+    title: `${category.name} in Pakistan`,
+    lead: `Shop original ${category.name.toLowerCase()}`,
+    path: `/${slug}`,
+    list: products.filter((product) => product.categoryId === category.id),
+  });
+}
+
+// Canonical path and heading for a listing's structured data.
 function categorySeo(categorySlug: string, filter?: string) {
   const slug = categorySlug.toLowerCase();
   const style = stylePages[slug];
-  if (style) {
-    return {
-      title: style.heading,
-      description: `Shop original ${style.heading.toLowerCase()} at Empulse. Delivery across Pakistan and free shipping over Rs. 5,000.`,
-      path: styleCanonical[slug] ?? `/${slug}`,
-    };
-  }
+  if (style) return { title: style.heading, path: styleCanonical[slug] ?? `/${slug}` };
   const category = categories.find((item) => item.slug === slug);
   if (!category) return null;
   const gender = isGender(category.id) ? category.id : null;
   const isNew = filter === "new";
   const title = isNew ? `New In – ${category.name}` : gender ? genderInfo[gender].who : category.name;
-  const path = isNew ? `/${slug}?filter=new` : `/${slug}`;
-  return {
-    title,
-    description: `Shop ${title} at Empulse. Original clothing, shoes and accessories with delivery across Pakistan.`,
-    path,
-  };
-}
-
-export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
-  const { category: categorySlug } = await params;
-  const { filter } = await searchParams;
-  const seo = categorySeo(categorySlug, filter);
-  if (seo) return pageMeta(seo);
-  const label = typeLabel(await getActiveProducts(), categorySlug);
-  if (!label) return { title: "Shop" };
-  return pageMeta({
-    title: label,
-    description: `Shop original ${label.toLowerCase()} at Empulse. Delivery across Pakistan and free shipping over Rs. 5,000.`,
-    path: `/${categorySlug.toLowerCase()}`,
-  });
+  return { title, path: isNew ? `/${slug}?filter=new` : `/${slug}` };
 }
 
 // One page per type (e.g. /sweatshirts) with Women / Men as a filter on the page.

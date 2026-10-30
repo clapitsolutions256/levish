@@ -3,7 +3,7 @@ import { pageMeta } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta({
   title: "Privacy Policy",
-  description: "How Empulse collects, uses and protects your personal information when you shop or create an account.",
+  description: "How Levish collects, uses and protects your personal information when you shop or create an account.",
   path: "/privacy",
 });
 

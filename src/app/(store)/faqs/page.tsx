@@ -6,7 +6,7 @@ import { pageMeta } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta({
   title: "FAQs",
-  description: "Answers about Empulse shipping, free delivery, order tracking, returns and sizing in Pakistan.",
+  description: "Answers about Levish shipping, free delivery, order tracking, returns and sizing in Pakistan.",
   path: "/faqs",
 });
 

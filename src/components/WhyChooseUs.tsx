@@ -25,7 +25,7 @@ export function WhyChooseUs() {
   return (
     <section className="mx-auto max-w-[90rem] px-4 py-16 sm:px-6 md:py-20" aria-label="Why choose us">
       <div className="mx-auto mb-10 max-w-2xl text-center">
-        <p className="eyebrow mb-2">The Empulse promise</p>
+        <p className="eyebrow mb-2">The Levish promise</p>
         <h2 className="section-heading">Why Choose Us</h2>
       </div>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">

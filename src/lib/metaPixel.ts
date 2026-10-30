@@ -139,6 +139,6 @@ export function trackPurchase(orderId: string, contents: MetaContent[], value: n
 }
 
 export function trackCompleteRegistration(email?: string) {
-  send("CompleteRegistration", { status: true, content_name: "Empulse account", currency: CURRENCY });
+  send("CompleteRegistration", { status: true, content_name: "Levish account", currency: CURRENCY });
   if (email) identifyMetaUser({ email });
 }

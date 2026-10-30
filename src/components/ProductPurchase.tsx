@@ -23,14 +23,21 @@ export function ProductPurchase({
   const { addToCart, items } = useCart();
   const variants = product.variants ?? [];
   const colors = useMemo(() => uniqueValues(variants, "color"), [variants]);
+  // Open on something that can actually be bought: the linked colour, else the first colour with stock.
   const [color, setColor] = useState(
-    () => colors.find((item) => item.toLowerCase() === initialColor?.trim().toLowerCase()) ?? colors[0] ?? ""
+    () =>
+      colors.find((item) => item.toLowerCase() === initialColor?.trim().toLowerCase()) ??
+      variants.find((variant) => variant.stock > 0)?.color ??
+      colors[0] ??
+      ""
   );
   const sizes = useMemo(
     () => uniqueValues(variants.filter((variant) => !color || variant.color === color), "size"),
     [variants, color]
   );
-  const [size, setSize] = useState(sizes[0] ?? "");
+  const firstInStock = (list: string[], forColor: string) =>
+    list.find((item) => (findVariant(variants, item, forColor)?.stock ?? 0) > 0) ?? list[0] ?? "";
+  const [size, setSize] = useState(() => firstInStock(sizes, color));
   const activeSize = sizes.includes(size) ? size : (sizes[0] ?? "");
   const activeColor = colors.includes(color) ? color : (colors[0] ?? "");
   const selected = variants.length ? findVariant(variants, activeSize, activeColor) : undefined;
@@ -47,7 +54,7 @@ export function ProductPurchase({
     setColor(next);
     setMessage("");
     const nextSizes = uniqueValues(variants.filter((variant) => variant.color === next), "size");
-    if (!nextSizes.includes(activeSize)) setSize(nextSizes[0] ?? "");
+    if ((findVariant(variants, activeSize, next)?.stock ?? 0) < 1) setSize(firstInStock(nextSizes, next));
   }
 
   useEffect(() => {
@@ -89,18 +96,19 @@ export function ProductPurchase({
                 <button
                   key={item}
                   type="button"
+                  disabled={unavailable}
+                  aria-label={unavailable ? `${item}, out of stock` : item}
                   onClick={() => {
                     setSize(item);
                     setMessage("");
                   }}
                   className={`min-w-11 rounded-lg border px-3 py-2 text-sm ${
-                    item === activeSize
+                    item === activeSize && !unavailable
                       ? "border-[var(--accent)] bg-[var(--sage-tint)] text-[var(--accent)]"
                       : "border-[var(--border)] bg-white text-[var(--foreground)]"
-                  } ${unavailable ? "line-through opacity-50" : ""}`}
+                  } ${unavailable ? "cursor-not-allowed line-through opacity-40" : ""}`}
                 >
                   {item}
-                  <span className="ml-1.5 text-[11px] opacity-70">({option?.stock ?? 0})</span>
                 </button>
               );
             })}
@@ -108,9 +116,9 @@ export function ProductPurchase({
         </div>
       ) : null}
 
-      {tracked ? (
-        <p className={`${compact ? "mt-2" : "mt-4"} text-sm ${out || atLimit ? "text-red-700" : "text-[var(--muted)]"}`}>
-          {out ? "Out of stock" : atLimit ? `Only ${stock} available` : `${stock} in stock`}
+      {atLimit ? (
+        <p className={`${compact ? "mt-2" : "mt-4"} text-sm text-[var(--muted)]`}>
+          You have all the available pieces of this size in your bag.
         </p>
       ) : null}
       {message ? <p className="mt-2 text-sm text-red-700">{message}</p> : null}
@@ -136,7 +144,7 @@ export function ProductPurchase({
         }}
         className={`${compact ? "mt-2 py-3" : "mt-4 py-4"} skeuo-ink w-full rounded-full px-10 font-medium disabled:cursor-not-allowed disabled:opacity-50 md:w-auto`}
       >
-        {out ? "Out of stock" : atLimit ? `Only ${stock} available` : "Add to cart"}
+        {out ? "Out of stock" : atLimit ? "Already in your bag" : "Add to cart"}
       </button>
     </div>
   );

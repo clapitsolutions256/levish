@@ -147,7 +147,7 @@ export function SwipeGallery({
             src={current}
             alt={alt}
             fill
-            priority={priority}
+            preload={priority}
             className={imageClassName}
             sizes={sizes}
             onLoad={(event) => onLoad?.(event.currentTarget)}

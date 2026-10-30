@@ -44,6 +44,8 @@ function backgroundFromImage(image: HTMLImageElement) {
 interface ProductCardProps {
   product: Product;
   index?: number;
+  /** First cards on a listing: fetch the photo straight away. */
+  priority?: boolean;
 }
 
 const HOLD_DELAY = 220;
@@ -140,10 +142,12 @@ function CardActions({
   product,
   onAdd,
   onView,
+  soldOut,
 }: {
   product: Product;
   onAdd: (event: { currentTarget: HTMLElement }) => void;
   onView: () => void;
+  soldOut: boolean;
 }) {
   const button =
     "flex h-10 w-10 items-center justify-center rounded-full transition duration-200 hover:scale-105 active:scale-90 sm:h-9 sm:w-9";
@@ -162,9 +166,10 @@ function CardActions({
       </button>
       <button
         type="button"
-        aria-label={`Add ${product.name} to cart`}
+        aria-label={soldOut ? `${product.name} is out of stock` : `Add ${product.name} to cart`}
         onClick={onAdd}
-        className={`${button} skeuo-ink`}
+        disabled={soldOut}
+        className={`${button} skeuo-ink disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100`}
       >
         <svg className="h-[18px] w-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -174,7 +179,7 @@ function CardActions({
   );
 }
 
-export function ProductCard({ product, index = 0 }: ProductCardProps) {
+export function ProductCard({ product, index = 0, priority = false }: ProductCardProps) {
   const { addToCart } = useCart();
   const [detailsOpen, setDetailsOpen] = useState(false);
   const closeDetails = useCallback(() => setDetailsOpen(false), []);
@@ -231,6 +236,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 alt={photoIndex === 0 ? product.name : ""}
                 fill
                 draggable={false}
+                loading={priority && photoIndex === 0 ? "eager" : "lazy"}
+                fetchPriority={priority && photoIndex === 0 ? "high" : "auto"}
                 className={`object-contain will-change-[opacity,transform] [transition:opacity_800ms_cubic-bezier(0.4,0,0.2,1),transform_1600ms_cubic-bezier(0.25,0.1,0.25,1)] ${
                   preview.active === photoIndex ? "opacity-100" : "opacity-0"
                 } ${preview.playing && preview.active === photoIndex ? "motion-safe:scale-[1.025]" : "scale-100"}`}
@@ -266,6 +273,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               flyProductToCart(photo, product.image);
             }}
             onView={() => setDetailsOpen(true)}
+            soldOut={soldOut}
           />
         </div>
       </div>

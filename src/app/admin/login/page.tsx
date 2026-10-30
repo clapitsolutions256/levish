@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500 text-white text-2xl font-bold mb-4 shadow-lg shadow-amber-500/30">
             E
           </div>
-          <h1 className="text-2xl font-bold text-white">Empulse Admin</h1>
+          <h1 className="text-2xl font-bold text-white">Levish Admin</h1>
           <p className="text-gray-400 text-sm mt-1">
             Sign in to manage your store
           </p>
@@ -132,7 +132,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center text-gray-500 text-xs mt-6">
-          Empulse Store Admin Panel
+          Levish Store Admin Panel
         </p>
       </div>
     </div>

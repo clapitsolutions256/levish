@@ -4,7 +4,7 @@ import { pageMeta } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta({
   title: "Contact Us",
-  description: "Contact Empulse by email or WhatsApp for orders, shipping and returns. We reply within 1–2 business days.",
+  description: "Contact Levish by email or WhatsApp for orders, shipping and returns. We reply within 1–2 business days.",
   path: "/contact",
 });
 
@@ -23,7 +23,7 @@ const channels = [
   },
   {
     title: "Facebook",
-    text: "Empulse",
+    text: "Levish",
     href: contact.facebook,
     icon: "facebook" as const,
   },

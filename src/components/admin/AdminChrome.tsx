@@ -99,7 +99,7 @@ export function AdminChrome({ background, onBackground }: { background: string; 
               <p className="truncate text-sm font-semibold text-[var(--foreground)]">
                 {hello}, {admin?.name?.split(" ")[0] || "Admin"}
               </p>
-              <p className="truncate text-xs text-[var(--foreground)]/60">{admin?.email || "Empulse admin"}</p>
+              <p className="truncate text-xs text-[var(--foreground)]/60">{admin?.email || "Levish admin"}</p>
             </div>
           </div>
 

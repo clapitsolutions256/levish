@@ -128,7 +128,7 @@ export function CartDrawer() {
                     {stock === 0 ? (
                       <p className="mt-1.5 text-xs text-red-700">Out of stock</p>
                     ) : atLimit ? (
-                      <p className="mt-1.5 text-xs text-[var(--accent)]">Only {stock} available</p>
+                      <p className="mt-1.5 text-xs text-[var(--muted)]">No more available</p>
                     ) : null}
                   </div>
                 </li>

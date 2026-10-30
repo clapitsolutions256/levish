@@ -7,7 +7,7 @@ export function AboutUs() {
         <p className="eyebrow mb-2">About us</p>
         <h2 className="section-heading">Fashion that feels like home</h2>
         <p className="type-copy mt-5 text-[var(--muted)]">
-          Empulse is built around one idea: cozy, always. From Lahore, we bring original clothing, shoes, and everyday layers for women, chosen so they feel good and last.
+          Levish is built around one idea: cozy, always. From Lahore, we bring original clothing, shoes, and everyday layers for women, chosen so they feel good and last.
         </p>
         <p className="type-copy mt-4 text-[var(--muted)]">
           Timeless pieces, seasonal drops, and a store that lets you check your order before you pay. Style should be easy, and it should feel like yours.

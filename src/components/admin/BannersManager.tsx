@@ -111,7 +111,7 @@ export function BannersManager() {
               <Preview label="Web" url={banner.image} wide />
               <Preview label="Mobile" url={banner.mobileImage} wide={false} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900">{banner.alt || "Empulse banner"}</p>
+                <p className="truncate text-sm font-medium text-gray-900">{banner.alt || "Levish banner"}</p>
                 <p className="mt-1 truncate text-xs text-gray-500">{banner.href || "No link"}</p>
                 <p className="mt-1 text-xs text-gray-400">{banner.active ? "Showing on the site" : "Hidden"}</p>
                 {!banner.mobileImage ? <p className="mt-1 text-xs text-amber-700">No mobile picture yet. Phones are using the web picture.</p> : null}
@@ -179,7 +179,7 @@ export function BannersManager() {
               <input
                 value={form.alt}
                 onChange={(event) => setForm({ ...form, alt: event.target.value })}
-                placeholder="Empulse new arrivals"
+                placeholder="Levish new arrivals"
                 className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
               />
             </label>

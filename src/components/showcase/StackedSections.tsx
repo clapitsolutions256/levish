@@ -79,9 +79,9 @@ function Panel({ panel, index, total, stack }: { panel: StackPanel; index: numbe
               <span className="tabular-nums">{pad(total)}</span>
             </div>
             <div>
-              <motion.h3 style={{ x: wordX }} className="font-display text-[4.75rem] italic leading-[0.85] md:text-[10rem]">
+              <motion.h2 style={{ x: wordX }} className="font-display text-[4.75rem] italic leading-[0.85] md:text-[10rem]">
                 {panel.word}
-              </motion.h3>
+              </motion.h2>
               <p className={`mt-4 max-w-sm text-sm md:text-base ${tone.muted}`}>{panel.line}</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {panel.links.map((link) => (

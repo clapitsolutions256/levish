@@ -48,6 +48,7 @@ export interface Product {
   featured?: boolean;
   new?: boolean;
   active?: boolean;
+  updatedAt?: string;
 }
 
 export interface CartItem {

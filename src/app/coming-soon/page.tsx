@@ -17,7 +17,7 @@ export default function ComingSoonPage() {
         alt="Levish"
         width={1595}
         height={541}
-        priority
+        preload
         className="h-12 w-auto md:h-16"
       />
       <p className="eyebrow mt-12">Opening soon</p>

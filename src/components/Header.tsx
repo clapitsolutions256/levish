@@ -112,15 +112,15 @@ export function Header() {
               <path strokeLinecap="round" strokeWidth={1.8} d="M4 7h16M4 12h10M4 17h16" />
             </svg>
           </button>
-          <Link href="/" className="flex items-center justify-center" aria-label="Empulse home">
+          <Link href="/" className="flex items-center justify-center" aria-label="Levish home">
             <Image
-              src="/kairo/LOGOEMP.png"
-              alt="Empulse"
-              width={1440}
-              height={390}
-              className="h-auto w-[8.5rem] object-contain"
-              priority
-              unoptimized
+              src={assets.logo}
+              alt="Levish"
+              width={1595}
+              height={541}
+              className="h-8 w-auto object-contain"
+              sizes="120px"
+              preload
             />
           </Link>
           <Link href="/search" aria-label="Search" className="clay flex h-11 w-11 items-center justify-center rounded-full text-[var(--accent)]">
@@ -149,8 +149,8 @@ export function Header() {
               width={1595}
               height={541}
               className="h-7 w-auto object-contain"
-              priority
-              unoptimized
+              sizes="96px"
+              preload
             />
           </Link>
 

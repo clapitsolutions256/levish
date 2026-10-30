@@ -157,8 +157,7 @@ export function ShopByStyle({ categories }: { categories: StyleCategory[] }) {
                       ? "object-contain object-center"
                       : "object-cover transition duration-700 ease-out group-hover:scale-105"
                   }
-                  sizes="250px"
-                  loading="eager"
+                  sizes="(max-width: 640px) 72vw, 250px"
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[var(--foreground)]/80 via-[var(--foreground)]/25 to-transparent px-4 pb-4 pt-20">
                   <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">

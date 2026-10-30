@@ -6,8 +6,8 @@ import { getActiveProducts, getProductBySlug, slugify } from "@/lib/catalog";
 import { PRODUCTS_PAUSED } from "@/lib/storeStatus";
 import { ProductsPausedNotice } from "@/components/ComingSoon";
 import { JsonLd } from "@/components/JsonLd";
-import { breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
-import { pageMeta } from "@/lib/site";
+import { breadcrumbJsonLd, categoryLabel, productJsonLd, productSummary } from "@/lib/seo";
+import { pageMeta, SITE_NAME } from "@/lib/site";
 import { ProductDetail } from "./ProductDetail";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ color?: string }> };
@@ -20,23 +20,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return { title: "Product" };
-  const description =
-    product.description?.trim() ||
-    `${product.name}${product.color ? ` in ${product.color}` : ""}. Shop original ${product.categoryId} at Empulse with delivery across Pakistan.`;
+  const description = productSummary(product);
+  const title = product.name.replace(/\.$/, "");
   const images = (product.images?.length ? product.images : [product.image]).filter(Boolean);
+  const meta = pageMeta({ title, description, path: `/product/${product.slug}` });
   return {
-    ...pageMeta({
-      title: product.name,
-      description: description.slice(0, 160),
-      path: `/product/${product.slug}`,
-    }),
+    ...meta,
     openGraph: {
-      title: product.name,
-      description: description.slice(0, 160),
+      title,
+      description,
       url: `/product/${product.slug}`,
+      siteName: SITE_NAME,
+      locale: "en_PK",
       type: "website",
-      images: images.slice(0, 4).map((url) => ({ url, alt: product.name })),
+      images: images.slice(0, 4).map((url) => ({ url, alt: title })),
     },
+    twitter: { card: "summary_large_image", title, description, images: images.slice(0, 1) },
   };
 }
 
@@ -81,7 +80,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
       <JsonLd
         data={breadcrumbJsonLd([
           { name: "Home", path: "/" },
-          { name: product.categoryId, path: `/${product.categoryId}` },
+          { name: categoryLabel(product.categoryId), path: `/${product.categoryId}` },
           { name: product.name, path: `/product/${product.slug}` },
         ])}
       />
@@ -92,9 +91,9 @@ export default async function ProductPage({ params, searchParams }: Props) {
         <span className="mx-2">/</span>
         <Link
           href={`/${product.categoryId}`}
-          className="hover:text-[var(--accent)] capitalize"
+          className="hover:text-[var(--accent)]"
         >
-          {product.categoryId}
+          {categoryLabel(product.categoryId)}
         </Link>
         <span className="mx-2">/</span>
         <span>{product.name}</span>
