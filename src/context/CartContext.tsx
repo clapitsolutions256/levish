@@ -210,9 +210,15 @@ export function CartProvider({
     writeCartSnapshot(state.items);
   }, [ready, state.items]);
 
+  const openTimer = useRef(0);
+  useEffect(() => () => window.clearTimeout(openTimer.current), []);
+
   const addToCart = useCallback(
     (product: Product, quantity = 1, size?: string, color?: string) => {
       dispatch({ type: "ADD", product, quantity, size, color });
+      // Show the bag right after the product's fly-to-cart animation (about 760ms) lands.
+      window.clearTimeout(openTimer.current);
+      openTimer.current = window.setTimeout(() => dispatch({ type: "OPEN_CART" }), 700);
       run(async (current) => {
         try {
           const data = await sendCart(

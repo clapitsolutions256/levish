@@ -22,7 +22,7 @@ export default function CheckoutPage() {
   const { items, itemCount, total, clearCart, ready } = useCart();
   const [placed, setPlaced] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [sameAsShipping, setSameAsShipping] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
@@ -361,14 +361,14 @@ export default function CheckoutPage() {
               <h2 className="section-heading mb-4">Payment</h2>
               <div className="space-y-4">
                 <div className="flex gap-4">
+                  <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition ${paymentMethod === "cod" ? "border-[var(--accent)] bg-[var(--accent)]/5 text-[var(--accent)]" : "border-[var(--border)] hover:border-[var(--muted)]"}`}>
+                    <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === "cod"} onChange={() => { setPaymentMethod("cod"); if (!paymentTracked.current) { paymentTracked.current = true; trackAddPaymentInfo(metaContents, orderTotal); } }} className="sr-only" />
+                    <span className="font-medium">Cash on delivery</span>
+                  </label>
                   <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition ${paymentMethod === "card" ? "border-[var(--accent)] bg-[var(--accent)]/5 text-[var(--accent)]" : "border-[var(--border)] hover:border-[var(--muted)]"}`}>
                     <input type="radio" name="paymentMethod" value="card" checked={paymentMethod === "card"} onChange={() => { setPaymentMethod("card"); if (!paymentTracked.current) { paymentTracked.current = true; trackAddPaymentInfo(metaContents, orderTotal); } }} className="sr-only" />
                     <svg className="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                     <span className="font-medium">Card</span>
-                  </label>
-                  <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition ${paymentMethod === "cod" ? "border-[var(--accent)] bg-[var(--accent)]/5 text-[var(--accent)]" : "border-[var(--border)] hover:border-[var(--muted)]"}`}>
-                    <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === "cod"} onChange={() => { setPaymentMethod("cod"); if (!paymentTracked.current) { paymentTracked.current = true; trackAddPaymentInfo(metaContents, orderTotal); } }} className="sr-only" />
-                    <span className="font-medium">Cash on delivery</span>
                   </label>
                 </div>
 

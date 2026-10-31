@@ -43,8 +43,8 @@ export function Footer() {
               />
             </Link>
             <p className="type-copy mt-5 max-w-xs text-[var(--cream)]/70">
-              Quality clothing, shoes and accessories crafted with care for
-              women.
+              Original clothing, shoes and accessories for men and women,
+              delivered across Pakistan.
             </p>
             <ul className="mt-5 space-y-2 text-sm text-[var(--cream)]/80">
               <li>

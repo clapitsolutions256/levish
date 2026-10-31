@@ -7,7 +7,7 @@ import type { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { flyProductToCart } from "@/lib/flyToCart";
 import { ProductQuickView } from "@/components/ProductQuickView";
-import { galleryFor, isSold } from "@/lib/variants";
+import { findVariant, galleryFor, isSold, uniqueValues } from "@/lib/variants";
 import { SoldBadge } from "@/components/SoldBadge";
 import { SaleTag } from "@/components/SaleTag";
 import { trackAddToCart } from "@/lib/metaPixel";
@@ -169,6 +169,7 @@ function CardActions({
         aria-label={soldOut ? `${product.name} is out of stock` : `Add ${product.name} to cart`}
         onClick={onAdd}
         disabled={soldOut}
+        data-quick-add
         className={`${button} skeuo-ink disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100`}
       >
         <svg className="h-[18px] w-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -179,9 +180,97 @@ function CardActions({
   );
 }
 
+// The cart button on sized products: pick a size (and colour) right on the card, then it is added.
+function QuickSizePicker({
+  product,
+  onPick,
+  onClose,
+}: {
+  product: Product;
+  onPick: (size: string, color: string) => void;
+  onClose: () => void;
+}) {
+  const { items } = useCart();
+  const ref = useRef<HTMLDivElement>(null);
+  const variants = product.variants ?? [];
+  const colors = uniqueValues(variants, "color");
+  const [color, setColor] = useState(() => variants.find((variant) => variant.stock > 0)?.color ?? colors[0] ?? "");
+  const sizes = uniqueValues(variants.filter((variant) => !color || variant.color === color), "size");
+  // A size can be added while the bag holds fewer than the stock left.
+  const canAdd = (size: string) => {
+    const stock = findVariant(variants, size, color)?.stock ?? 0;
+    const inBag = items.find((item) => item.product.id === product.id && (item.size ?? "") === size && (item.color ?? "") === color)?.quantity ?? 0;
+    return stock > 0 && inBag < stock;
+  };
+
+  useEffect(() => {
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as HTMLElement;
+      // The card's cart button toggles the picker itself.
+      if (!ref.current?.contains(target) && !target.closest("[data-quick-add]")) onClose();
+    };
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && onClose();
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div ref={ref} role="dialog" aria-label={`Choose a size for ${product.name}`} className="glass-solid animate-fade-up absolute inset-x-2 bottom-2 z-30 rounded-2xl p-3">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Choose size</p>
+        <button type="button" onClick={onClose} aria-label="Close" className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-black/5">
+          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeWidth={2} d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+      {colors.length > 1 ? (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {colors.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setColor(item)}
+              aria-pressed={item === color}
+              className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${item === color ? "clay-ink" : "clay text-[var(--foreground)]/80"}`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      ) : null}
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {sizes.map((size) => {
+          const available = canAdd(size);
+          return (
+            <button
+              key={size}
+              type="button"
+              disabled={!available}
+              onClick={() => onPick(size, color)}
+              aria-label={available ? `Add size ${size}` : `${size}, unavailable`}
+              className={`min-w-10 rounded-xl px-2.5 py-2 text-sm font-semibold transition active:scale-95 ${
+                available ? "skeuo text-[var(--foreground)] hover:bg-[var(--sage-tint)]" : "cursor-not-allowed bg-black/5 text-[var(--muted)]/60 line-through"
+              }`}
+            >
+              {size}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function ProductCard({ product, index = 0, priority = false }: ProductCardProps) {
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const closePicker = useCallback(() => setPickerOpen(false), []);
   const closeDetails = useCallback(() => setDetailsOpen(false), []);
   const frameRef = useRef<HTMLDivElement>(null);
   const [imageReady, setImageReady] = useState(false);
@@ -200,6 +289,13 @@ export function ProductCard({ product, index = 0, priority = false }: ProductCar
   const firstColor = product.variants?.find((variant) => variant.color)?.color;
   const photos = [...new Set([product.image, ...galleryFor(product, firstColor)].filter(Boolean))].slice(0, 6);
   const preview = usePhotoPreview(photos.length);
+
+  function addLine(size: string | undefined, color: string | undefined, from: HTMLElement | null) {
+    addToCart(product, 1, size, color);
+    trackAddToCart({ id: product.id, name: product.name, category: product.categoryId, price: product.price });
+    const photo = frameRef.current ?? from;
+    if (photo) flyProductToCart(photo, (color ? galleryFor(product, color)[0] : "") || product.image);
+  }
 
   const matchFrame = useCallback((image: HTMLImageElement) => {
     setImageReady(true);
@@ -254,23 +350,32 @@ export function ProductCard({ product, index = 0, priority = false }: ProductCar
         )}
         {product.salePercent ? <SaleTag percent={product.salePercent} /> : null}
         {soldOut ? <SoldBadge /> : null}
+        {pickerOpen ? (
+          <QuickSizePicker
+            product={product}
+            onClose={closePicker}
+            onPick={(size, color) => {
+              addLine(size, color, frameRef.current);
+              setPickerOpen(false);
+            }}
+          />
+        ) : null}
         <div className="absolute bottom-3 right-3 z-20">
           <CardActions
             product={product}
             onAdd={(event) => {
               if (tracked) {
-                setDetailsOpen(true);
+                // One size left to buy: add it straight away; otherwise ask which size.
+                const open = (product.variants ?? []).filter((variant) => variant.stock > 0);
+                const only = open.length === 1 ? open[0] : null;
+                const inBag = only
+                  ? items.find((item) => item.product.id === product.id && item.size === only.size && item.color === only.color)?.quantity ?? 0
+                  : 0;
+                if (only && inBag < only.stock) addLine(only.size, only.color, event.currentTarget);
+                else setPickerOpen((value) => !value);
                 return;
               }
-              addToCart(product);
-              trackAddToCart({
-                id: product.id,
-                name: product.name,
-                category: product.categoryId,
-                price: product.price,
-              });
-              const photo = frameRef.current ?? event.currentTarget;
-              flyProductToCart(photo, product.image);
+              addLine(undefined, undefined, event.currentTarget);
             }}
             onView={() => setDetailsOpen(true)}
             soldOut={soldOut}

@@ -4,12 +4,62 @@ import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { galleryFor, lineStock } from "@/lib/variants";
+import { wearerOf, type CartSuggestion } from "@/lib/showcase";
+import type { CartItem } from "@/context/CartContext";
+
+// Pieces that go with what is in the bag: same wearer (unisex counts for both), new types first.
+function pickSuggestions(pool: CartSuggestion[], items: CartItem[], count = 6) {
+  const inBag = new Set(items.map((item) => item.product.id));
+  const candidates = pool.filter((piece) => !inBag.has(piece.id));
+  if (!items.length) return candidates.filter((piece) => piece.featured).concat(candidates.filter((piece) => !piece.featured)).slice(0, count);
+  const wearers = new Set(items.map((item) => wearerOf(item.product)));
+  const types = new Set(items.map((item) => (item.product.categoryId === "shoes" ? "shoes" : (item.product.subcategory ?? "").toLowerCase())));
+  const fits = (piece: CartSuggestion) => wearers.has(piece.wearer) || piece.wearer === "unisex" || wearers.has("unisex");
+  const score = (piece: CartSuggestion) => (fits(piece) ? 2 : 0) + (types.has(piece.type) ? 0 : 1);
+  const ranked = candidates
+    .map((piece, index) => ({ piece, index, score: score(piece) }))
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .map(({ piece }) => piece);
+  // At most two of a type, so the row shows a mix.
+  const perType = new Map<string, number>();
+  const picked: CartSuggestion[] = [];
+  for (const piece of ranked) {
+    if ((perType.get(piece.type) ?? 0) >= 2) continue;
+    perType.set(piece.type, (perType.get(piece.type) ?? 0) + 1);
+    picked.push(piece);
+    if (picked.length === count) break;
+  }
+  return picked;
+}
+
+function Suggestions({ pieces, title, onNavigate }: { pieces: CartSuggestion[]; title: string; onNavigate: () => void }) {
+  if (!pieces.length) return null;
+  return (
+    <section className="mt-8" aria-label={title}>
+      <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{title}</h3>
+      <ul className="-mx-5 flex snap-x scroll-px-5 gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {pieces.map((piece) => (
+          <li key={piece.id} className="w-36 shrink-0 snap-start">
+            <Link href={`/product/${piece.slug}`} onClick={onNavigate} className="group block [&:hover]:!text-[var(--foreground)]">
+              <span className="relative block aspect-[3/4] overflow-hidden rounded-2xl bg-white shadow-[0_8px_20px_rgba(11,11,11,0.08)]">
+                <Image src={piece.image} alt={piece.name} fill sizes="144px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+              </span>
+              {piece.brand ? <span className="mt-2 block truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{piece.brand}</span> : null}
+              <span className="mt-0.5 block text-xs font-medium leading-4 line-clamp-2">{piece.name}</span>
+              <span className="mt-1 block text-xs font-semibold">{formatPrice(piece.price)}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
 }
 
-export function CartDrawer() {
+export function CartDrawer({ suggestions = [] }: { suggestions?: CartSuggestion[] }) {
   const {
     items,
     isOpen,
@@ -63,6 +113,9 @@ export function CartDrawer() {
               <p className="text-[var(--muted)] font-medium mb-1">Your cart is empty</p>
               <p className="text-sm text-[var(--muted)]/70">Add some cozy items to get started.</p>
             </div>
+          ) : null}
+          {items.length === 0 ? (
+            <Suggestions pieces={pickSuggestions(suggestions, items)} title="Popular right now" onNavigate={closeCart} />
           ) : (
             <ul className="space-y-4">
               {items.map((item) => {
@@ -136,6 +189,7 @@ export function CartDrawer() {
               })}
             </ul>
           )}
+          {items.length > 0 ? <Suggestions pieces={pickSuggestions(suggestions, items)} title="You may also like" onNavigate={closeCart} /> : null}
         </div>
 
         {/* Footer */}

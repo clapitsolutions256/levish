@@ -101,3 +101,40 @@ export function menuThumbnails(products: Product[]): MenuThumbs {
   }
   return thumbs;
 }
+
+export type CartSuggestion = {
+  id: string;
+  slug: string;
+  name: string;
+  image: string;
+  price: number;
+  brand?: string;
+  categoryId: string;
+  type: string;
+  wearer: string;
+  featured: boolean;
+};
+
+/** "men", "women" or "unisex"; shoes take theirs from the shoe type. */
+export function wearerOf(product: Pick<Product, "categoryId" | "subcategory">): string {
+  if (product.categoryId === "shoes") return product.subcategory?.toLowerCase() === "woman" ? "women" : "men";
+  return product.categoryId;
+}
+
+/** In-stock pieces the cart drawer can suggest, trimmed to what a small card needs. */
+export function suggestionPool(products: Product[]): CartSuggestion[] {
+  return products
+    .filter((product) => !isSold(product))
+    .map((product) => ({
+      id: product.id,
+      slug: product.slug,
+      name: product.name.replace(/\.$/, ""),
+      image: product.image,
+      price: product.price,
+      brand: product.brand,
+      categoryId: product.categoryId,
+      type: product.categoryId === "shoes" ? "shoes" : (product.subcategory ?? "").toLowerCase(),
+      wearer: wearerOf(product),
+      featured: Boolean(product.featured),
+    }));
+}

@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
 import { FloatingNav } from "@/components/FloatingNav";
 import { getActiveProducts } from "@/lib/catalog";
-import { menuThumbnails } from "@/lib/showcase";
+import { menuThumbnails, suggestionPool } from "@/lib/showcase";
 
 export default async function StoreLayout({
   children,
@@ -18,7 +18,7 @@ export default async function StoreLayout({
       <main className="flex-1">{children}</main>
       <Footer />
       <FloatingNav thumbs={menuThumbnails(products)} />
-      <CartDrawer />
+      <CartDrawer suggestions={suggestionPool(products)} />
     </div>
   );
 }

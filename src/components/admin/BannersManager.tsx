@@ -157,7 +157,7 @@ export function BannersManager() {
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <ImageField
                 label="Web banner"
-                hint="Full screen on laptops: 1920 × 1080 (16:9). Edges may be cropped."
+                hint="Laptops and desktops, full screen: 1920 × 1080 px (16:9). Keep the main subject in the centre; edges may be cropped."
                 url={form.image}
                 wide
                 uploading={uploadingField === "image"}
@@ -165,7 +165,7 @@ export function BannersManager() {
               />
               <ImageField
                 label="Mobile banner"
-                hint="Full screen on phones: 1080 × 2280 (9:19). Edges may be cropped."
+                hint="Phones, rounded card: 1080 × 1440 px (3:4). Keep the main subject in the centre; top and bottom may be cropped on taller phones."
                 url={form.mobileImage}
                 wide={false}
                 uploading={uploadingField === "mobileImage"}
