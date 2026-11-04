@@ -85,37 +85,7 @@ export default async function HomePage() {
       <JsonLd data={siteGraphJsonLd()} />
       <HeroSlider />
 
-      {spotlight ? (
-        <Spotlight product={spotlight} pieceCount={catalog.length} />
-      ) : (
-        <section className="mx-auto max-w-[90rem] px-4 pt-10 sm:px-6 md:pt-14">
-          <h1 className="section-heading">Original fashion, shoes and accessories</h1>
-        </section>
-      )}
-
-      {PRODUCTS_PAUSED ? null : <StackedSections panels={panels} />}
-
       <ShopByStyle categories={styles} />
-
-      {PRODUCTS_PAUSED ? (
-        <section className="max-w-[90rem] mx-auto px-4 sm:px-6 pb-8">
-          <ProductsPausedNotice />
-        </section>
-      ) : null}
-
-      {saleProducts.length ? (
-        <section className="max-w-[90rem] mx-auto px-4 sm:px-6 pt-4 pb-16 md:pb-20">
-          <div className="mb-10 animate-fade-up">
-            <p className="eyebrow mb-2">Limited time</p>
-            <h2 className="section-heading">Sale</h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 md:gap-7">
-            {saleProducts.map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
-            ))}
-          </div>
-        </section>
-      ) : null}
 
       {/* New Arrivals */}
       <section className={`max-w-[90rem] mx-auto px-4 sm:px-6 pt-4 pb-16 md:pb-20 ${PRODUCTS_PAUSED ? "hidden" : ""}`}>
@@ -140,6 +110,36 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {spotlight ? (
+        <Spotlight product={spotlight} pieceCount={catalog.length} />
+      ) : (
+        <section className="mx-auto max-w-[90rem] px-4 pt-10 sm:px-6 md:pt-14">
+          <h1 className="section-heading">Original fashion, shoes and accessories</h1>
+        </section>
+      )}
+
+      {PRODUCTS_PAUSED ? null : <StackedSections panels={panels} />}
+
+      {PRODUCTS_PAUSED ? (
+        <section className="max-w-[90rem] mx-auto px-4 sm:px-6 pb-8">
+          <ProductsPausedNotice />
+        </section>
+      ) : null}
+
+      {saleProducts.length ? (
+        <section className="max-w-[90rem] mx-auto px-4 sm:px-6 pt-4 pb-16 md:pb-20">
+          <div className="mb-10 animate-fade-up">
+            <p className="eyebrow mb-2">Limited time</p>
+            <h2 className="section-heading">Sale</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 md:gap-7">
+            {saleProducts.map((product, i) => (
+              <ProductCard key={product.id} product={product} index={i} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {PRODUCTS_PAUSED ? null : <OrbitShowcase products={orbitPieces(catalog)} />}
       {PRODUCTS_PAUSED ? null : <ShopTheLook looks={buildLooks(catalog)} />}
