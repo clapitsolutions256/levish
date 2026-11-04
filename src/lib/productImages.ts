@@ -22,6 +22,15 @@ export function productPhotoUrls(row: PhotoRow | null | undefined) {
   return [...urls];
 }
 
+export function bannerPhotoUrls(row: { image?: string | null; mobile_image?: string | null } | null | undefined) {
+  return [row?.image, row?.mobile_image].filter((url): url is string => Boolean(url));
+}
+
+export function orderPhotoUrls(row: { order_items?: unknown } | null | undefined) {
+  if (!row || !Array.isArray(row.order_items)) return [];
+  return row.order_items.map((item) => (item as { image?: unknown })?.image).filter((url): url is string => typeof url === "string" && Boolean(url));
+}
+
 // Only files in our own bucket are deleted. Local /kairo paths and other hosts are left alone.
 function storagePath(url: string) {
   const marker = `/storage/v1/object/public/${BUCKET}/`;
@@ -30,8 +39,8 @@ function storagePath(url: string) {
   return decodeURIComponent(url.slice(at + marker.length).split("?")[0]);
 }
 
-// Deletes photos that left a product, unless another product, a banner or an order still shows them.
-// Call it after the product row is updated or deleted. Failures are logged, not thrown.
+// Deletes photos that left a product, banner or order, unless another product, banner or order
+// still shows them. Call it after the row is updated or deleted. Failures are logged, not thrown.
 export async function removeUnusedPhotos(before: string[], after: string[] = []) {
   try {
     const kept = new Set(after);
