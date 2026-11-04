@@ -11,6 +11,7 @@ import { SHIPPING_THRESHOLD, shippingFor } from "@/lib/shipping";
 import { readCustomerSession } from "@/lib/customerSession";
 import { useGetAccountQuery, useUpdateAccountMutation } from "@/store/accountApi";
 import { bankTransfer } from "@/data/payment";
+import { CopyButton } from "@/components/CopyButton";
 import { identifyMetaUser, trackAddPaymentInfo, trackInitiateCheckout, trackPurchase, type MetaContent } from "@/lib/metaPixel";
 
 function formatPrice(price: number) {
@@ -240,7 +241,8 @@ export default function CheckoutPage() {
               <br />
               Account title: <span className="text-[var(--foreground)]">{bankTransfer.accountTitle}</span>
               <br />
-              Account number: <span className="font-mono tracking-wider text-[var(--foreground)] select-all">{bankTransfer.accountNumber}</span>
+              Account number: <span className="font-mono tracking-wider text-[var(--foreground)] select-all">{bankTransfer.accountNumber}</span>{" "}
+              <CopyButton text={bankTransfer.accountNumber} />
             </p>
             <p className="mt-3 text-[var(--muted)]">
               Send the screenshot to{" "}
@@ -430,7 +432,10 @@ export default function CheckoutPage() {
                       ].map(([label, value]) => (
                         <div key={label} className="flex items-center justify-between gap-4 px-4 py-3">
                           <dt className="text-[var(--muted)]">{label}</dt>
-                          <dd className={`text-right font-medium text-[var(--foreground)] ${label === "Account number" ? "font-mono tracking-wider select-all" : ""}`}>{value}</dd>
+                          <dd className={`flex items-center justify-end gap-2 text-right font-medium text-[var(--foreground)] ${label === "Account number" ? "font-mono tracking-wider select-all" : ""}`}>
+                            {value}
+                            {label === "Account number" ? <CopyButton text={value} /> : null}
+                          </dd>
                         </div>
                       ))}
                     </dl>
