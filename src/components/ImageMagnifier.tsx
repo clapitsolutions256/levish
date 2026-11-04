@@ -16,7 +16,8 @@ function containBox(frameW: number, frameH: number, natural: { w: number; h: num
   return { x: (frameW - w) / 2, y: (frameH - h) / 2, w, h };
 }
 
-export function ImageMagnifier({ src }: { src: string }) {
+// `inset` must match the padding around the photo, so the lens lines up with what is drawn.
+export function ImageMagnifier({ src, inset = "inset-0" }: { src: string; inset?: string }) {
   const frame = useRef<HTMLDivElement>(null);
   const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
   const [lens, setLens] = useState<{ x: number; y: number; box: Box } | null>(null);
@@ -43,7 +44,7 @@ export function ImageMagnifier({ src }: { src: string }) {
   return (
     <div
       ref={frame}
-      className={`absolute inset-0 z-[5] hidden [@media(hover:hover)_and_(pointer:fine)]:block ${lens ? "cursor-none" : "cursor-zoom-in"}`}
+      className={`absolute ${inset} z-[5] hidden [@media(hover:hover)_and_(pointer:fine)]:block ${lens ? "cursor-none" : "cursor-zoom-in"}`}
       onMouseMove={onMove}
       onMouseLeave={() => setLens(null)}
       aria-hidden="true"

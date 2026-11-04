@@ -8,6 +8,7 @@ import Link from "next/link";
 import type { Product } from "@/types";
 import { ProductPurchase } from "@/components/ProductPurchase";
 import { SwipeGallery } from "@/components/SwipeGallery";
+import { ImageMagnifier } from "@/components/ImageMagnifier";
 import { galleryFor, isSold, uniqueValues } from "@/lib/variants";
 import { SoldBadge } from "@/components/SoldBadge";
 import { SaleTag } from "@/components/SaleTag";
@@ -139,6 +140,7 @@ export function ProductQuickView({ product, onClose }: { product: Product; onClo
               if (next) setFrameColor(next);
             }}
           >
+            <ImageMagnifier src={photos[active] ?? photos[0] ?? product.image} inset="inset-2 md:inset-10" />
             {product.new ? (
               <span className="pointer-events-none absolute top-4 left-4 z-10 rounded-full bg-[var(--sage-tint)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--accent)]">
                 New
