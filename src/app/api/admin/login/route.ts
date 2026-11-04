@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
-    const token = jwt.sign({ email, role: "admin" }, JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ email, role: "admin" }, JWT_SECRET, { expiresIn: "7d", audience: "levish-admin" });
     return NextResponse.json({ token, admin: { email, name: "Admin" } });
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });

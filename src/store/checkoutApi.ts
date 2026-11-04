@@ -27,11 +27,20 @@ interface CheckoutRequest {
   shipping: string;
   total: number;
   paymentMethod: string;
+  promoCode?: string;
 }
 
 interface CheckoutResponse {
   message: string;
   orderId: string;
+  total: number;
+}
+
+export interface AppliedPromo {
+  code: string;
+  type: "percent" | "fixed";
+  value: number;
+  discount: number;
 }
 
 export interface Order {
@@ -51,6 +60,8 @@ export interface Order {
   subtotal: number;
   shipping: string;
   total: number;
+  discount?: number;
+  promoCode?: string;
   paymentMethod?: string;
   status: string;
   createdAt: string;
@@ -73,6 +84,12 @@ export const checkoutApi = createApi({
       }),
       invalidatesTags: ["Order"],
     }),
+    applyPromo: builder.mutation<
+      AppliedPromo,
+      { code: string; email: string; phone: string; orderItems: { productId?: string; quantity: number }[] }
+    >({
+      query: (body) => ({ url: "/promo", method: "POST", body }),
+    }),
     getOrder: builder.query<Order, string>({
       query: (id) => `/checkout/${id}`,
       providesTags: (_result, _err, id) => [{ type: "Order", id }],
@@ -80,4 +97,4 @@ export const checkoutApi = createApi({
   }),
 });
 
-export const { usePlaceOrderMutation, useGetOrderQuery } = checkoutApi;
+export const { usePlaceOrderMutation, useApplyPromoMutation, useGetOrderQuery } = checkoutApi;

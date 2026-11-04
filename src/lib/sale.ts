@@ -18,3 +18,9 @@ export function withSale(product: Product): Product {
   if (!percent) return { ...product, salePercent: undefined };
   return { ...product, price: salePrice(product.price, percent), compareAtPrice: product.price, salePercent: percent };
 }
+
+// Checkout shows this before the order is placed; the server works it out again from its own prices.
+export function promoDiscount(promo: { type: "percent" | "fixed"; value: number }, subtotal: number) {
+  const amount = promo.type === "percent" ? Math.round((subtotal * promo.value) / 100) : promo.value;
+  return Math.max(0, Math.min(subtotal, amount));
+}

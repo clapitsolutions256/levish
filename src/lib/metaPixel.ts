@@ -1,4 +1,5 @@
-export const META_PIXEL_ID = "2346883336121456";
+// Levish's own Pixel. Empty means no tracking at all, so Levish never reports into another store's Pixel.
+export const META_PIXEL_ID = /^\d+$/.test(process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "") ? process.env.NEXT_PUBLIC_META_PIXEL_ID! : "";
 const CURRENCY = "PKR";
 
 type MetaParams = Record<string, unknown>;

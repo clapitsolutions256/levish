@@ -33,6 +33,9 @@ export interface Order {
   subtotal: number;
   shipping: string;
   total: number;
+  discount?: number;
+  promoCode?: string;
+  paymentMethod?: string;
   status: string;
   notes?: OrderNote[];
   createdAt: string;
@@ -70,6 +73,46 @@ export interface CustomerDetail {
   orders: Order[];
 }
 
+export interface LatestOrder {
+  _id: string;
+  name: string;
+  city: string;
+  total: number;
+  createdAt: string;
+}
+
+export interface InventoryProductRow {
+  id: string;
+  name: string;
+  image: string;
+  qty: number;
+  revenue: number;
+  recentQty: number;
+  recentRevenue: number;
+  stockLeft: number | null;
+}
+
+export interface InventoryAnalytics {
+  summary: {
+    totalProducts: number;
+    activeProducts: number;
+    untrackedProducts: number;
+    unitsInStock: number;
+    stockValue: number;
+    outOfStock: number;
+    lowStock: number;
+    unitsSold: number;
+    unitsSoldRecent: number;
+  };
+  lowStockLimit: number;
+  recentDays: number;
+  hotSelling: InventoryProductRow[];
+  slowMovers: { id: string; name: string; image: string; stock: number }[];
+  outOfStock: { id: string; name: string; image: string; active: boolean }[];
+  lowStock: { id: string; name: string; image: string; color: string; size: string; stock: number }[];
+  byType: { name: string; sold: number; revenue: number; inStock: number }[];
+}
+
 export interface AnalyticsData {
   daily: { _id: string; revenue: number; orders: number }[];
   topProducts: { _id: string; totalQty: number; totalRevenue: number }[];
@@ -96,6 +139,9 @@ export const ordersApi = createApi({
     getOrder: builder.query<Order, string>({
       query: (id) => `/orders/${id}`,
       providesTags: (_result, _err, id) => [{ type: "Order", id }],
+    }),
+    getLatestOrders: builder.query<LatestOrder[], void>({
+      query: () => "/orders/latest",
     }),
     getStats: builder.query<OrderStats, void>({
       query: () => "/orders/stats",
@@ -173,6 +219,10 @@ export const ordersApi = createApi({
       query: () => "/analytics/revenue",
       providesTags: ["Analytics"],
     }),
+    getInventoryAnalytics: builder.query<InventoryAnalytics, void>({
+      query: () => "/analytics/inventory",
+      providesTags: ["Analytics"],
+    }),
     exportOrders: builder.query<string, { status?: string }>({
       query: ({ status } = {}) => ({
         url: `/orders/export${status && status !== "all" ? `?status=${encodeURIComponent(status)}` : ""}`,
@@ -186,6 +236,7 @@ export const {
   useGetOrdersQuery,
   useGetOrderQuery,
   useGetStatsQuery,
+  useGetLatestOrdersQuery,
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
   useAddOrderNoteMutation,
@@ -194,5 +245,6 @@ export const {
   useGetCustomersQuery,
   useGetCustomerQuery,
   useGetAnalyticsQuery,
+  useGetInventoryAnalyticsQuery,
   useLazyExportOrdersQuery,
 } = ordersApi;

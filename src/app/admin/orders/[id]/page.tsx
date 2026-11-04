@@ -12,6 +12,7 @@ import {
   useDeleteOrderNoteMutation,
 } from "@/store/ordersApi";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { downloadShippingLabel } from "@/lib/shippingLabel";
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
@@ -60,6 +61,7 @@ export default function OrderDetailPage({
   const [deleteNote] = useDeleteOrderNoteMutation();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [noteText, setNoteText] = useState("");
+  const [isLabelling, setIsLabelling] = useState(false);
 
   if (isLoading) {
     return (
@@ -126,6 +128,24 @@ export default function OrderDetailPage({
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={async () => {
+              setIsLabelling(true);
+              try {
+                await downloadShippingLabel(order);
+              } finally {
+                setIsLabelling(false);
+              }
+            }}
+            disabled={isLabelling}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[var(--accent)] rounded-lg hover:bg-[var(--accent-hover)] disabled:opacity-50 transition-colors"
+            title="Download a printable label for the courier flyer"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16" />
+            </svg>
+            {isLabelling ? "Preparing…" : "Download label"}
+          </button>
           {showDeleteConfirm ? (
             <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
               <span className="text-sm text-red-700">Delete this order?</span>
@@ -298,6 +318,17 @@ export default function OrderDetailPage({
             <span className="text-gray-500">Subtotal</span>
             <span>{formatPrice(order.subtotal)}</span>
           </div>
+          {order.discount ? (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">
+                Discount
+                {order.promoCode ? (
+                  <span className="ml-2 rounded-md bg-[var(--sage-tint)] px-2 py-0.5 font-mono text-xs font-semibold text-[var(--accent)]">{order.promoCode}</span>
+                ) : null}
+              </span>
+              <span className="text-[var(--accent)]">- {formatPrice(order.discount)}</span>
+            </div>
+          ) : null}
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">Shipping</span>
             <span>{order.shipping}</span>

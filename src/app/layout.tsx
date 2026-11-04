@@ -5,6 +5,7 @@ import Script from "next/script";
 import "./globals.css";
 import { CartProvider, type CartItem } from "@/context/CartContext";
 import { MetaPixelPageView } from "@/components/MetaPixel";
+import { META_PIXEL_ID } from "@/lib/metaPixel";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { readCartCookie } from "@/lib/cartToken";
 import { ReduxProvider } from "@/store/ReduxProvider";
@@ -90,7 +91,8 @@ export default async function RootLayout({
   return (
     <html lang="en-PK" className={`${poppins.variable} ${display.variable}`} suppressHydrationWarning>
       <head>
-        <Script id="meta-pixel" strategy="beforeInteractive">{`
+        {META_PIXEL_ID ? (
+          <Script id="meta-pixel" strategy="beforeInteractive">{`
           !function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
           n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -99,20 +101,23 @@ export default async function RootLayout({
           t.src=v;s=b.getElementsByTagName(e)[0];
           s.parentNode.insertBefore(t,s)}(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '2346883336121456');
+          fbq('init', '${META_PIXEL_ID}');
           if (location.pathname.indexOf('/admin') !== 0) fbq('track', 'PageView');
         `}</Script>
+        ) : null}
       </head>
       <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
-        <noscript>
-          <img
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=2346883336121456&ev=PageView&noscript=1"
-            alt=""
-          />
-        </noscript>
+        {META_PIXEL_ID ? (
+          <noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+              alt=""
+            />
+          </noscript>
+        ) : null}
         <MetaPixelPageView />
         <Script id="strip-bis" strategy="beforeInteractive">{`
           (function(){

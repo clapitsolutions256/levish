@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetAnalyticsQuery, useGetStatsQuery } from "@/store/ordersApi";
+import { InventoryInsights } from "./InventoryInsights";
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
@@ -73,7 +74,7 @@ export default function AnalyticsPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Revenue, products, and location insights
+          Revenue, inventory, products and location insights
         </p>
       </div>
 
@@ -101,6 +102,8 @@ export default function AnalyticsPage() {
           </div>
         </div>
       )}
+
+      <InventoryInsights />
 
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
         <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-5">

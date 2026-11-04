@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { AdminAuthProvider } from "@/context/AdminAuthContext";
+import { AdminAuthProvider, useAdminAuth } from "@/context/AdminAuthContext";
 import { AdminAuthGuard } from "./AuthGuard";
 import { AdminChrome } from "./AdminChrome";
+import { NewOrderAlert } from "./NewOrderAlert";
 import { adminBackgrounds, DEFAULT_ADMIN_BACKGROUND } from "@/data/adminBackgrounds";
 import { ADMIN_PAUSED, PAUSED_NOTICE } from "@/lib/storeStatus";
 
@@ -26,6 +27,11 @@ function AdminPausedNotice() {
       </div>
     </div>
   );
+}
+
+function OrderAlerts() {
+  const { token } = useAdminAuth();
+  return <NewOrderAlert enabled={Boolean(token) && !ADMIN_PAUSED} />;
 }
 
 // Full-screen scenery behind the glass. The chosen photo is a per-browser preference.
@@ -69,6 +75,7 @@ export function AdminAppShell({ children }: { children: React.ReactNode }) {
           ) : (
             <>
               <AdminChrome background={background.id} onBackground={setBackground} />
+              <OrderAlerts />
               <main className="relative px-3 pb-28 pt-24 sm:px-4 lg:pl-24 lg:pr-6">
                 <div className="admin-panel mx-auto min-h-[calc(100vh-9.5rem)] max-w-[96rem] rounded-[2rem]">
                   {ADMIN_PAUSED ? <AdminPausedNotice /> : children}

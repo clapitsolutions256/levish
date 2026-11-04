@@ -14,6 +14,7 @@ const BUILT_IN = [
   { key: "sweatshirt", name: "Sweatshirts", href: "/sweatshirts" },
   { key: "trouser", name: "Trousers", href: "/trousers" },
   { key: "jeans", name: "Jeans", href: "/jeans" },
+  { key: "Polos & Tees", name: "Polo's & Tees", href: "/polos-and-tees" },
 ];
 
 function clothingType(product: Product) {

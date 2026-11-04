@@ -18,6 +18,7 @@ const nav = [
   { label: "Products", href: "/admin/products", icon: icon("M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4") },
   { label: "Banners", href: "/admin/banners", icon: icon("M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M9 9.5a1 1 0 100-2 1 1 0 000 2") },
   { label: "Orders", href: "/admin/orders", icon: icon("M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2") },
+  { label: "Promos", href: "/admin/promos", icon: icon("M7 7h.01M7 3h5a2 2 0 011.41.59l7 7a2 2 0 010 2.82l-7 7a2 2 0 01-2.82 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z") },
   { label: "Customers", href: "/admin/customers", icon: icon("M17 20h5v-2a3 3 0 00-5.36-1.86M17 20H7m10 0v-2c0-.66-.13-1.29-.36-1.86M7 20H2v-2a3 3 0 015.36-1.86M7 20v-2c0-.66.13-1.29.36-1.86m0 0a5 5 0 019.28 0M15 7a3 3 0 11-6 0 3 3 0 016 0z") },
   { label: "Analytics", href: "/admin/analytics", icon: icon("M4 19V9m6 10V5m6 14v-7m4 7H2") },
 ];

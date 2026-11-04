@@ -82,6 +82,7 @@ const MENU_TYPES: Record<string, string> = {
   hoodies: "hoodie",
   jackets: "jacket",
   undergarments: "undergarments",
+  "polos-tees": "Polos & Tees",
 };
 
 export type MenuThumbs = Record<Gender, Record<string, string>>;

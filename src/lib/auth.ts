@@ -14,7 +14,9 @@ export function verifyAdmin(request: Request): AdminPayload {
     throw new Error("Unauthorized");
   }
   const token = authHeader.split(" ")[1];
-  const decoded = jwt.verify(token, JWT_SECRET) as AdminPayload;
+  const decoded = jwt.verify(token, JWT_SECRET, { audience: "levish-admin" }) as AdminPayload;
+  // Only tokens issued by the admin login (role "admin") open admin routes.
+  if (decoded?.role !== "admin") throw new Error("Unauthorized");
   return decoded;
 }
 

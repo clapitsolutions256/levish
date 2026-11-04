@@ -7,6 +7,8 @@ export type AccountOrder = {
   subtotal: number;
   shipping: string;
   total: number;
+  discount?: number;
+  promoCode?: string;
   createdAt: string;
   orderItems: {
     name: string;

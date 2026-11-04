@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCustomer, unauthorized } from "@/lib/customerAuth";
 import { getSupabase } from "@/lib/supabase";
-
+import { hashPassword, verifyPassword } from "@/lib/customerAccounts";
 
 export async function PATCH(request: Request) {
   const customer = await getCustomer(request);
@@ -22,17 +22,13 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Choose a different password." }, { status: 400 });
     }
 
-    const check = await getSupabase().auth.signInWithPassword({
-      email: customer.email,
-      password: currentPassword,
-    });
-    if (check.error) {
+    const supabase = getSupabase();
+    const { data } = await supabase.from("profiles").select("password_hash").eq("id", customer.id).maybeSingle();
+    if (!data?.password_hash || !(await verifyPassword(currentPassword, data.password_hash))) {
       return NextResponse.json({ error: "Current password is incorrect." }, { status: 401 });
     }
 
-    const updated = await getSupabase().auth.admin.updateUserById(customer.id, {
-      password: newPassword,
-    });
+    const updated = await supabase.from("profiles").update({ password_hash: await hashPassword(newPassword) }).eq("id", customer.id);
     if (updated.error) {
       return NextResponse.json({ error: "Could not update the password." }, { status: 400 });
     }

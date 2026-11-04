@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyAdmin, unauthorizedResponse } from "@/lib/auth";
-import { getSupabase } from "@/lib/supabase";
+import { getSupabase, STORAGE_BUCKET } from "@/lib/supabase";
+import { compressImage, IMAGE_CACHE_SECONDS } from "@/lib/compressImage";
 
 const TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -35,15 +36,16 @@ export async function POST(request: Request) {
       if (file.size > 5 * 1024 * 1024) {
         return NextResponse.json({ error: "Each image must be under 5 MB." }, { status: 400 });
       }
-      const path = `${crypto.randomUUID()}.${ext}`;
+      const path = `${crypto.randomUUID()}.webp`;
       const uploaded = await supabase.storage
-        .from("product-images")
-        .upload(path, Buffer.from(await file.arrayBuffer()), {
-          contentType: file.type,
+        .from(STORAGE_BUCKET)
+        .upload(path, await compressImage(Buffer.from(await file.arrayBuffer())), {
+          contentType: "image/webp",
+          cacheControl: IMAGE_CACHE_SECONDS,
           upsert: false,
         });
       if (uploaded.error) throw uploaded.error;
-      urls.push(supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl);
+      urls.push(supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path).data.publicUrl);
     }
 
     return NextResponse.json({ url: urls[0], urls });

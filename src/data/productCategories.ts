@@ -7,6 +7,7 @@ const clothingTypes = [
   "Shirts",
   "T-Shirts",
   "Polo",
+  "Polos & Tees",
   "Dresses",
   "Bottoms",
   "Trouser",

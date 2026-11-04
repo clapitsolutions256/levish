@@ -30,6 +30,7 @@ const stylePages: Record<string, { heading: string; subcategory: string }> = {
   trousers: { heading: "Trousers", subcategory: "trouser" },
   trouser: { heading: "Trousers", subcategory: "trouser" },
   jeans: { heading: "Jeans", subcategory: "jeans" },
+  "polos-and-tees": { heading: "Polo's & Tees", subcategory: "Polos & Tees" },
 };
 
 const styleCanonical: Record<string, string> = {

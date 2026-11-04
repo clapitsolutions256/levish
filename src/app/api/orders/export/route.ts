@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const orders = await listOrders({ status: searchParams.get("status") });
 
-    const header = "Order ID,Customer Name,Email,Phone,Address,City,State,Postal Code,Items,Subtotal,Shipping,Total,Status,Date\n";
+    const header = "Order ID,Customer Name,Email,Phone,Address,City,State,Postal Code,Items,Subtotal,Promo Code,Discount,Shipping,Total,Status,Date\n";
     const rows = orders
       .map((o) => {
         const items = (o.orderItems || []).map((i) => `${i.name} x${i.quantity}`).join(" | ");
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
           o.deliveryAddress.state || "",
           o.deliveryAddress.postalCode || "",
           `"${items}"`,
-          o.subtotal, o.shipping, o.total, o.status, d,
+          o.subtotal, o.promoCode || "", o.discount, o.shipping, o.total, o.status, d,
         ].join(",");
       })
       .join("\n");

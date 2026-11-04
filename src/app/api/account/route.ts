@@ -94,11 +94,8 @@ export async function PATCH(request: Request) {
         return NextResponse.json({ error: "Please enter your name." }, { status: 400 });
       }
       const supabase = getSupabase();
-      const updated = await supabase.auth.admin.updateUserById(customer.id, {
-        user_metadata: { name },
-      });
+      const updated = await supabase.from("profiles").update({ name }).eq("id", customer.id);
       if (updated.error) throw updated.error;
-      await supabase.from("profiles").update({ name }).eq("id", customer.id);
       return NextResponse.json({ user: { ...customer, name } });
     }
 
@@ -111,11 +108,6 @@ export async function PATCH(request: Request) {
 
     const name = `${firstName} ${lastName}`.trim();
     const supabase = getSupabase();
-    const updated = await supabase.auth.admin.updateUserById(customer.id, {
-      user_metadata: { name },
-    });
-    if (updated.error) throw updated.error;
-
     const saved = await supabase
       .from("profiles")
       .update({

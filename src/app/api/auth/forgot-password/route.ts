@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 import { SITE_URL } from "@/lib/site";
+import { newResetToken } from "@/lib/customerAccounts";
+import { sendPasswordReset } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -9,15 +11,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please enter a valid email." }, { status: 400 });
     }
 
-    const origin = request.headers.get("origin") || SITE_URL;
     const supabase = getSupabase();
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${origin}/reset-password`,
-    });
-    if (error) {
-      console.error("Forgot password error:", error.message);
+    const { data: profile } = await supabase.from("profiles").select("id, name").eq("email", email).maybeSingle();
+    if (profile) {
+      const reset = newResetToken();
+      await supabase.from("profiles").update({ reset_token_hash: reset.hash, reset_expires_at: reset.expiresAt }).eq("id", profile.id);
+      const origin = request.headers.get("origin") || SITE_URL;
+      await sendPasswordReset(email, String(profile.name ?? ""), `${origin}/reset-password?token=${reset.token}`);
     }
 
+    // Same answer either way, so the form doesn't reveal who has an account.
     return NextResponse.json({
       message: "If an account exists for that email, a reset link is on its way.",
     });

@@ -31,6 +31,35 @@ export type BannerInput = {
   active?: boolean;
 };
 
+export type AdminPromo = {
+  code: string;
+  owner: string;
+  type: "percent" | "fixed";
+  value: number;
+  minOrder: number;
+  maxUses: number | null;
+  oncePerCustomer: boolean;
+  expiresAt: string | null;
+  active: boolean;
+  createdAt: string;
+  uses: number;
+  sales: number;
+  discountGiven: number;
+};
+
+export type PromoInput = {
+  code?: string;
+  owner?: string;
+  type?: "percent" | "fixed";
+  value?: number;
+  minOrder?: number;
+  maxUses?: number | null;
+  oncePerCustomer?: boolean;
+  // YYYY-MM-DD, or "" for no expiry.
+  expiresAt?: string;
+  active?: boolean;
+};
+
 export type ProductPayload = {
   name: string;
   price: number;
@@ -52,7 +81,7 @@ export type ProductPayload = {
 export const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: adminBaseQuery,
-  tagTypes: ["AdminProduct", "AdminSession", "AdminBanner", "AdminBrand"],
+  tagTypes: ["AdminProduct", "AdminSession", "AdminBanner", "AdminBrand", "AdminPromo"],
   refetchOnFocus: true,
   refetchOnReconnect: true,
   keepUnusedDataFor: 120,
@@ -152,6 +181,22 @@ export const adminApi = createApi({
     uploadBannerImage: builder.mutation<{ url: string }, FormData>({
       query: (body) => ({ url: "/admin/banners/image", method: "POST", body }),
     }),
+    getPromos: builder.query<AdminPromo[], void>({
+      query: () => "/admin/promos",
+      providesTags: ["AdminPromo"],
+    }),
+    createPromo: builder.mutation<{ code: string }, PromoInput>({
+      query: (body) => ({ url: "/admin/promos", method: "POST", body }),
+      invalidatesTags: ["AdminPromo"],
+    }),
+    updatePromo: builder.mutation<{ ok: boolean }, { code: string; body: PromoInput }>({
+      query: ({ code, body }) => ({ url: `/admin/promos/${encodeURIComponent(code)}`, method: "PATCH", body }),
+      invalidatesTags: ["AdminPromo"],
+    }),
+    deletePromo: builder.mutation<{ ok: boolean }, string>({
+      query: (code) => ({ url: `/admin/promos/${encodeURIComponent(code)}`, method: "DELETE" }),
+      invalidatesTags: ["AdminPromo"],
+    }),
   }),
 });
 
@@ -172,4 +217,8 @@ export const {
   useUpdateBannerMutation,
   useDeleteBannerMutation,
   useUploadBannerImageMutation,
+  useGetPromosQuery,
+  useCreatePromoMutation,
+  useUpdatePromoMutation,
+  useDeletePromoMutation,
 } = adminApi;

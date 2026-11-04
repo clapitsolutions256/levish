@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
+import { hashPassword, signCustomerToken } from "@/lib/customerAccounts";
 
 export async function POST(request: Request) {
   try {
@@ -19,43 +20,27 @@ export async function POST(request: Request) {
     }
 
     const supabase = getSupabase();
-    const created = await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { name },
-    });
+    const { data: existing } = await supabase.from("profiles").select("id, password_hash").eq("email", email).maybeSingle();
+    if (existing?.password_hash) {
+      return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });
+    }
 
-    if (created.error) {
-      const message = created.error.message.toLowerCase();
-      if (message.includes("already") || message.includes("registered") || message.includes("exists")) {
+    const passwordHash = await hashPassword(password);
+    // A profile moved over without a password (from the old sign-in) is claimed by signing up again.
+    const saved = existing
+      ? await supabase.from("profiles").update({ name, password_hash: passwordHash }).eq("id", existing.id).select("id").single()
+      : await supabase.from("profiles").insert({ name, email, password_hash: passwordHash }).select("id").single();
+    if (saved.error || !saved.data) {
+      if (saved.error?.code === "23505") {
         return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });
       }
-      return NextResponse.json({ error: "Could not create the account." }, { status: 400 });
+      throw saved.error;
     }
 
-    const signedIn = await supabase.auth.signInWithPassword({ email, password });
-    if (signedIn.error || !signedIn.data.session || !signedIn.data.user) {
-      return NextResponse.json(
-        { message: "Account created. Sign in to continue.", user: { id: created.data.user.id, email, name } },
-        { status: 201 }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        message: "Account created.",
-        token: signedIn.data.session.access_token,
-        user: {
-          id: signedIn.data.user.id,
-          email,
-          name,
-        },
-      },
-      { status: 201 }
-    );
+    const user = { id: saved.data.id as string, email, name };
+    return NextResponse.json({ message: "Account created.", token: signCustomerToken(user), user }, { status: 201 });
   } catch (err) {
-    console.error("Signup error:", err);
+    console.error("Sign up error:", err);
     return NextResponse.json({ error: "Could not create the account." }, { status: 500 });
   }
 }

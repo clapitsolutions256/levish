@@ -10,13 +10,14 @@ const types = [
   { id: "jeans", label: "Jeans" },
   { id: "hoodie", label: "Hoodies" },
   { id: "jacket", label: "Jackets" },
+  { id: "polos-and-tees", label: "Polo's & Tees" },
   { id: "undergarments", label: "Undergarments" },
 ] as const;
 
 export type GenderShopType = (typeof types)[number]["id"];
 
-// Men's range has no undergarments.
-const menTypes = types.filter((type) => type.id !== "undergarments");
+// Undergarments and Polo's & Tees are only stocked for women.
+const menTypes = types.filter((type) => type.id !== "undergarments" && type.id !== "polos-and-tees");
 
 // Each type lives on its own page (e.g. /hoodies) with the gender as a filter.
 function hrefFor(gender: Gender, type: GenderShopType) {

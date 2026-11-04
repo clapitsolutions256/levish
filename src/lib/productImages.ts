@@ -1,6 +1,6 @@
-import { getSupabase } from "@/lib/supabase";
+import { getSupabase, STORAGE_BUCKET } from "@/lib/supabase";
 
-const BUCKET = "product-images";
+const BUCKET = STORAGE_BUCKET;
 
 type PhotoRow = {
   image?: string | null;

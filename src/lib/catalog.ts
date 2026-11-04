@@ -172,10 +172,11 @@ export async function getProductsByCategoryAndSubcategory(categoryId: string, su
   const products = await getActiveProducts();
   const base = products.filter((product) => product.categoryId === categoryId);
   if (categoryId === "shoes") {
-    const shoeFor: Record<string, string> = { women: "woman", men: "men" };
-    const who = shoeFor[subcategorySlug.toLowerCase()];
-    if (!who) return base;
-    return base.filter((product) => product.subcategory?.toLowerCase() === who);
+    // Men's shoes were saved as "Man" before the label changed to "Men", so both still match.
+    const shoeFor: Record<string, string[]> = { women: ["woman"], men: ["men", "man"] };
+    const labels = shoeFor[subcategorySlug.toLowerCase()];
+    if (!labels) return base;
+    return base.filter((product) => labels.includes(product.subcategory?.toLowerCase() ?? ""));
   }
   if (categoryId === "accessories" && subcategorySlug.toLowerCase() === "eyewear") {
     return base.filter((product) => product.subcategory?.toLowerCase() === "eyewear");

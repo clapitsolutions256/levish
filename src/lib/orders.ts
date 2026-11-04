@@ -30,6 +30,9 @@ export type OrderRow = {
   subtotal: number;
   shipping: string;
   total: number;
+  // Added by supabase/promo-codes.sql; older databases do not have them yet.
+  promo_code?: string | null;
+  discount?: number | null;
   payment_method: string;
   status: string;
   created_at: string;
@@ -64,6 +67,8 @@ export function toOrder(row: OrderRow) {
     subtotal: Number(row.subtotal),
     shipping: row.shipping,
     total: Number(row.total),
+    promoCode: row.promo_code || undefined,
+    discount: Number(row.discount) || 0,
     paymentMethod: row.payment_method,
     status: row.status,
     notes: notes.map((note) => ({

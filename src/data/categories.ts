@@ -40,5 +40,6 @@ export const navCategories: { id: string; name: string; slug: string; children: 
   { id: "jeans", name: "Jeans", slug: "jeans?gender=women", children: [] },
   { id: "hoodies", name: "Hoodies", slug: "hoodies?gender=women", children: [] },
   { id: "jackets", name: "Jackets", slug: "jackets?gender=women", children: [] },
+  { id: "polos-tees", name: "Polo's & Tees", slug: "polos-and-tees?gender=women", children: [] },
   { id: "undergarments", name: "Undergarments", slug: "undergarments?gender=women", children: [] },
 ];

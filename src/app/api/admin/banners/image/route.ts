@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyAdmin, unauthorizedResponse } from "@/lib/auth";
-import { getSupabase } from "@/lib/supabase";
+import { getSupabase, STORAGE_BUCKET } from "@/lib/supabase";
+import { compressImage, IMAGE_CACHE_SECONDS } from "@/lib/compressImage";
 
 const TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -30,13 +31,15 @@ export async function POST(request: Request) {
     }
 
     const supabase = getSupabase();
-    const path = `banners/${crypto.randomUUID()}.${ext}`;
-    const uploaded = await supabase.storage.from("product-images").upload(path, Buffer.from(await file.arrayBuffer()), {
-      contentType: file.type,
+    const path = `banners/${crypto.randomUUID()}.webp`;
+    const image = await compressImage(Buffer.from(await file.arrayBuffer()), 2000);
+    const uploaded = await supabase.storage.from(STORAGE_BUCKET).upload(path, image, {
+      contentType: "image/webp",
+      cacheControl: IMAGE_CACHE_SECONDS,
       upsert: false,
     });
     if (uploaded.error) throw uploaded.error;
-    const url = supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+    const url = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path).data.publicUrl;
     return NextResponse.json({ url });
   } catch (err) {
     console.error("Banner image error:", err);

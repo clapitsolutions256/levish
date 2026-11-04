@@ -18,10 +18,9 @@ export function ResetPasswordForm() {
   const [resetPassword] = useResetPasswordMutation();
 
   useEffect(() => {
-    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-    const accessToken = hash.get("access_token") ?? "";
-    const type = hash.get("type");
-    if (accessToken && (type === "recovery" || type === null)) setToken(accessToken);
+    // The reset email links to /reset-password?token=...
+    const linkToken = new URLSearchParams(window.location.search).get("token") ?? "";
+    if (linkToken) setToken(linkToken);
     setReady(true);
   }, []);
 

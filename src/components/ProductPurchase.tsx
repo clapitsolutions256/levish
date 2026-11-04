@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { flyProductToCart } from "@/lib/flyToCart";
 import { findVariant, galleryFor, uniqueValues } from "@/lib/variants";
 import { trackAddToCart } from "@/lib/metaPixel";
+import { SizeChartButton } from "@/components/SizeChart";
 
 export function ProductPurchase({
   product,
@@ -35,6 +36,7 @@ export function ProductPurchase({
     () => uniqueValues(variants.filter((variant) => !color || variant.color === color), "size"),
     [variants, color]
   );
+  const allSizes = useMemo(() => uniqueValues(variants, "size"), [variants]);
   const firstInStock = (list: string[], forColor: string) =>
     list.find((item) => (findVariant(variants, item, forColor)?.stock ?? 0) > 0) ?? list[0] ?? "";
   const [size, setSize] = useState(() => firstInStock(sizes, color));
@@ -113,8 +115,15 @@ export function ProductPurchase({
               );
             })}
           </div>
+          <div className={compact ? "mt-2.5" : "mt-3.5"}>
+            <SizeChartButton product={product} sizes={allSizes} />
+          </div>
         </div>
-      ) : null}
+      ) : (
+        <div className={compact ? "mt-3" : "mt-5"}>
+          <SizeChartButton product={product} sizes={allSizes} />
+        </div>
+      )}
 
       {atLimit ? (
         <p className={`${compact ? "mt-2" : "mt-4"} text-sm text-[var(--muted)]`}>

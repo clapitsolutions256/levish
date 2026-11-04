@@ -17,6 +17,7 @@ const styles = [
   { path: "/trousers", type: "trouser" },
   { path: "/jeans", type: "jeans" },
   { path: "/undergarments", type: "undergarments" },
+  { path: "/polos-and-tees", type: "Polos & Tees" },
 ];
 
 const genders = ["women", "men"] as const;
