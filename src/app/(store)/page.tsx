@@ -9,7 +9,7 @@ import { Spotlight } from "@/components/showcase/Spotlight";
 import { StackedSections, type StackPanel } from "@/components/showcase/StackedSections";
 import { OrbitShowcase } from "@/components/showcase/OrbitShowcase";
 import { ShopTheLook } from "@/components/showcase/ShopTheLook";
-import { buildLooks, orbitPieces, sectionPieces, wornBy } from "@/lib/showcase";
+import { buildLooks, differentArticles, orbitPieces, sectionPieces, wornBy } from "@/lib/showcase";
 import type { Product } from "@/types";
 import { isSold } from "@/lib/variants";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
@@ -135,7 +135,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 md:gap-7">
-          {newProducts.slice(0, 5).map((product, i) => (
+          {differentArticles(newProducts, 5).map((product, i) => (
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>

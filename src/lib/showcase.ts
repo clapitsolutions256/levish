@@ -139,3 +139,41 @@ export function suggestionPool(products: Product[]): CartSuggestion[] {
       featured: Boolean(product.featured),
     }));
 }
+
+// Words that name a colour (or its shade) in a product title, so they don't make two colourways look like two articles.
+const COLOUR_WORDS = new Set(
+  (
+    "black white off red blue navy green yellow pink purple lilac lavender brown grey gray beige cream ivory olive khaki " +
+    "maroon burgundy wine orange peach coral skin nude stone sand tan camel chocolate charcoal silver gold mint teal " +
+    "sky denim heather forest rust mustard pastel pastal dark light deep pale bright royal wash washed"
+  ).split(" ")
+);
+
+// One product per article: "T-Shirt Yellow" and "T-Shirt Red" are colours of the same article.
+function articleKey(product: Product) {
+  const colours = [product.color, ...(product.variants ?? []).map((variant) => variant.color)]
+    .map((colour) => colour?.trim().toLowerCase())
+    .filter((colour): colour is string => Boolean(colour) && colour !== "—");
+  let name = product.name.toLowerCase();
+  for (const colour of [...new Set(colours)].sort((a, b) => b.length - a.length)) name = name.split(colour).join(" ");
+  const brand = (product.brand ?? "").toLowerCase();
+  // Some titles repeat the brand and some don't ("Oversized Croppsy Sweatshirt"), so brand words are left out too.
+  const brandWords = new Set(brand.split(/[^a-z0-9]+/));
+  const words = name.split(/[^a-z0-9]+/).filter((word) => word && !COLOUR_WORDS.has(word) && !brandWords.has(word));
+  return `${brand}|${product.subcategory ?? ""}|${words.join(" ")}`;
+}
+
+/** The first product of each article, in order, so a row shows different pieces rather than one item in five colours. */
+export function differentArticles(products: Product[], count: number) {
+  const seen = new Set<string>();
+  const picked: Product[] = [];
+  for (const product of products) {
+    const key = articleKey(product);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    picked.push(product);
+    if (picked.length === count) return picked;
+  }
+  // Too few articles to fill the row: top up with other colours rather than leave gaps.
+  return [...picked, ...products.filter((product) => !picked.includes(product))].slice(0, count);
+}
