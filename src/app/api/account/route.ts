@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCustomer, unauthorized } from "@/lib/customerAuth";
 import { getSupabase } from "@/lib/supabase";
 import { toOrder, withProductImages, type OrderRow } from "@/lib/orders";
+import { renameCustomer } from "@/lib/customerSignIn";
 
 export async function GET(request: Request) {
   const customer = await getCustomer(request);
@@ -94,6 +95,7 @@ export async function PATCH(request: Request) {
         return NextResponse.json({ error: "Please enter your name." }, { status: 400 });
       }
       const supabase = getSupabase();
+      await renameCustomer(customer.id, name);
       const updated = await supabase.from("profiles").update({ name }).eq("id", customer.id);
       if (updated.error) throw updated.error;
       return NextResponse.json({ user: { ...customer, name } });
@@ -108,6 +110,7 @@ export async function PATCH(request: Request) {
 
     const name = `${firstName} ${lastName}`.trim();
     const supabase = getSupabase();
+    await renameCustomer(customer.id, name);
     const saved = await supabase
       .from("profiles")
       .update({

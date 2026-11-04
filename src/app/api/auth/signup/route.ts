@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
-import { hashPassword, signCustomerToken } from "@/lib/customerAccounts";
+import { signUp } from "@/lib/customerSignIn";
 
 export async function POST(request: Request) {
   try {
@@ -19,26 +18,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Password must be at least 8 characters." }, { status: 400 });
     }
 
-    const supabase = getSupabase();
-    const { data: existing } = await supabase.from("profiles").select("id, password_hash").eq("email", email).maybeSingle();
-    if (existing?.password_hash) {
-      return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });
-    }
-
-    const passwordHash = await hashPassword(password);
-    // A profile moved over without a password (from the old sign-in) is claimed by signing up again.
-    const saved = existing
-      ? await supabase.from("profiles").update({ name, password_hash: passwordHash }).eq("id", existing.id).select("id").single()
-      : await supabase.from("profiles").insert({ name, email, password_hash: passwordHash }).select("id").single();
-    if (saved.error || !saved.data) {
-      if (saved.error?.code === "23505") {
-        return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });
-      }
-      throw saved.error;
-    }
-
-    const user = { id: saved.data.id as string, email, name };
-    return NextResponse.json({ message: "Account created.", token: signCustomerToken(user), user }, { status: 201 });
+    const result = await signUp(name, email, password);
+    if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
+    return NextResponse.json({ message: "Account created.", ...result }, { status: 201 });
   } catch (err) {
     console.error("Sign up error:", err);
     return NextResponse.json({ error: "Could not create the account." }, { status: 500 });

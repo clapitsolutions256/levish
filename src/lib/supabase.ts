@@ -10,6 +10,8 @@ const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 // "public" tables or "product-images" photos. Levish's own old project uses the defaults.
 const SHARED_PROJECT = "fvpukvbdvtfqlnvlijqa.supabase.co";
 const shared = (url ?? "").includes(SHARED_PROJECT);
+/** True once Levish runs inside the project it shares with Empulse. */
+export const SHARED_DATABASE = shared;
 export const DB_SCHEMA = process.env.SUPABASE_SCHEMA || (shared ? "" : "public");
 export const STORAGE_BUCKET = process.env.SUPABASE_BUCKET || (shared ? "" : "product-images");
 

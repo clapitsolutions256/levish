@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { verifyCustomerToken } from "@/lib/customerAccounts";
+import { customerFromToken } from "@/lib/customerSignIn";
 
 export type CustomerUser = {
   id: string;
@@ -11,7 +11,7 @@ export async function getCustomer(request: Request): Promise<CustomerUser | null
   const header = request.headers.get("authorization") ?? "";
   const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
   if (!token) return null;
-  return verifyCustomerToken(token);
+  return customerFromToken(token);
 }
 
 export function unauthorized() {

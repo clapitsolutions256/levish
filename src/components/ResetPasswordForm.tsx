@@ -18,9 +18,11 @@ export function ResetPasswordForm() {
   const [resetPassword] = useResetPasswordMutation();
 
   useEffect(() => {
-    // The reset email links to /reset-password?token=...
+    // Levish's own reset email links to /reset-password?token=...; Supabase's puts access_token in the hash.
     const linkToken = new URLSearchParams(window.location.search).get("token") ?? "";
-    if (linkToken) setToken(linkToken);
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const supabaseToken = ["recovery", null].includes(hash.get("type")) ? hash.get("access_token") ?? "" : "";
+    if (linkToken || supabaseToken) setToken(linkToken || supabaseToken);
     setReady(true);
   }, []);
 
