@@ -39,9 +39,25 @@ type SnapshotLine = {
   color?: string;
 };
 
+const PHOTO_ORIGIN = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").origin;
+  } catch {
+    return "";
+  }
+})();
+
+// A saved cart can hold photo links from a Supabase project the store has since left, which
+// next/image refuses to load. Those lines are dropped; the cart is reloaded from the server anyway.
+export function hasCurrentPhoto(image?: string) {
+  if (!image) return false;
+  if (image.startsWith("/") && !image.startsWith("//")) return true;
+  return Boolean(PHOTO_ORIGIN) && image.startsWith(`${PHOTO_ORIGIN}/`);
+}
+
 export function slimCartSnapshot(items: SnapshotLine[]) {
   return items
-    .filter((item) => item?.product?.id && item.product.name && item.product.image && item.quantity > 0)
+    .filter((item) => item?.product?.id && item.product.name && hasCurrentPhoto(item.product.image) && item.quantity > 0)
     .map((item) => ({
       product: {
         id: item.product.id,
@@ -63,8 +79,8 @@ export function readCartSnapshot<T>() {
   try {
     const raw = localStorage.getItem(SNAPSHOT_KEY);
     if (!raw) return [] as T[];
-    const parsed = JSON.parse(raw) as T[];
-    return Array.isArray(parsed) ? parsed : [];
+    const parsed = JSON.parse(raw) as { product?: { image?: string } }[];
+    return (Array.isArray(parsed) ? parsed.filter((item) => hasCurrentPhoto(item?.product?.image)) : []) as T[];
   } catch {
     return [] as T[];
   }
