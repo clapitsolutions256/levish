@@ -2,7 +2,7 @@ import { NextResponse, after } from "next/server";
 import { getCustomer } from "@/lib/customerAuth";
 import { reserveStock, restoreStock } from "@/lib/stock";
 import { getSupabase } from "@/lib/supabase";
-import { sendOrderConfirmation } from "@/lib/email";
+import { sendNewOrderAlert, sendOrderConfirmation } from "@/lib/email";
 import { PAUSED_NOTICE, PRODUCTS_PAUSED } from "@/lib/storeStatus";
 import { checkPromo, cleanCode, serverSubtotal } from "@/lib/promo";
 import { shippingFor } from "@/lib/shipping";
@@ -89,26 +89,25 @@ export async function POST(request: Request) {
       throw error;
     }
 
-    // Email the customer once the response has gone out, so checkout stays fast.
-    after(() =>
-      sendOrderConfirmation({
-        id: data.id,
-        email: email.toLowerCase().trim(),
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        address: address.trim(),
-        apartment: (apartment || "").trim(),
-        city: city.trim(),
-        phone: phone.trim(),
-        items: orderItems,
-        subtotal: priced.subtotal,
-        shipping: priced.shipping,
-        total: priced.total,
-        discount: promo?.discount ?? 0,
-        promoCode: promo?.promo_code,
-        paymentMethod: paymentMethod || "cod",
-      })
-    );
+    // Email the customer, and alert the store, once the response has gone out so checkout stays fast.
+    const placed = {
+      id: data.id,
+      email: email.toLowerCase().trim(),
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      address: address.trim(),
+      apartment: (apartment || "").trim(),
+      city: city.trim(),
+      phone: phone.trim(),
+      items: orderItems,
+      subtotal: priced.subtotal,
+      shipping: priced.shipping,
+      total: priced.total,
+      discount: promo?.discount ?? 0,
+      promoCode: promo?.promo_code,
+      paymentMethod: paymentMethod || "cod",
+    };
+    after(() => Promise.all([sendOrderConfirmation(placed), sendNewOrderAlert(placed)]));
 
     return NextResponse.json(
       { message: "Order placed successfully!", orderId: data.id, total: priced.total },
