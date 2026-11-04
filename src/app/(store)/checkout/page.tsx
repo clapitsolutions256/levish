@@ -10,6 +10,7 @@ import { promoDiscount } from "@/lib/sale";
 import { SHIPPING_THRESHOLD, shippingFor } from "@/lib/shipping";
 import { readCustomerSession } from "@/lib/customerSession";
 import { useGetAccountQuery, useUpdateAccountMutation } from "@/store/accountApi";
+import { bankTransfer } from "@/data/payment";
 import { identifyMetaUser, trackAddPaymentInfo, trackInitiateCheckout, trackPurchase, type MetaContent } from "@/lib/metaPixel";
 
 function formatPrice(price: number) {
@@ -17,12 +18,13 @@ function formatPrice(price: number) {
 }
 
 
-type PaymentMethod = "card" | "cod";
+type PaymentMethod = "transfer" | "cod";
 
 export default function CheckoutPage() {
   const { items, itemCount, total, clearCart, ready } = useCart();
   const [placed, setPlaced] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [paidTotal, setPaidTotal] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [sameAsShipping, setSameAsShipping] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -179,6 +181,7 @@ export default function CheckoutPage() {
           .catch(() => undefined);
       }
       setOrderId(result.orderId);
+      setPaidTotal(result.total);
       await clearCart();
       setPlaced(true);
     } catch (err: unknown) {
@@ -228,6 +231,25 @@ export default function CheckoutPage() {
           <p className="mt-1 text-sm text-[var(--muted)]">
             Order ID: <span className="font-mono text-[var(--foreground)]">{orderId}</span>
           </p>
+        )}
+        {paymentMethod === "transfer" && (
+          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 text-left text-sm leading-6">
+            <p className="font-semibold text-[var(--foreground)]">Pay {formatPrice(paidTotal)} by online transfer</p>
+            <p className="mt-2 text-[var(--muted)]">
+              {bankTransfer.bank}
+              <br />
+              Account title: <span className="text-[var(--foreground)]">{bankTransfer.accountTitle}</span>
+              <br />
+              Account number: <span className="font-mono tracking-wider text-[var(--foreground)] select-all">{bankTransfer.accountNumber}</span>
+            </p>
+            <p className="mt-3 text-[var(--muted)]">
+              Send the screenshot to{" "}
+              <a href={bankTransfer.screenshotHref} target="_blank" rel="noopener noreferrer" className="font-medium text-[var(--accent)] underline-offset-4 hover:underline">
+                {bankTransfer.screenshotTo}
+              </a>{" "}
+              on WhatsApp, and tell us you paid by online transfer when we call to confirm. You&apos;ll get {bankTransfer.cashbackPercent}% cashback.
+            </p>
+          </div>
         )}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
           {orderId && (
@@ -382,7 +404,7 @@ export default function CheckoutPage() {
               )}
             </section>
 
-            {/* Payment method & card details */}
+            {/* Payment method & bank details */}
             <section className="bg-[var(--card)] rounded-2xl p-6 border border-[var(--border)]">
               <h2 className="section-heading mb-4">Payment</h2>
               <div className="space-y-4">
@@ -391,67 +413,41 @@ export default function CheckoutPage() {
                     <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === "cod"} onChange={() => { setPaymentMethod("cod"); if (!paymentTracked.current) { paymentTracked.current = true; trackAddPaymentInfo(metaContents, orderTotal); } }} className="sr-only" />
                     <span className="font-medium">Cash on delivery</span>
                   </label>
-                  <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition ${paymentMethod === "card" ? "border-[var(--accent)] bg-[var(--accent)]/5 text-[var(--accent)]" : "border-[var(--border)] hover:border-[var(--muted)]"}`}>
-                    <input type="radio" name="paymentMethod" value="card" checked={paymentMethod === "card"} onChange={() => { setPaymentMethod("card"); if (!paymentTracked.current) { paymentTracked.current = true; trackAddPaymentInfo(metaContents, orderTotal); } }} className="sr-only" />
-                    <svg className="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-                    <span className="font-medium">Card</span>
+                  <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition ${paymentMethod === "transfer" ? "border-[var(--accent)] bg-[var(--accent)]/5 text-[var(--accent)]" : "border-[var(--border)] hover:border-[var(--muted)]"}`}>
+                    <input type="radio" name="paymentMethod" value="transfer" checked={paymentMethod === "transfer"} onChange={() => { setPaymentMethod("transfer"); if (!paymentTracked.current) { paymentTracked.current = true; trackAddPaymentInfo(metaContents, orderTotal); } }} className="sr-only" />
+                    <svg className="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 21h18M4 10h16M12 3l8 5H4l8-5zM6 10v8m4-8v8m4-8v8m4-8v8" /></svg>
+                    <span className="font-medium">Online transfer</span>
                   </label>
                 </div>
 
-                {paymentMethod === "card" && (
+                {paymentMethod === "transfer" && (
                   <div className="pt-4 space-y-4 border-t border-[var(--border)]">
-                    <div>
-                      <label htmlFor="cardNumber" className="block text-sm font-medium text-[var(--foreground)] mb-1">Card number</label>
-                      <input
-                        id="cardNumber"
-                        name="cardNumber"
-                        type="text"
-                        inputMode="numeric"
-                        autoComplete="cc-number"
-                        maxLength={19}
-                        placeholder="1234 5678 9012 3456"
-                        className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-mono tracking-wider"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="nameOnCard" className="block text-sm font-medium text-[var(--foreground)] mb-1">Name on card</label>
-                      <input
-                        id="nameOnCard"
-                        name="nameOnCard"
-                        type="text"
-                        autoComplete="cc-name"
-                        placeholder="Name as on card"
-                        className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="expiry" className="block text-sm font-medium text-[var(--foreground)] mb-1">Expiry</label>
-                        <input
-                          id="expiry"
-                          name="expiry"
-                          type="text"
-                          autoComplete="cc-exp"
-                          placeholder="MM/YY"
-                          maxLength={5}
-                          className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-mono"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="cvv" className="block text-sm font-medium text-[var(--foreground)] mb-1">CVV</label>
-                        <input
-                          id="cvv"
-                          name="cvv"
-                          type="text"
-                          inputMode="numeric"
-                          autoComplete="cc-csc"
-                          placeholder="123"
-                          maxLength={4}
-                          className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-mono"
-                        />
-                        <p className="text-xs text-[var(--muted)] mt-1">3 or 4 digits on back of card</p>
-                      </div>
-                    </div>
+                    <dl className="divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] bg-[var(--background)] text-sm">
+                      {[
+                        ["Bank", bankTransfer.bank],
+                        ["Account title", bankTransfer.accountTitle],
+                        ["Account number", bankTransfer.accountNumber],
+                      ].map(([label, value]) => (
+                        <div key={label} className="flex items-center justify-between gap-4 px-4 py-3">
+                          <dt className="text-[var(--muted)]">{label}</dt>
+                          <dd className={`text-right font-medium text-[var(--foreground)] ${label === "Account number" ? "font-mono tracking-wider select-all" : ""}`}>{value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                    <p className="rounded-xl bg-[var(--sage-tint)] px-4 py-3 text-sm font-semibold text-[var(--accent)]">
+                      Get {bankTransfer.cashbackPercent}% cashback when you pay by online transfer.
+                    </p>
+                    <ol className="list-decimal space-y-1.5 pl-5 text-sm leading-6 text-[var(--muted)]">
+                      <li>Transfer the order total ({formatPrice(orderTotal)}) to the account above.</li>
+                      <li>
+                        Send a screenshot of the transfer to{" "}
+                        <a href={bankTransfer.screenshotHref} target="_blank" rel="noopener noreferrer" className="font-medium text-[var(--accent)] underline-offset-4 hover:underline">
+                          {bankTransfer.screenshotTo}
+                        </a>{" "}
+                        on WhatsApp.
+                      </li>
+                      <li>When we call to confirm your order, tell us you paid by online transfer.</li>
+                    </ol>
                   </div>
                 )}
               </div>
@@ -562,7 +558,7 @@ export default function CheckoutPage() {
                 disabled={loading}
                 className="w-full mt-6 py-4 skeuo-ink font-medium rounded-full disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {loading ? "Processing…" : paymentMethod === "card" ? "Pay now" : "Place order"}
+                {loading ? "Processing…" : "Place order"}
               </button>
               <Link href="/cart" className="block mt-4 text-center text-sm text-[var(--accent)] hover:underline">Back to cart</Link>
             </div>

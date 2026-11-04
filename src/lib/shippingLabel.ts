@@ -51,7 +51,7 @@ export async function downloadShippingLabel(order: Order) {
 
   // Payment box: what the rider collects.
   doc.setLineWidth(0.7).rect(M, y, W - 2 * M, 16);
-  doc.setFont("helvetica", "bold").setFontSize(12).text(cod ? "CASH ON DELIVERY" : "PREPAID (CARD)", M + 4, y + 7);
+  doc.setFont("helvetica", "bold").setFontSize(12).text(cod ? "CASH ON DELIVERY" : "PREPAID (ONLINE TRANSFER)", M + 4, y + 7);
   doc.setFont("helvetica", "normal").setFontSize(10).text(cod ? "Collect from customer" : "Do not collect cash", M + 4, y + 12.5);
   doc.setFont("helvetica", "bold").setFontSize(22).text(cod ? money(order.total) : "Rs. 0", W - M - 4, y + 11, { align: "right" });
   y += 23;

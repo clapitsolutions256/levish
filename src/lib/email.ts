@@ -1,5 +1,6 @@
 import { SITE_URL } from "@/lib/site";
 import { assets } from "@/data/assets";
+import { bankTransfer } from "@/data/payment";
 
 // Emails go through Resend (resend.com). Set RESEND_API_KEY to turn them on.
 // ORDER_EMAIL_FROM must use a domain verified in Resend, e.g. "Levish <orders@levish.store>".
@@ -117,11 +118,27 @@ function addressLines(order: OrderEmail) {
 }
 
 function paymentLabel(order: OrderEmail) {
-  return order.paymentMethod !== "card" ? "Cash on delivery" : "Card";
+  return order.paymentMethod === "transfer" ? "Online transfer (check for the screenshot)" : "Cash on delivery";
+}
+
+// Bank details and next steps for a customer who chose online transfer.
+function transferHtml(order: OrderEmail) {
+  return `
+          <tr><td style="padding:24px 32px 0">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid ${SAGE};border-radius:14px">
+              <tr><td style="padding:16px;font-size:13px;line-height:1.7;color:${INK}">
+                <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${MUTED}">Pay by online transfer</div>
+                <div style="margin-top:6px">Please transfer <strong>${money(order.total)}</strong> to:</div>
+                <div style="margin-top:6px">${escape(bankTransfer.bank)}<br>Account title: <strong>${escape(bankTransfer.accountTitle)}</strong><br>Account number: <strong>${escape(bankTransfer.accountNumber)}</strong></div>
+                <div style="margin-top:10px;color:${MUTED}">Then send the screenshot to <a href="${bankTransfer.screenshotHref}" style="color:${INK};font-weight:600">${escape(bankTransfer.screenshotTo)}</a> on WhatsApp, and tell us you paid by online transfer when we call to confirm your order.</div>
+                <div style="margin-top:10px;padding:8px 12px;border-radius:10px;background:${SAGE_TINT};font-weight:600">You get ${bankTransfer.cashbackPercent}% cashback on online transfer.</div>
+              </td></tr>
+            </table>
+          </td></tr>`;
 }
 
 function confirmationHtml(order: OrderEmail) {
-  const cod = order.paymentMethod !== "card";
+  const cod = order.paymentMethod !== "transfer";
   return frame(`
           <tr><td style="padding:24px 32px 8px;text-align:center">
             <p style="margin:0;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#4f7d57">Order confirmed</p>
@@ -143,11 +160,12 @@ function confirmationHtml(order: OrderEmail) {
                 </td>
                 <td style="padding:16px;vertical-align:top;width:50%">
                   <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${MUTED}">Payment</div>
-                  <div style="margin-top:6px;font-size:13px;line-height:1.6;color:${INK}">${cod ? "Cash on delivery<br>First check, then pay" : "Card"}</div>
+                  <div style="margin-top:6px;font-size:13px;line-height:1.6;color:${INK}">${cod ? "Cash on delivery<br>First check, then pay" : "Online transfer"}</div>
                 </td>
               </tr>
             </table>
           </td></tr>
+          ${cod ? "" : transferHtml(order)}
           <tr><td style="padding:28px 32px 0;text-align:center">${button(`${SITE_URL}/order/${order.id}`, "View your order")}</td></tr>`);
 }
 
