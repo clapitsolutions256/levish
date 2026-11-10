@@ -66,18 +66,6 @@ export default async function HomePage() {
       pieces: pieces(sectionPieces(catalog, wornBy("men"))),
       tone: "ink",
     },
-    {
-      word: "Shoes",
-      href: "/shoes",
-      line: "Sneakers and runners from On and the labels you know.",
-      count: catalog.filter((product) => product.categoryId === "shoes").length,
-      links: [
-        { label: "Men's shoes", href: "/shoes?gender=men" },
-        { label: "All shoes", href: "/shoes" },
-      ],
-      pieces: pieces(sectionPieces(catalog, (product) => product.categoryId === "shoes")),
-      tone: "paper",
-    },
   ];
 
   return (
@@ -115,7 +103,7 @@ export default async function HomePage() {
         <Spotlight product={spotlight} pieceCount={catalog.length} />
       ) : (
         <section className="mx-auto max-w-[90rem] px-4 pt-10 sm:px-6 md:pt-14">
-          <h1 className="section-heading">Original fashion, shoes and accessories</h1>
+          <h1 className="section-heading">Original men&apos;s and women&apos;s fashion</h1>
         </section>
       )}
 

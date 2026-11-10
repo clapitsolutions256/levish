@@ -7,7 +7,7 @@ import { pageMeta } from "@/lib/site";
 export const metadata: Metadata = pageMeta({
   title: "About Us",
   description:
-    "Levish is a Pakistan fashion store for clothing, shoes and accessories. Read our story and how we choose original brands.",
+    "Levish is a Pakistan fashion store for clothing and accessories. Read our story and how we choose original brands.",
   path: "/about",
 });
 
@@ -42,7 +42,7 @@ export default function AboutPage() {
             </div>
             <h3 className="section-heading mb-3">Our Mission</h3>
             <p className="type-copy text-[var(--muted)]">
-              Quality clothing, shoes and accessories for women.
+              Quality clothing and accessories for women.
               We focus on timeless pieces and seasonal drops so you can dress
               for the moment without the clutter.
             </p>
@@ -84,8 +84,8 @@ export default function AboutPage() {
               <p className="type-copy mt-5 text-[var(--muted)]">
                 Syed Mudasir Hussain Shah leads Levish from Lahore, bringing a clear
                 vision for accessible, quality fashion. Levish has grown around the
-                idea of cozy, always — offering thoughtful, original clothing, shoes
-                and accessories for men and women.
+                idea of cozy, always — offering thoughtful, original clothing and
+                accessories for men and women.
               </p>
               <p className="type-copy mt-3 text-[var(--muted)]">
                 From Lahore to the rest of Pakistan, the focus is on making everyday

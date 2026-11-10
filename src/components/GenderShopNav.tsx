@@ -4,7 +4,6 @@ import { typePath } from "@/lib/styles";
 
 const types = [
   { id: "all", label: "All" },
-  { id: "shoes", label: "Shoes" },
   { id: "trouser", label: "Trouser" },
   { id: "sweatshirt", label: "Sweatshirt" },
   { id: "jeans", label: "Jeans" },
@@ -22,7 +21,6 @@ const menTypes = types.filter((type) => type.id !== "undergarments" && type.id !
 // Each type lives on its own page (e.g. /hoodies) with the gender as a filter.
 function hrefFor(gender: Gender, type: GenderShopType) {
   if (type === "all") return `/${gender}`;
-  if (type === "shoes") return `/shoes?gender=${gender}`;
   return `${typePath(type)}?gender=${gender}`;
 }
 

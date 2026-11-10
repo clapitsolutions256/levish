@@ -7,7 +7,6 @@ const footerLinks = {
   shop: [
     { label: "Women", href: "/women" },
     { label: "Men", href: "/men" },
-    { label: "Shoes", href: "/shoes" },
     { label: "Accessories", href: "/accessories" },
   ],
   help: [
@@ -43,7 +42,7 @@ export function Footer() {
               />
             </Link>
             <p className="type-copy mt-5 max-w-xs text-[var(--cream)]/70">
-              Original clothing, shoes and accessories for men and women,
+              Original clothing and accessories for men and women,
               delivered across Pakistan.
             </p>
             <ul className="mt-5 space-y-2 text-sm text-[var(--cream)]/80">

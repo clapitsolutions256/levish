@@ -45,13 +45,13 @@ const panels: Record<Section, { label: string; title: string; text: string; link
   women: {
     label: "Women",
     title: "The women\u2019s edit",
-    text: "Original pieces, from everyday denim to outerwear and shoes.",
+    text: "Original pieces, from everyday denim to outerwear.",
     links: navCategories,
   },
   men: {
     label: "Men",
     title: "The men\u2019s edit",
-    text: "Sweatshirts, jackets, denim and sneakers from the brands you trust.",
+    text: "Sweatshirts, jackets and denim from the brands you trust.",
     links: menNavCategories,
   },
 };
@@ -95,19 +95,21 @@ function GenderPanel({ section, onNavigate }: { section: Section; onNavigate: ()
         </ul>
       </div>
 
-      <div className="pt-3">
-        <ColumnHeading>Footwear</ColumnHeading>
-        <ul>
-          {footwear.map((cat) => (
-            <li key={cat.id}>
-              <Link href={`/${cat.slug}`} onClick={onNavigate} className={menuLink}>
-                {cat.name}
-                <Arrow />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {footwear.length ? (
+        <div className="pt-3">
+          <ColumnHeading>Footwear</ColumnHeading>
+          <ul>
+            {footwear.map((cat) => (
+              <li key={cat.id}>
+                <Link href={`/${cat.slug}`} onClick={onNavigate} className={menuLink}>
+                  {cat.name}
+                  <Arrow />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       <div className="pt-3">
         <ColumnHeading>Discover</ColumnHeading>

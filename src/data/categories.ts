@@ -25,7 +25,6 @@ export const categories: Category[] = [
 export type Gender = "women" | "men";
 
 export const menNavCategories: { id: string; name: string; slug: string }[] = [
-  { id: "shoes", name: "Shoes", slug: "shoes?gender=men" },
   { id: "trouser", name: "Trouser", slug: "trousers?gender=men" },
   { id: "sweatshirt", name: "Sweatshirt", slug: "sweatshirts?gender=men" },
   { id: "jeans", name: "Jeans", slug: "jeans?gender=men" },
@@ -34,7 +33,6 @@ export const menNavCategories: { id: string; name: string; slug: string }[] = [
 ];
 
 export const navCategories: { id: string; name: string; slug: string; children: { name: string; slug: string }[] }[] = [
-  { id: "shoes", name: "Shoes", slug: "shoes?gender=women", children: [] },
   { id: "trouser", name: "Trouser", slug: "trousers?gender=women", children: [] },
   { id: "sweatshirt", name: "Sweatshirt", slug: "sweatshirts?gender=women", children: [] },
   { id: "jeans", name: "Jeans", slug: "jeans?gender=women", children: [] },

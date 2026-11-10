@@ -6,14 +6,14 @@ export const SITE_NAME = "Levish";
 export const SITE_TITLE = "Levish | Original Men's & Women's Fashion in Pakistan";
 
 export const SITE_DESCRIPTION =
-  "Original men's and women's fashion and sneakers from Lacoste, Ralph Lauren, Levi's and On. Delivery across Pakistan, free shipping over Rs. 5,000.";
+  "Original men's and women's fashion from Lacoste, Ralph Lauren, Levi's and more. Delivery across Pakistan, free shipping over Rs. 5,000.";
 
 // Link preview for shared pages. Page metadata replaces the root openGraph object, so pages repeat it.
 export const SHARE_IMAGE = {
   url: "/og.png?v=5",
   width: 1200,
   height: 630,
-  alt: "Levish – original fashion, shoes and accessories",
+  alt: "Levish – original men's and women's fashion",
 };
 
 export function absoluteUrl(path: string) {

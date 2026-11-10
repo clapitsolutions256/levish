@@ -121,8 +121,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   }
   if (gender) {
     return listingMeta({
-      title: gender === "men" ? "Men's Clothing & Sneakers in Pakistan" : "Women's Clothing & Shoes in Pakistan",
-      lead: `Shop original ${possessive(gender)} clothing and ${gender === "men" ? "sneakers" : "shoes"}`,
+      title: gender === "men" ? "Men's Clothing in Pakistan" : "Women's Clothing in Pakistan",
+      lead: `Shop original ${possessive(gender)} clothing`,
       path: `/${slug}`,
       list: products.filter((product) => forGender(product, gender)),
     });

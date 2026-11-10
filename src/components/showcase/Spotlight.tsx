@@ -30,7 +30,7 @@ export function Spotlight({ product, pieceCount }: { product: Product; pieceCoun
       <div className="mx-auto max-w-[90rem] px-4 sm:px-6">
         <motion.div variants={rise} initial="hidden" whileInView="shown" viewport={{ once: true, amount: 0.6 }} custom={0} className="relative z-20 max-w-xl">
           <p className="eyebrow mb-3">Levish · Since day one</p>
-          <h1 className="section-heading">Original fashion, shoes and accessories</h1>
+          <h1 className="section-heading">Original men&apos;s and women&apos;s fashion</h1>
           <p className="type-copy mt-3 text-[var(--muted)]">
             Original brands for men and women, nationwide delivery, and free shipping on orders above Rs. 5,000.
           </p>
