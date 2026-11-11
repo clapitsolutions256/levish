@@ -10,10 +10,10 @@ export const SITE_DESCRIPTION =
 
 // Link preview for shared pages. Page metadata replaces the root openGraph object, so pages repeat it.
 export const SHARE_IMAGE = {
-  url: "/og.png?v=5",
+  url: "/og.png?v=6",
   width: 1200,
   height: 630,
-  alt: "Levish – original men's and women's fashion",
+  alt: "Levish – original fashion, intimates & accessories",
 };
 
 export function absoluteUrl(path: string) {

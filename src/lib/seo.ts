@@ -90,7 +90,7 @@ export function siteGraphJsonLd() {
         "@id": `${SITE_URL}/#store`,
         name: SITE_NAME,
         url: SITE_URL,
-        image: absoluteUrl("/og.png?v=5"),
+        image: absoluteUrl("/og.png?v=6"),
         currenciesAccepted: "PKR",
         paymentAccepted: "Cash, Credit Card",
         areaServed: "PK",
