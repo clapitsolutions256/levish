@@ -92,7 +92,7 @@ export function Spotlight({ product, pieceCount }: { product: Product; pieceCoun
 
           <motion.div style={{ y: slow }} className="absolute bottom-10 right-0 z-10 hidden md:right-[6%] md:block">
             <motion.div variants={rise} initial="hidden" whileInView="shown" viewport={{ once: true }} custom={0.4} className="glass-dark rounded-3xl px-4 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--sage)]">First check, then pay</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--sage)]">Nationwide delivery</p>
               <p className="mt-0.5 text-sm text-white/80">Free shipping over Rs. 5,000</p>
             </motion.div>
           </motion.div>

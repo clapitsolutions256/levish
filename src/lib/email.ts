@@ -67,7 +67,7 @@ function frame(content: string) {
           </td></tr>
           ${content}
           <tr><td style="padding:24px 32px 32px;text-align:center;font-size:12px;line-height:1.7;color:${MUTED}">
-            Nationwide delivery · 100% original · First check then pay<br>
+            Nationwide delivery · 100% original<br>
             Questions? Just reply to this email.
           </td></tr>
         </table>
@@ -160,7 +160,7 @@ function confirmationHtml(order: OrderEmail) {
                 </td>
                 <td style="padding:16px;vertical-align:top;width:50%">
                   <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${MUTED}">Payment</div>
-                  <div style="margin-top:6px;font-size:13px;line-height:1.6;color:${INK}">${cod ? "Cash on delivery<br>First check, then pay" : "Online transfer"}</div>
+                  <div style="margin-top:6px;font-size:13px;line-height:1.6;color:${INK}">${cod ? "Cash on delivery" : "Online transfer"}</div>
                 </td>
               </tr>
             </table>

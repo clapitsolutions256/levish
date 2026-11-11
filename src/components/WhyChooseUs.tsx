@@ -5,11 +5,6 @@ const reasons = [
     icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
   },
   {
-    title: "First check, then pay",
-    text: "Open the parcel, look it over, and pay only when you are happy with it.",
-    icon: "M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z",
-  },
-  {
     title: "Free shipping",
     text: "Delivery across Pakistan, and free shipping on orders above Rs. 5,000.",
     icon: "M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0",
@@ -28,7 +23,7 @@ export function WhyChooseUs() {
         <p className="eyebrow mb-2">The Levish promise</p>
         <h2 className="section-heading">Why Choose Us</h2>
       </div>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
         {reasons.map((reason) => (
           <article key={reason.title} className="card-warm p-7">
             <div className="neu-inset mb-5 flex h-14 w-14 items-center justify-center rounded-full text-[var(--sage-deep)]">

@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = subcategoryTitle(cat, sub);
   const meta = pageMeta({
     title,
-    description: `Shop original ${title.toLowerCase()} at Levish. Check before you pay, delivery across Pakistan and free shipping over Rs. 5,000.`,
+    description: `Shop original ${title.toLowerCase()} at Levish. Delivery across Pakistan and free shipping over Rs. 5,000.`,
     path: `/${cat}/${sub}`,
   });
   // Empty listings stay out of the index until they have products.

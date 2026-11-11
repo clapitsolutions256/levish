@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const meta = pageMeta({
     title: `Original ${name} in Pakistan`,
     description: brand.count
-      ? `Shop ${brand.count} original ${name} styles at Levish. Check before you pay, delivery across Pakistan and free shipping over Rs. 5,000.`
+      ? `Shop ${brand.count} original ${name} styles at Levish. Delivery across Pakistan and free shipping over Rs. 5,000.`
       : `Original ${name} is coming soon to Levish. Delivery across Pakistan and free shipping over Rs. 5,000.`,
     path: `/brands/${slug}`,
   });

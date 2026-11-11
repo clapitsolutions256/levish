@@ -10,7 +10,7 @@ export function AboutUs() {
           Levish is built around one idea: cozy, always. From Lahore, we bring original clothing and everyday layers for women, chosen so they feel good and last.
         </p>
         <p className="type-copy mt-4 text-[var(--muted)]">
-          Timeless pieces, seasonal drops, and a store that lets you check your order before you pay. Style should be easy, and it should feel like yours.
+          Timeless pieces and seasonal drops, delivered across Pakistan. Style should be easy, and it should feel like yours.
         </p>
         <Link href="/about" className="btn-primary mt-8">
           Our story

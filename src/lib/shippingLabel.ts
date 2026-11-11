@@ -39,7 +39,7 @@ export async function downloadShippingLabel(order: Order) {
 
   // Header: logo, order number and date.
   if (logo) doc.addImage(logo, "PNG", M, y, 48, 48 * (392 / 2045));
-  else doc.setFont("helvetica", "bold").setFontSize(20).text("EMPULSE", M, y + 7);
+  else doc.setFont("helvetica", "bold").setFontSize(20).text("LEVISH", M, y + 7);
   doc.setFont("helvetica", "bold").setFontSize(14).text(`Order #${orderNo}`, W - M, y + 4, { align: "right" });
   doc
     .setFont("helvetica", "normal")
@@ -100,7 +100,7 @@ export async function downloadShippingLabel(order: Order) {
   doc.setFont("helvetica", "bold").setFontSize(9).text("FROM", M, y);
   doc.setFont("helvetica", "normal").text(`Levish · levish.store · WhatsApp ${contact.whatsapp}`, M + 13, y);
   y += 5;
-  doc.setFontSize(8.5).text("First check then pay. If undelivered, please return to sender. Thank you for shopping with Empulse!", M, y);
+  doc.setFontSize(8.5).text("If undelivered, please return to sender. Thank you for shopping with Levish!", M, y);
 
   // Cut line across the middle of the page.
   doc.setLineDashPattern([2, 2], 0).setLineWidth(0.3).setDrawColor(150).line(0, H, W, H);

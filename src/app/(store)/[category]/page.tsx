@@ -70,7 +70,7 @@ function brandLine(list: Product[]) {
   return `${top.slice(0, -1).join(", ")} and ${top[top.length - 1]}`;
 }
 
-const PROMISE = "Check before you pay. Free shipping over Rs. 5,000 across Pakistan.";
+const PROMISE = "Free shipping over Rs. 5,000 across Pakistan.";
 
 function listingMeta(input: { title: string; lead: string; path: string; list: Product[] }) {
   const brands = brandLine(input.list);

@@ -25,7 +25,7 @@ export function plainDescription(text: string | undefined, max = 160) {
 export function productSummary(product: Product) {
   const brand = product.brand && !product.name.toLowerCase().includes(product.brand.toLowerCase()) ? ` by ${product.brand}` : "";
   const color = product.color && product.color !== "—" ? ` in ${product.color}` : "";
-  return `${product.name.replace(/\.$/, "")}${brand}${color}, Rs. ${product.price.toLocaleString()}. 100% original, check before you pay, delivery across Pakistan.`;
+  return `${product.name.replace(/\.$/, "")}${brand}${color}, Rs. ${product.price.toLocaleString()}. 100% original, delivery across Pakistan.`;
 }
 
 const returnPolicy = {
