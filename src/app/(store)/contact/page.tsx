@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { contact } from "@/data/contact";
+import { ContactForm } from "@/components/ContactForm";
 import { pageMeta } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta({
@@ -29,9 +30,15 @@ const channels = [
   },
   {
     title: "Instagram",
-    text: "@empulse.store",
+    text: contact.instagramHandle,
     href: contact.instagram,
     icon: "instagram" as const,
+  },
+  {
+    title: "TikTok",
+    text: contact.tiktokHandle,
+    href: contact.tiktok,
+    icon: "tiktok" as const,
   },
   {
     title: "Location",
@@ -90,62 +97,13 @@ export default function ContactPage() {
           })}
         </div>
 
-        <form className="card-warm mx-auto mt-8 max-w-3xl space-y-5 p-6 sm:p-8" action="#" method="post">
-          <div>
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Send a message</h2>
-            <p className="mt-1 text-sm text-[var(--muted)]">We reply within 24–48 hours on business days.</p>
-          </div>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div>
-              <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
-                Name
-              </label>
-              <input id="name" name="name" type="text" required className="input-warm" placeholder="Your name" />
-            </div>
-            <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
-                Email
-              </label>
-              <input id="email" name="email" type="email" required className="input-warm" placeholder="you@example.com" />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="subject" className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
-              Subject
-            </label>
-            <select id="subject" name="subject" className="input-warm">
-              <option value="order">Order / Shipping</option>
-              <option value="return">Returns / Exchanges</option>
-              <option value="product">Product Question</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
-              Message
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              rows={5}
-              required
-              className="input-warm resize-y"
-              placeholder="How can we help?"
-            />
-          </div>
-          <button type="submit" className="btn-primary">
-            Send Message
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-          </button>
-        </form>
+        <ContactForm />
       </div>
     </div>
   );
 }
 
-function ChannelIcon({ name }: { name: "email" | "whatsapp" | "facebook" | "instagram" | "location" }) {
+function ChannelIcon({ name }: { name: "email" | "whatsapp" | "facebook" | "instagram" | "tiktok" | "location" }) {
   if (name === "email") {
     return (
       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -173,6 +131,13 @@ function ChannelIcon({ name }: { name: "email" | "whatsapp" | "facebook" | "inst
         <rect x="3.5" y="3.5" width="17" height="17" rx="5" strokeWidth="1.6" />
         <circle cx="12" cy="12" r="4" strokeWidth="1.6" />
         <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+  if (name === "tiktok") {
+    return (
+      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
       </svg>
     );
   }

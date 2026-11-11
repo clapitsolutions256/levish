@@ -1,6 +1,7 @@
 import { SITE_URL } from "@/lib/site";
 import { assets } from "@/data/assets";
 import { bankTransfer } from "@/data/payment";
+import { contact } from "@/data/contact";
 
 // Emails go through Resend (resend.com). Set RESEND_API_KEY to turn them on.
 // ORDER_EMAIL_FROM must use a domain verified in Resend, e.g. "Levish <orders@levish.store>".
@@ -68,7 +69,8 @@ function frame(content: string) {
           ${content}
           <tr><td style="padding:24px 32px 32px;text-align:center;font-size:12px;line-height:1.7;color:${MUTED}">
             Nationwide delivery · 100% original<br>
-            Questions? Just reply to this email.
+            Questions? Reply to this email or message us on <a href="${contact.whatsappHref}" style="color:${INK};font-weight:600">WhatsApp ${contact.whatsapp}</a><br>
+            <a href="${contact.instagram}" style="color:${MUTED}">Instagram</a> · <a href="${contact.facebook}" style="color:${MUTED}">Facebook</a> · <a href="${contact.tiktok}" style="color:${MUTED}">TikTok</a>
           </td></tr>
         </table>
       </td></tr>
@@ -249,4 +251,19 @@ export function sendNewOrderAlert(order: OrderEmail) {
 /** A link to choose a new password. */
 export function sendPasswordReset(email: string, name: string, link: string) {
   return send(email, "Reset your Levish password", resetHtml(name, link));
+}
+
+export type ContactMessage = { name: string; email: string; subject: string; message: string };
+
+/** A message from the contact form. Replying goes straight to the customer. */
+export function sendContactMessage(msg: ContactMessage) {
+  const to = (process.env.ORDER_ALERT_EMAIL || DEFAULT_ALERT_TO).split(",").map((address) => address.trim());
+  const html = frame(`
+          <tr><td style="padding:24px 32px 0">
+            <p style="margin:0;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#4f7d57">New message</p>
+            <h1 style="margin:10px 0 0;font-size:20px;line-height:1.3;color:${INK}">${escape(msg.subject)}</h1>
+            <p style="margin:8px 0 0;font-size:13px;color:${MUTED}">From ${escape(msg.name)} · <a href="mailto:${escape(msg.email)}" style="color:${INK}">${escape(msg.email)}</a></p>
+            <div style="margin-top:16px;padding:16px;border-radius:14px;background:${PAPER};font-size:14px;line-height:1.7;color:${INK};white-space:pre-wrap">${escape(msg.message)}</div>
+          </td></tr>`);
+  return send(to, `Contact form · ${msg.subject} · ${msg.name}`, html, msg.email);
 }

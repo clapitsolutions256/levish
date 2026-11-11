@@ -1,6 +1,6 @@
 import type { Product } from "@/types";
 import { assets } from "@/data/assets";
-import { contact } from "@/data/contact";
+import { contact, socialLinks } from "@/data/contact";
 import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 
 const FREE_SHIPPING_FROM = 5000;
@@ -57,14 +57,13 @@ export function siteGraphJsonLd() {
         "@type": "Organization",
         "@id": `${SITE_URL}/#organization`,
         name: SITE_NAME,
-        alternateName: "Empulse",
         url: SITE_URL,
         logo: absoluteUrl(assets.logo),
         email: contact.email,
         telephone: contact.phone,
         address: { "@type": "PostalAddress", addressLocality: "Lahore", addressCountry: "PK" },
         hasMerchantReturnPolicy: returnPolicy,
-        sameAs: [contact.facebook, contact.instagram],
+        sameAs: socialLinks,
         contactPoint: {
           "@type": "ContactPoint",
           telephone: contact.phone,
