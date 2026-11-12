@@ -10,13 +10,12 @@ export type StyleCategory = {
   image: string;
 };
 
-const SPEED = 35; // px per second, like the partners strip
+const SPEED = 45; // px per second
 
 export function ShopByStyle({ categories }: { categories: StyleCategory[] }) {
   const scroller = useRef<HTMLDivElement>(null);
   const position = useRef(0);
   const holdUntil = useRef(0);
-  const hovering = useRef(false);
   const [looping, setLooping] = useState(false);
 
   // Loop only when one set of cards is wider than the row.
@@ -54,7 +53,8 @@ export function ShopByStyle({ categories }: { categories: StyleCategory[] }) {
       last = now;
       const width = loopWidth();
       if (Math.abs(el.scrollLeft - position.current) > 2) position.current = el.scrollLeft; // user scrolled
-      if (!hovering.current && now > holdUntil.current && width > 0) {
+      // Keeps moving on phones and computers; it only waits a moment after someone swipes or clicks the arrows.
+      if (now > holdUntil.current && width > 0) {
         position.current += SPEED * dt;
         if (position.current >= width) position.current -= width;
         el.scrollLeft = position.current;
@@ -124,8 +124,6 @@ export function ShopByStyle({ categories }: { categories: StyleCategory[] }) {
         <div
           ref={scroller}
           className="flex gap-5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          onMouseEnter={() => (hovering.current = true)}
-          onMouseLeave={() => (hovering.current = false)}
           onTouchStart={() => pause(4000)}
           onTouchEnd={() => pause(2500)}
           onWheel={() => pause(2500)}
