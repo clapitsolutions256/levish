@@ -10,7 +10,13 @@ function hostname(request: NextRequest) {
 }
 
 export function proxy(request: NextRequest) {
-  if (!COMING_SOON_HOSTS.has(hostname(request))) return NextResponse.next();
+  const host = hostname(request);
+  // The store lives at www; the bare domain forwards there on every host (Vercel used to do this itself).
+  if (host === "levish.store") {
+    const { pathname, search } = request.nextUrl;
+    return NextResponse.redirect(`https://www.levish.store${pathname}${search}`, 308);
+  }
+  if (!COMING_SOON_HOSTS.has(host)) return NextResponse.next();
 
   const { pathname } = request.nextUrl;
   if (
