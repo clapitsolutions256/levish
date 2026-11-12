@@ -8,6 +8,7 @@ import { ProductsPausedNotice } from "@/components/ComingSoon";
 import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbJsonLd, categoryLabel, productJsonLd, productSummary } from "@/lib/seo";
 import { pageMeta, SITE_NAME } from "@/lib/site";
+import { articleKey, differentArticles } from "@/lib/showcase";
 import { ProductDetail } from "./ProductDetail";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ color?: string }> };
@@ -70,12 +71,16 @@ export default async function ProductPage({ params, searchParams }: Props) {
     notFound();
   }
 
-  const related = (await getActiveProducts())
-    .filter((item) => item.categoryId === product.categoryId && item.id !== product.id)
-    .slice(0, 4);
+  // Other pieces, not this one in other colours: its colours are already on the page.
+  const article = articleKey(product);
+  const related = differentArticles(
+    (await getActiveProducts()).filter((item) => item.categoryId === product.categoryId && articleKey(item) !== article),
+    4
+  );
 
+  // Extra room at the bottom on phones so the buy bar never covers the last row.
   return (
-    <div className="mx-auto max-w-[100rem] px-4 py-8 sm:px-6 lg:px-10">
+    <div className="mx-auto max-w-[100rem] px-4 py-8 max-md:pb-24 sm:px-6 lg:px-10">
       <JsonLd data={productJsonLd(product)} />
       <JsonLd
         data={breadcrumbJsonLd([

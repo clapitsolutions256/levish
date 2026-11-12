@@ -27,7 +27,6 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [paidTotal, setPaidTotal] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
-  const [sameAsShipping, setSameAsShipping] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -334,8 +333,13 @@ export default function CheckoutPage() {
                   </div>
                 </div>
                 <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-[var(--foreground)] mb-1">Phone number</label>
+                  <input id="phone" name="phone" type="tel" inputMode="tel" required autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="03XX XXXXXXX" />
+                  <p className="mt-1 text-xs text-[var(--muted)]">We&apos;ll call this number to confirm your order.</p>
+                </div>
+                <div>
                   <label htmlFor="address" className="block text-sm font-medium text-[var(--foreground)] mb-1">Address</label>
-                  <input id="address" name="address" type="text" required autoComplete="street-address" value={address} onChange={(event) => setAddress(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Street address" />
+                  <input id="address" name="address" type="text" required autoComplete="street-address" value={address} onChange={(event) => setAddress(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="House no., street, area" />
                 </div>
                 <div>
                   <label htmlFor="address2" className="block text-sm font-medium text-[var(--foreground)] mb-1">Apartment, suite, etc. (optional)</label>
@@ -347,63 +351,17 @@ export default function CheckoutPage() {
                     <input id="city" name="city" type="text" required autoComplete="address-level2" value={city} onChange={(event) => setCity(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="City" />
                   </div>
                   <div>
-                    <label htmlFor="state" className="block text-sm font-medium text-[var(--foreground)] mb-1">State / Province</label>
-                    <input id="state" name="state" type="text" autoComplete="address-level1" value={stateName} onChange={(event) => setStateName(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="State" />
+                    <label htmlFor="state" className="block text-sm font-medium text-[var(--foreground)] mb-1">Province (optional)</label>
+                    <input id="state" name="state" type="text" autoComplete="address-level1" value={stateName} onChange={(event) => setStateName(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="e.g. Punjab" />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="postalCode" className="block text-sm font-medium text-[var(--foreground)] mb-1">Postal code</label>
-                    <input id="postalCode" name="postalCode" type="text" autoComplete="postal-code" value={postalCode} onChange={(event) => setPostalCode(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Postal code" />
-                  </div>
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-[var(--foreground)] mb-1">Phone</label>
-                    <input id="phone" name="phone" type="tel" required autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="03XX XXXXXXX" />
+                    <label htmlFor="postalCode" className="block text-sm font-medium text-[var(--foreground)] mb-1">Postal code (optional)</label>
+                    <input id="postalCode" name="postalCode" type="text" inputMode="numeric" autoComplete="postal-code" value={postalCode} onChange={(event) => setPostalCode(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Postal code" />
                   </div>
                 </div>
               </div>
-            </section>
-
-            {/* Billing address */}
-            <section className="bg-[var(--card)] rounded-2xl p-6 border border-[var(--border)]">
-              <h2 className="section-heading mb-4">Billing address</h2>
-              <label className="flex items-center gap-2 cursor-pointer mb-4">
-                <input
-                  type="checkbox"
-                  checked={sameAsShipping}
-                  onChange={(e) => setSameAsShipping(e.target.checked)}
-                  className="rounded border-[var(--border)] text-[var(--accent)] focus:ring-[var(--accent)]"
-                />
-                <span className="text-sm text-[var(--foreground)]">Same as delivery address</span>
-              </label>
-              {!sameAsShipping && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="billFirstName" className="block text-sm font-medium text-[var(--foreground)] mb-1">First name</label>
-                      <input id="billFirstName" name="billFirstName" type="text" className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="First name" />
-                    </div>
-                    <div>
-                      <label htmlFor="billLastName" className="block text-sm font-medium text-[var(--foreground)] mb-1">Last name</label>
-                      <input id="billLastName" name="billLastName" type="text" className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Last name" />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="billAddress" className="block text-sm font-medium text-[var(--foreground)] mb-1">Address</label>
-                    <input id="billAddress" name="billAddress" type="text" className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Street address" />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="billCity" className="block text-sm font-medium text-[var(--foreground)] mb-1">City</label>
-                      <input id="billCity" name="billCity" type="text" className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="City" />
-                    </div>
-                    <div>
-                      <label htmlFor="billPostalCode" className="block text-sm font-medium text-[var(--foreground)] mb-1">Postal code</label>
-                      <input id="billPostalCode" name="billPostalCode" type="text" className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Postal code" />
-                    </div>
-                  </div>
-                </div>
-              )}
             </section>
 
             {/* Payment method & bank details */}

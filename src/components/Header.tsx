@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { assets } from "@/data/assets";
 import { OfferTicker } from "@/components/OfferTicker";
 import { ShopMenu } from "@/components/ShopMenu";
-import { OPEN_SHOP_SHEET } from "@/components/MobileShopSheet";
+import { OPEN_SHOP_SHEET } from "@/lib/shopSheet";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { clearCustomerSession, readCustomerSession, type CustomerSession } from "@/lib/customerSession";

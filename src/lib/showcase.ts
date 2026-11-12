@@ -150,7 +150,7 @@ const COLOUR_WORDS = new Set(
 );
 
 // One product per article: "T-Shirt Yellow" and "T-Shirt Red" are colours of the same article.
-function articleKey(product: Product) {
+export function articleKey(product: Product) {
   const colours = [product.color, ...(product.variants ?? []).map((variant) => variant.color)]
     .map((colour) => colour?.trim().toLowerCase())
     .filter((colour): colour is string => Boolean(colour) && colour !== "—");

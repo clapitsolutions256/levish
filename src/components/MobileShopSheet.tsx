@@ -7,7 +7,7 @@ import { AnimatePresence, motion, useDragControls, useReducedMotion } from "moti
 import { menNavCategories, navCategories, type Gender } from "@/data/categories";
 import type { MenuThumbs } from "@/lib/showcase";
 
-export const OPEN_SHOP_SHEET = "empulse-open-shop";
+export { OPEN_SHOP_SHEET } from "@/lib/shopSheet";
 
 const sections: { id: Gender; label: string; title: string; links: { id: string; name: string; slug: string }[] }[] = [
   { id: "women", label: "Women", title: "The women’s edit", links: navCategories },

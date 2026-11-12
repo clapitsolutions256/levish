@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { motion } from "motion/react";
+import dynamic from "next/dynamic";
 import { useCart } from "@/context/CartContext";
-import { MobileShopSheet, OPEN_SHOP_SHEET } from "@/components/MobileShopSheet";
+import { OPEN_SHOP_SHEET } from "@/lib/shopSheet";
 import type { MenuThumbs } from "@/lib/showcase";
+
+// The sheet and its animation library load the first time someone opens it, not with every page.
+const MobileShopSheet = dynamic(() => import("@/components/MobileShopSheet").then((mod) => mod.MobileShopSheet), { ssr: false });
 
 type Tab = "home" | "shop" | "search" | "cart" | "account";
 
@@ -36,11 +39,15 @@ export function FloatingNav({ thumbs }: { thumbs: MenuThumbs }) {
   const pathname = usePathname();
   const { itemCount, openCart } = useCart();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetUsed, setSheetUsed] = useState(false);
   const [badgePop, setBadgePop] = useState(false);
   const active: Tab = sheetOpen ? "shop" : tabFor(pathname);
   const closeSheet = useCallback(() => setSheetOpen(false), []);
 
   useEffect(() => setSheetOpen(false), [pathname]);
+  useEffect(() => {
+    if (sheetOpen) setSheetUsed(true);
+  }, [sheetOpen]);
 
   // The header's menu button opens the same sheet.
   useEffect(() => {
@@ -63,38 +70,36 @@ export function FloatingNav({ thumbs }: { thumbs: MenuThumbs }) {
     };
   }, []);
 
+  // Every tab shows its name under the icon, so it is clear what each one does.
   const tabClass = (tab: Tab) =>
-    `relative flex h-12 items-center justify-center gap-2 rounded-full px-3.5 text-[13px] font-semibold transition-colors ${
-      active === tab ? "text-white [&:hover]:!text-white" : "text-[var(--foreground)]/70 [&:hover]:!text-[var(--foreground)]"
+    `flex h-14 w-full flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors ${
+      active === tab ? "text-[var(--accent)]" : "text-[var(--foreground)]/60 [&:hover]:!text-[var(--foreground)]"
     }`;
 
   const body = (tab: Tab) => (
     <>
-      {active === tab ? (
-        <motion.span layoutId="dock-active" className="clay-ink absolute inset-0 rounded-full" transition={{ type: "spring", stiffness: 460, damping: 36 }} aria-hidden="true" />
-      ) : null}
-      <span className={`relative ${tab === "cart" && badgePop ? "cart-pop" : ""}`}>
-        <svg className="h-[22px] w-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <span
+        className={`relative flex h-8 w-12 items-center justify-center rounded-full transition-colors duration-200 ${
+          active === tab ? "clay-ink text-white" : ""
+        } ${tab === "cart" && badgePop ? "cart-pop" : ""}`}
+      >
+        <svg className="h-[21px] w-[21px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d={icons[tab]} />
         </svg>
         {tab === "cart" && itemCount > 0 ? (
-          <span className="absolute -right-2 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[var(--sage)] px-1 text-[10px] font-bold text-[var(--accent)] ring-2 ring-white">
+          <span className="absolute -right-0.5 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[var(--sage)] px-1 text-[10px] font-bold text-[var(--accent)] ring-2 ring-white">
             {itemCount > 99 ? "99+" : itemCount}
           </span>
         ) : null}
       </span>
-      {active === tab ? (
-        <motion.span className="relative" initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: "auto" }} transition={{ duration: 0.2 }}>
-          {labels[tab]}
-        </motion.span>
-      ) : null}
+      <span className={active === tab ? "font-semibold" : ""}>{labels[tab]}</span>
     </>
   );
 
   return (
     <>
       <nav aria-label="Mobile navigation" className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 md:hidden">
-        <motion.ul layout className="glass-solid flex h-16 items-center justify-between rounded-full px-2">
+        <ul className="glass-solid grid h-[4.25rem] grid-cols-5 items-center rounded-[1.75rem] px-1">
           <li>
             <Link href="/" onClick={tap} aria-label="Home" aria-current={active === "home" ? "page" : undefined} className={tabClass("home")}>
               {body("home")}
@@ -137,9 +142,9 @@ export function FloatingNav({ thumbs }: { thumbs: MenuThumbs }) {
               {body("account")}
             </Link>
           </li>
-        </motion.ul>
+        </ul>
       </nav>
-      <MobileShopSheet open={sheetOpen} onClose={closeSheet} thumbs={thumbs} initial={pathname.startsWith("/men") ? "men" : "women"} />
+      {sheetUsed ? <MobileShopSheet open={sheetOpen} onClose={closeSheet} thumbs={thumbs} initial={pathname.startsWith("/men") ? "men" : "women"} /> : null}
     </>
   );
 }

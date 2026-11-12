@@ -93,8 +93,11 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 md:gap-7">
-          {differentArticles(newProducts, 5).map((product, i) => (
-            <ProductCard key={product.id} product={product} index={i} />
+          {/* Six fill whole rows of two or three; tablets show four and desktops five. */}
+          {differentArticles(newProducts, 6).map((product, i) => (
+            <div key={product.id} className={i === 4 ? "md:max-lg:hidden" : i === 5 ? "md:hidden" : undefined}>
+              <ProductCard product={product} index={i} />
+            </div>
           ))}
         </div>
       </section>

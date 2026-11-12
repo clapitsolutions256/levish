@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { Product } from "@/types";
 import { ProductPurchase } from "@/components/ProductPurchase";
@@ -10,6 +10,8 @@ import { galleryFor, isSold, uniqueValues } from "@/lib/variants";
 import { SoldBadge } from "@/components/SoldBadge";
 import { SaleTag } from "@/components/SaleTag";
 import { trackViewContent } from "@/lib/metaPixel";
+import { ProductPromises } from "@/components/ProductPromises";
+import { ProductBuyBar } from "@/components/ProductBuyBar";
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
@@ -22,6 +24,7 @@ export function ProductDetail({ product, initialColor }: { product: Product; ini
   });
   const photos = galleryFor(product, color);
   const [active, setActive] = useState(0);
+  const purchase = useRef<HTMLDivElement>(null);
   const onColorChange = useCallback((next: string) => {
     setColor((currentColor) => {
       if (currentColor !== next) setActive(0);
@@ -80,10 +83,8 @@ export function ProductDetail({ product, initialColor }: { product: Product; ini
             <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-sm font-semibold text-red-600">{product.salePercent}% off</span>
           ) : null}
         </div>
-        {product.description ? <p className="mt-4 whitespace-pre-line text-base leading-6 text-[var(--muted)]">{product.description}</p> : null}
-
         {photos.length > 1 ? (
-          <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
+          <div className="mt-5 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {photos.map((photo, index) => (
               <button
                 key={`${photo}-${index}`}
@@ -101,9 +102,20 @@ export function ProductDetail({ product, initialColor }: { product: Product; ini
           </div>
         ) : null}
 
-        <ProductPurchase compact product={product} onColorChange={onColorChange} initialColor={color} />
-        <p className="mt-3 text-sm leading-6 text-[var(--muted)]">Free shipping on orders above Rs. 5,000. Easy returns.</p>
+        <div ref={purchase} className="scroll-mt-24">
+          <ProductPurchase compact product={product} onColorChange={onColorChange} initialColor={color} />
+        </div>
+        <ProductPromises />
+
+        {/* Details come after the buy button, so choosing a size never needs a long scroll. */}
+        {product.description ? (
+          <div className="mt-6 border-t border-[var(--border)] pt-5">
+            <h2 className="text-base font-semibold text-[var(--foreground)]">Product details</h2>
+            <p className="mt-2 whitespace-pre-line text-base leading-7 text-[var(--muted)]">{product.description}</p>
+          </div>
+        ) : null}
       </div>
+      {isSold(product) ? null : <ProductBuyBar name={product.name} price={product.price} target={purchase} />}
     </div>
   );
 }
