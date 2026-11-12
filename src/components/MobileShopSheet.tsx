@@ -14,15 +14,6 @@ const sections: { id: Gender; label: string; title: string; links: { id: string;
   { id: "men", label: "Men", title: "The men’s edit", links: menNavCategories },
 ];
 
-const helpLinks = [
-  { name: "About", href: "/about" },
-  { name: "FAQs", href: "/faqs" },
-  { name: "Returns", href: "/returns" },
-  { name: "Contact", href: "/contact" },
-  { name: "Blogs", href: "/blog" },
-  { name: "Privacy", href: "/privacy" },
-];
-
 /** Phone shop menu: a bottom sheet with Women / Men tabs and photo cards for every category. */
 export function MobileShopSheet({
   open,
@@ -177,15 +168,6 @@ export function MobileShopSheet({
                 ].map((item) => (
                   <Link key={item.href} href={item.href} onClick={onClose} className="skeuo rounded-2xl py-3 text-center text-xs font-semibold [&:hover]:!text-[var(--foreground)]">
                     {item.label}
-                  </Link>
-                ))}
-              </div>
-
-              <p className="mb-2 mt-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">Help</p>
-              <div className="flex flex-wrap gap-2">
-                {helpLinks.map((link) => (
-                  <Link key={link.href} href={link.href} onClick={onClose} className="rounded-full bg-white/70 px-3.5 py-1.5 text-xs font-medium text-[var(--foreground)]/80 [&:hover]:!text-[var(--foreground)]">
-                    {link.name}
                   </Link>
                 ))}
               </div>
