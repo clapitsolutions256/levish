@@ -10,6 +10,9 @@ const CLOTHING = new Set(["women", "men", "unisex"]);
 
 // Built-in styles keep their order and their existing pages.
 const BUILT_IN = [
+  { key: "undergarments", name: "Lingerie", href: "/undergarments" },
+  { key: "bodysuit", name: "Bodysuits", href: "/bodysuits" },
+  { key: "Co-ord Sets", name: "Co-ord Sets", href: "/co-ord-sets" },
   { key: "jacket", name: "Jackets", href: "/jackets" },
   { key: "hoodie", name: "Hoodies", href: "/hoodies" },
   { key: "sweatshirt", name: "Sweatshirts", href: "/sweatshirts" },

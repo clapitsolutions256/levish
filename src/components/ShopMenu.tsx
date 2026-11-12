@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { menNavCategories, navCategories } from "@/data/categories";
+import type { MenuThumbs } from "@/lib/showcase";
 
 type Section = "women" | "men";
 
@@ -56,9 +57,10 @@ const panels: Record<Section, { label: string; title: string; text: string; link
   },
 };
 
-function GenderPanel({ section, onNavigate }: { section: Section; onNavigate: () => void }) {
+function GenderPanel({ section, onNavigate, thumbs }: { section: Section; onNavigate: () => void; thumbs?: MenuThumbs }) {
   const panel = panels[section];
-  const clothing = panel.links.filter((cat) => cat.id !== "shoes");
+  // Only styles with live products, like the phone menu, so no link opens an empty page.
+  const clothing = panel.links.filter((cat) => cat.id !== "shoes" && (!thumbs || thumbs[section][cat.id]));
   const footwear = panel.links.filter((cat) => cat.id === "shoes");
   return (
     <div className="grid grid-cols-[16rem_minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-8">
@@ -130,7 +132,7 @@ function GenderPanel({ section, onNavigate }: { section: Section; onNavigate: ()
  * Men / Women toggles for the desktop header. Clicking one opens a full-width
  * panel under the header bar, so the nearest positioned ancestor must be the header row.
  */
-export function ShopMenu() {
+export function ShopMenu({ thumbs }: { thumbs?: MenuThumbs }) {
   const pathname = usePathname();
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<Record<Section, HTMLButtonElement | null>>({ women: null, men: null });
@@ -204,7 +206,7 @@ export function ShopMenu() {
           id="shop-menu-panel"
           className="glass animate-fade-down absolute inset-x-0 top-full mt-2 rounded-[1.6rem] p-3"
         >
-          <GenderPanel section={open} onNavigate={close} />
+          <GenderPanel section={open} onNavigate={close} thumbs={thumbs} />
         </div>
       )}
     </div>

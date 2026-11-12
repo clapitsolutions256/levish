@@ -18,6 +18,8 @@ const clothingTypes = [
   "Jacket",
   "Blazers",
   "Undergarments",
+  "Bodysuits",
+  "Co-ord Sets",
 ];
 
 export const productCategories: {

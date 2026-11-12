@@ -10,6 +10,7 @@ import { ProductPurchase } from "@/components/ProductPurchase";
 import { SwipeGallery } from "@/components/SwipeGallery";
 import { ImageMagnifier } from "@/components/ImageMagnifier";
 import { galleryFor, isSold, uniqueValues } from "@/lib/variants";
+import { sameType } from "@/lib/productTypes";
 import { SoldBadge } from "@/components/SoldBadge";
 import { SaleTag } from "@/components/SaleTag";
 
@@ -172,7 +173,7 @@ export function ProductQuickView({ product, onClose }: { product: Product; onClo
 
         <div className="flex min-h-0 flex-col px-5 pt-4 md:h-full md:px-8 md:py-8">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--accent)]">
-            {[product.subcategory, product.categoryId].filter(Boolean).join(" · ")}
+            {[sameType(product.subcategory, "undergarments") ? "Lingerie" : product.subcategory, product.categoryId].filter(Boolean).join(" · ")}
           </p>
           <h2 id={titleId} className="section-heading mt-1.5 text-[var(--foreground)]">
             {product.name}

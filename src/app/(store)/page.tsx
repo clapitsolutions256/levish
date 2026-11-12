@@ -52,7 +52,7 @@ export default async function HomePage() {
       links: [
         { label: "Sweatshirts", href: "/sweatshirts?gender=women" },
         { label: "Trousers", href: "/trousers?gender=women" },
-        { label: "Undergarments", href: "/undergarments?gender=women" },
+        { label: "Lingerie", href: "/undergarments?gender=women" },
       ],
       pieces: pieces(sectionPieces(catalog, wornBy("women"))),
       tone: "sage",

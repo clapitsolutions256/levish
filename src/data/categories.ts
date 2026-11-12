@@ -33,11 +33,13 @@ export const menNavCategories: { id: string; name: string; slug: string }[] = [
 ];
 
 export const navCategories: { id: string; name: string; slug: string; children: { name: string; slug: string }[] }[] = [
+  { id: "undergarments", name: "Lingerie", slug: "undergarments?gender=women", children: [] },
+  { id: "bodysuits", name: "Bodysuits", slug: "bodysuits?gender=women", children: [] },
+  { id: "co-ord-sets", name: "Co-ord Sets", slug: "co-ord-sets?gender=women", children: [] },
   { id: "trouser", name: "Trouser", slug: "trousers?gender=women", children: [] },
   { id: "sweatshirt", name: "Sweatshirt", slug: "sweatshirts?gender=women", children: [] },
   { id: "jeans", name: "Jeans", slug: "jeans?gender=women", children: [] },
   { id: "hoodies", name: "Hoodies", slug: "hoodies?gender=women", children: [] },
   { id: "jackets", name: "Jackets", slug: "jackets?gender=women", children: [] },
   { id: "polos-tees", name: "Polo's & Tees", slug: "polos-and-tees?gender=women", children: [] },
-  { id: "undergarments", name: "Undergarments", slug: "undergarments?gender=women", children: [] },
 ];

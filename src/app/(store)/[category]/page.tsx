@@ -20,7 +20,15 @@ type Props = {
 
 const categorySlugs = categories.map((c) => c.slug);
 
-const stylePages: Record<string, { heading: string; subcategory: string }> = {
+// `search` is the name used in page titles for Google when it differs from the heading;
+// `womenOnly` styles are titled "for Women" rather than "for Men & Women".
+const stylePages: Record<string, { heading: string; subcategory: string; search?: string; womenOnly?: boolean }> = {
+  undergarments: { heading: "Lingerie", subcategory: "undergarments", search: "Lingerie & Undergarments", womenOnly: true },
+  lingerie: { heading: "Lingerie", subcategory: "undergarments", search: "Lingerie & Undergarments", womenOnly: true },
+  bodysuits: { heading: "Bodysuits", subcategory: "bodysuit", womenOnly: true },
+  bodysuit: { heading: "Bodysuits", subcategory: "bodysuit", womenOnly: true },
+  "co-ord-sets": { heading: "Co-ord Sets", subcategory: "Co-ord Sets", womenOnly: true },
+  "co-ord-set": { heading: "Co-ord Sets", subcategory: "Co-ord Sets", womenOnly: true },
   jackets: { heading: "Jackets", subcategory: "jacket" },
   jacket: { heading: "Jackets", subcategory: "jacket" },
   hoodies: { heading: "Hoodies", subcategory: "hoodie" },
@@ -34,6 +42,9 @@ const stylePages: Record<string, { heading: string; subcategory: string }> = {
 };
 
 const styleCanonical: Record<string, string> = {
+  lingerie: "/undergarments",
+  bodysuit: "/bodysuits",
+  "co-ord-set": "/co-ord-sets",
   jacket: "/jackets",
   hoodie: "/hoodies",
   trouser: "/trousers",
@@ -96,12 +107,14 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   // Type pages, with or without the Women / Men filter.
   if (style || !categories.some((item) => item.slug === slug)) {
     const base = style ? styleCanonical[slug] ?? `/${slug}` : `/${slug}`;
-    const heading = style?.heading ?? typeLabel(products, slug);
+    const heading = style?.search ?? style?.heading ?? typeLabel(products, slug);
     if (!heading) return { title: "Shop" };
     const all = style ? products.filter((product) => sameType(product.subcategory, style.subcategory)) : productsOfType(products, slug);
     const list = genderFilter ? all.filter((product) => forGender(product, genderFilter)) : all;
     return listingMeta({
-      title: genderFilter ? `${genderInfo[genderFilter].who}'s ${heading} in Pakistan` : `${heading} for Men & Women in Pakistan`,
+      title: genderFilter
+        ? `${genderInfo[genderFilter].who}'s ${heading} in Pakistan`
+        : `${heading} for ${style?.womenOnly ? "Women" : "Men & Women"} in Pakistan`,
       lead: `Shop original ${genderFilter ? `${possessive(genderFilter)} ` : ""}${heading.toLowerCase()}`,
       path: genderFilter ? `${base}?gender=${genderFilter}` : base,
       list,
@@ -238,6 +251,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
 
   const isNewFilter = filter === "new";
   const isShoes = category.id === "shoes";
+  const stocked = gender
+    ? [...new Set((await getActiveProducts()).filter((product) => forGender(product, gender)).map((product) => typePath(product.subcategory ?? "")))]
+    : [];
 
   let list: Product[];
   if (gender && !isNewFilter) {
@@ -290,7 +306,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         {category.description && !isShoes && (
           <p className="type-copy mt-2 text-[var(--muted)]">{category.description}</p>
         )}
-        {gender && <GenderShopNav gender={gender} active="all" />}
+        {gender && <GenderShopNav gender={gender} active="all" stocked={stocked} />}
         {isShoes && !isNewFilter && <GenderFilter path="/shoes" active={genderFilter} />}
       </div>
       {list.length === 0 ? (

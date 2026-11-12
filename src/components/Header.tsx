@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { assets } from "@/data/assets";
 import { OfferTicker } from "@/components/OfferTicker";
 import { ShopMenu } from "@/components/ShopMenu";
+import type { MenuThumbs } from "@/lib/showcase";
 import { OPEN_SHOP_SHEET } from "@/lib/shopSheet";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -23,7 +24,7 @@ const helpLinks = [
 const iconButton =
   "clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--foreground)] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0";
 
-export function Header() {
+export function Header({ thumbs }: { thumbs?: MenuThumbs }) {
   const { itemCount, openCart } = useCart();
   const [profileOpen, setProfileOpen] = useState(false);
   const [helpMenuOpen, setHelpMenuOpen] = useState(false);
@@ -135,7 +136,7 @@ export function Header() {
       <div className="relative z-50 hidden px-4 pt-4 md:block lg:px-6">
         <div className="relative mx-auto grid max-w-[96rem] grid-cols-[1fr_auto_1fr] items-center gap-3 p-2">
           <div className="justify-self-start">
-            <ShopMenu />
+            <ShopMenu thumbs={thumbs} />
           </div>
 
           <Link

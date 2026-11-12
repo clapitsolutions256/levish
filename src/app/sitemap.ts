@@ -17,6 +17,8 @@ const styles = [
   { path: "/trousers", type: "trouser" },
   { path: "/jeans", type: "jeans" },
   { path: "/undergarments", type: "undergarments" },
+  { path: "/bodysuits", type: "bodysuit" },
+  { path: "/co-ord-sets", type: "Co-ord Sets" },
   { path: "/polos-and-tees", type: "Polos & Tees" },
 ];
 

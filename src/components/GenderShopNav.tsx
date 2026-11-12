@@ -4,19 +4,22 @@ import { typePath } from "@/lib/styles";
 
 const types = [
   { id: "all", label: "All" },
+  { id: "undergarments", label: "Lingerie" },
+  { id: "bodysuit", label: "Bodysuits" },
+  { id: "Co-ord Sets", label: "Co-ord Sets" },
   { id: "trouser", label: "Trouser" },
   { id: "sweatshirt", label: "Sweatshirt" },
   { id: "jeans", label: "Jeans" },
   { id: "hoodie", label: "Hoodies" },
   { id: "jacket", label: "Jackets" },
   { id: "polos-and-tees", label: "Polo's & Tees" },
-  { id: "undergarments", label: "Undergarments" },
 ] as const;
 
 export type GenderShopType = (typeof types)[number]["id"];
 
-// Undergarments and Polo's & Tees are only stocked for women.
-const menTypes = types.filter((type) => type.id !== "undergarments" && type.id !== "polos-and-tees");
+// Lingerie, bodysuits, co-ord sets and Polo's & Tees are only stocked for women.
+const womenOnly = new Set<string>(["undergarments", "bodysuit", "Co-ord Sets", "polos-and-tees"]);
+const menTypes = types.filter((type) => !womenOnly.has(type.id));
 
 // Each type lives on its own page (e.g. /hoodies) with the gender as a filter.
 function hrefFor(gender: Gender, type: GenderShopType) {
@@ -24,10 +27,14 @@ function hrefFor(gender: Gender, type: GenderShopType) {
   return `${typePath(type)}?gender=${gender}`;
 }
 
-export function GenderShopNav({ active, gender = "women" }: { active: GenderShopType; gender?: Gender }) {
+// `stocked` lists the type pages that have live products, so no button leads to an empty page.
+export function GenderShopNav({ active, gender = "women", stocked }: { active: GenderShopType; gender?: Gender; stocked?: string[] }) {
+  const shown = (gender === "men" ? menTypes : types).filter(
+    (type) => type.id === "all" || !stocked || stocked.includes(typePath(type.id))
+  );
   return (
     <div className="-mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
-      {(gender === "men" ? menTypes : types).map((type) => {
+      {shown.map((type) => {
         const selected = type.id === active;
         return (
           <Link

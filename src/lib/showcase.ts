@@ -88,6 +88,8 @@ const MENU_TYPES: Record<string, string> = {
   hoodies: "hoodie",
   jackets: "jacket",
   undergarments: "undergarments",
+  bodysuits: "bodysuit",
+  "co-ord-sets": "Co-ord Sets",
   "polos-tees": "Polos & Tees",
 };
 
