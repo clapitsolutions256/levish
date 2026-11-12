@@ -9,6 +9,7 @@ const types = [
   { id: "Co-ord Sets", label: "Co-ord Sets" },
   { id: "trouser", label: "Trouser" },
   { id: "sweatshirt", label: "Sweatshirt" },
+  { id: "sweaters", label: "Sweaters" },
   { id: "jeans", label: "Jeans" },
   { id: "hoodie", label: "Hoodies" },
   { id: "jacket", label: "Jackets" },
