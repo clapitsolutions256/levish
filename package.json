@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build",
+    "build:hostinger": "next build --webpack",
     "start": "next start",
     "lint": "eslint src",
     "seed": "node --env-file=.env scripts/seed.mjs"
