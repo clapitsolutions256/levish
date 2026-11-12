@@ -13,6 +13,12 @@ function wears(product: Product, gender: Gender) {
   return product.categoryId === gender || product.categoryId === "unisex";
 }
 
+// The store is mostly for women: their pieces lead, then unisex, then the rest, each in its own order.
+export function womenFirst(products: Product[]) {
+  const rank = (product: Product) => (!wears(product, "women") ? 2 : product.categoryId === "unisex" ? 1 : 0);
+  return [...products].sort((a, b) => rank(a) - rank(b));
+}
+
 function ofTypes(products: Product[], types: string[]) {
   return products.filter((product) => types.some((type) => sameType(product.subcategory, type)));
 }
@@ -32,10 +38,10 @@ export function orbitPieces(products: Product[], count = 6) {
   return picked.slice(0, count);
 }
 
-/** Outfits of a top, a bottom and (when stocked) shoes, alternating men's and women's. */
+/** Outfits of a top, a bottom and (when stocked) shoes, alternating women's and men's. */
 export function buildLooks(products: Product[], max = 6): Look[] {
   const available = products.filter((product) => !isSold(product));
-  const byGender = (["men", "women"] as const).map((gender) => {
+  const byGender = (["women", "men"] as const).map((gender) => {
     const mine = available.filter((product) => wears(product, gender));
     const tops = ofTypes(mine, TOPS);
     const bottoms = ofTypes(mine, BOTTOMS);

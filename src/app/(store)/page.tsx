@@ -9,7 +9,7 @@ import { Spotlight } from "@/components/showcase/Spotlight";
 import { StackedSections, type StackPanel } from "@/components/showcase/StackedSections";
 import { OrbitShowcase } from "@/components/showcase/OrbitShowcase";
 import { ShopTheLook } from "@/components/showcase/ShopTheLook";
-import { buildLooks, differentArticles, orbitPieces, sectionPieces, wornBy } from "@/lib/showcase";
+import { buildLooks, differentArticles, orbitPieces, sectionPieces, womenFirst, wornBy } from "@/lib/showcase";
 import type { Product } from "@/types";
 import { isSold } from "@/lib/variants";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
@@ -33,11 +33,15 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const catalog = await getActiveProducts();
+  // Women's pieces lead every section on the home page.
+  const catalog = womenFirst(await getActiveProducts());
   const newProducts = catalog.filter((product) => product.new);
   const saleProducts = catalog.filter((product) => product.salePercent);
   const styles = styleCards(catalog);
-  const spotlight = catalog.find((product) => product.featured && !isSold(product)) ?? catalog[0];
+  const spotlight =
+    catalog.find((product) => product.featured && !isSold(product) && wornBy("women")(product)) ??
+    catalog.find((product) => product.featured && !isSold(product)) ??
+    catalog[0];
   const pieces = (list: Product[]) => list.map(({ id, slug, name, image }) => ({ id, slug, name, image }));
   const panels: StackPanel[] = [
     {

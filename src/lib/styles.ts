@@ -1,6 +1,7 @@
 import type { Product } from "@/types";
 import { slugify } from "@/lib/catalog";
 import { sameType } from "@/lib/productTypes";
+import { wornBy } from "@/lib/showcase";
 
 export type StyleCard = { name: string; href: string; image: string };
 
@@ -69,5 +70,12 @@ export function styleCards(products: Product[]): StyleCard[] {
     const slug = slugify(type);
     if (slug) extra.push({ name: displayName(type), href: `/${slug}`, image: product.image });
   }
-  return [...cards, ...extra.sort((a, b) => a.name.localeCompare(b.name))];
+  // Styles women can shop come first, undergarments leading; the order is otherwise kept.
+  const forWomen = wornBy("women");
+  const rank = (card: StyleCard) => {
+    if (card.href === "/undergarments") return 0;
+    const kind = products.filter((product) => clothingType(product) && typePath(clothingType(product)) === card.href);
+    return kind.some(forWomen) ? 1 : 2;
+  };
+  return [...cards, ...extra.sort((a, b) => a.name.localeCompare(b.name))].sort((a, b) => rank(a) - rank(b));
 }
