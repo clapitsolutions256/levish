@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AdminAuthProvider, useAdminAuth } from "@/context/AdminAuthContext";
 import { AdminAuthGuard } from "./AuthGuard";
@@ -60,6 +60,12 @@ export function AdminAppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLoginPage = pathname === "/admin/login";
   const [background, setBackground] = useAdminBackground();
+  const scroller = useRef<HTMLDivElement>(null);
+
+  // The panel stays put and only its inside scrolls, so each new page starts at its top.
+  useEffect(() => {
+    scroller.current?.scrollTo({ top: 0 });
+  }, [pathname]);
 
   return (
     <AdminAuthProvider>
@@ -76,9 +82,12 @@ export function AdminAppShell({ children }: { children: React.ReactNode }) {
             <>
               <AdminChrome background={background.id} onBackground={setBackground} />
               <OrderAlerts />
-              <main className="relative px-3 pb-28 pt-24 sm:px-4 lg:pl-24 lg:pr-6">
-                <div className="admin-panel mx-auto min-h-[calc(100vh-9.5rem)] max-w-[96rem] rounded-[2rem]">
-                  {ADMIN_PAUSED ? <AdminPausedNotice /> : children}
+              {/* Fixed between the top bar and the dock; only the content inside the panel scrolls. */}
+              <main className="fixed inset-x-0 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] top-[5.25rem] px-3 sm:px-4 lg:pl-24 lg:pr-6">
+                <div className="admin-panel mx-auto h-full max-w-[96rem] rounded-[2rem]">
+                  <div ref={scroller} className="h-full overflow-y-auto overscroll-contain rounded-[2rem]">
+                    {ADMIN_PAUSED ? <AdminPausedNotice /> : children}
+                  </div>
                 </div>
               </main>
             </>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { apiError } from "@/store/apiError";
+import { ModalPortal } from "@/components/admin/ModalPortal";
 import {
   useCreatePromoMutation,
   useDeletePromoMutation,
@@ -218,121 +219,123 @@ export function PromosManager() {
       </div>
 
       {open ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
-          <form onSubmit={save} className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6">
-            <h2 className="text-lg font-semibold text-gray-900">{editing ? `Edit ${editing.code}` : "Add promo code"}</h2>
+        <ModalPortal>
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
+            <form onSubmit={save} className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6">
+              <h2 className="text-lg font-semibold text-gray-900">{editing ? `Edit ${editing.code}` : "Add promo code"}</h2>
 
-            {!editing ? (
+              {!editing ? (
+                <label className="mt-4 block text-sm font-medium text-gray-700">
+                  Code
+                  <input
+                    value={form.code}
+                    onChange={(event) => setForm({ ...form, code: event.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "") })}
+                    maxLength={20}
+                    required
+                    className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 font-mono text-sm uppercase tracking-wider"
+                  />
+                  <span className="mt-1 block text-xs font-normal text-gray-500">Letters and numbers, e.g. ALI10. Customers type this at checkout.</span>
+                </label>
+              ) : null}
+
               <label className="mt-4 block text-sm font-medium text-gray-700">
-                Code
+                For (name)
                 <input
-                  value={form.code}
-                  onChange={(event) => setForm({ ...form, code: event.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "") })}
-                  maxLength={20}
-                  required
-                  className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 font-mono text-sm uppercase tracking-wider"
+                  value={form.owner}
+                  onChange={(event) => setForm({ ...form, owner: event.target.value })}
+                  maxLength={80}
+                  className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
                 />
-                <span className="mt-1 block text-xs font-normal text-gray-500">Letters and numbers, e.g. ALI10. Customers type this at checkout.</span>
+                <span className="mt-1 block text-xs font-normal text-gray-500">Who this code belongs to, e.g. an influencer or a customer.</span>
               </label>
-            ) : null}
 
-            <label className="mt-4 block text-sm font-medium text-gray-700">
-              For (name)
-              <input
-                value={form.owner}
-                onChange={(event) => setForm({ ...form, owner: event.target.value })}
-                maxLength={80}
-                className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
-              />
-              <span className="mt-1 block text-xs font-normal text-gray-500">Who this code belongs to, e.g. an influencer or a customer.</span>
-            </label>
-
-            <div className="mt-4">
-              <p className="text-sm font-medium text-gray-700">Discount</p>
-              <div className="mt-1 flex gap-2">
-                <div className="inline-flex shrink-0 rounded-lg border border-gray-200 p-1">
-                  {(["percent", "fixed"] as const).map((type) => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setForm({ ...form, type })}
-                      className={`rounded-md px-3 py-1.5 text-sm font-medium ${form.type === type ? "bg-[var(--accent)] text-white" : "text-gray-600"}`}
-                    >
-                      {type === "percent" ? "%" : "Rs."}
-                    </button>
-                  ))}
+              <div className="mt-4">
+                <p className="text-sm font-medium text-gray-700">Discount</p>
+                <div className="mt-1 flex gap-2">
+                  <div className="inline-flex shrink-0 rounded-lg border border-gray-200 p-1">
+                    {(["percent", "fixed"] as const).map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => setForm({ ...form, type })}
+                        className={`rounded-md px-3 py-1.5 text-sm font-medium ${form.type === type ? "bg-[var(--accent)] text-white" : "text-gray-600"}`}
+                      >
+                        {type === "percent" ? "%" : "Rs."}
+                      </button>
+                    ))}
+                  </div>
+                  <input
+                    type="number"
+                    min={1}
+                    max={form.type === "percent" ? 90 : undefined}
+                    required
+                    value={form.value}
+                    onChange={(event) => setForm({ ...form, value: event.target.value })}
+                    className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                  />
                 </div>
-                <input
-                  type="number"
-                  min={1}
-                  max={form.type === "percent" ? 90 : undefined}
-                  required
-                  value={form.value}
-                  onChange={(event) => setForm({ ...form, value: event.target.value })}
-                  className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
-                />
+                <span className="mt-1 block text-xs text-gray-500">
+                  {form.type === "percent" ? "Percent off the products, e.g. 10 for 10% off." : "Rupees off the products, e.g. 500."} Delivery charges are not discounted.
+                </span>
               </div>
-              <span className="mt-1 block text-xs text-gray-500">
-                {form.type === "percent" ? "Percent off the products, e.g. 10 for 10% off." : "Rupees off the products, e.g. 500."} Delivery charges are not discounted.
-              </span>
-            </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <label className="block text-sm font-medium text-gray-700">
-                Minimum order (Rs.)
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <label className="block text-sm font-medium text-gray-700">
+                  Minimum order (Rs.)
+                  <input
+                    type="number"
+                    min={0}
+                    value={form.minOrder}
+                    onChange={(event) => setForm({ ...form, minOrder: event.target.value })}
+                    className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                  />
+                  <span className="mt-1 block text-xs font-normal text-gray-500">Empty = any order</span>
+                </label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Total uses
+                  <input
+                    type="number"
+                    min={0}
+                    value={form.maxUses}
+                    onChange={(event) => setForm({ ...form, maxUses: event.target.value })}
+                    className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                  />
+                  <span className="mt-1 block text-xs font-normal text-gray-500">Empty = no limit</span>
+                </label>
+              </div>
+
+              <label className="mt-4 block text-sm font-medium text-gray-700">
+                Expiry date
                 <input
-                  type="number"
-                  min={0}
-                  value={form.minOrder}
-                  onChange={(event) => setForm({ ...form, minOrder: event.target.value })}
+                  type="date"
+                  value={form.expiresAt}
+                  onChange={(event) => setForm({ ...form, expiresAt: event.target.value })}
                   className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
                 />
-                <span className="mt-1 block text-xs font-normal text-gray-500">Empty = any order</span>
+                <span className="mt-1 block text-xs font-normal text-gray-500">Works until the end of this day. Empty = never expires.</span>
               </label>
-              <label className="block text-sm font-medium text-gray-700">
-                Total uses
-                <input
-                  type="number"
-                  min={0}
-                  value={form.maxUses}
-                  onChange={(event) => setForm({ ...form, maxUses: event.target.value })}
-                  className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
-                />
-                <span className="mt-1 block text-xs font-normal text-gray-500">Empty = no limit</span>
+
+              <label className="mt-4 flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" checked={form.oncePerCustomer} onChange={(event) => setForm({ ...form, oncePerCustomer: event.target.checked })} />
+                One use per customer (same email or phone)
               </label>
-            </div>
+              <label className="mt-2 flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" checked={form.active} onChange={(event) => setForm({ ...form, active: event.target.checked })} />
+                Code is on
+              </label>
 
-            <label className="mt-4 block text-sm font-medium text-gray-700">
-              Expiry date
-              <input
-                type="date"
-                value={form.expiresAt}
-                onChange={(event) => setForm({ ...form, expiresAt: event.target.value })}
-                className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
-              />
-              <span className="mt-1 block text-xs font-normal text-gray-500">Works until the end of this day. Empty = never expires.</span>
-            </label>
-
-            <label className="mt-4 flex items-center gap-2 text-sm text-gray-700">
-              <input type="checkbox" checked={form.oncePerCustomer} onChange={(event) => setForm({ ...form, oncePerCustomer: event.target.checked })} />
-              One use per customer (same email or phone)
-            </label>
-            <label className="mt-2 flex items-center gap-2 text-sm text-gray-700">
-              <input type="checkbox" checked={form.active} onChange={(event) => setForm({ ...form, active: event.target.checked })} />
-              Code is on
-            </label>
-
-            {formError ? <p className="mt-3 text-sm text-red-700">{formError}</p> : null}
-            <div className="mt-6 flex justify-end gap-2">
-              <button type="button" onClick={() => setOpen(false)} className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium">
-                Cancel
-              </button>
-              <button type="submit" disabled={creating || updating} className="rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
-                {creating || updating ? "Saving…" : "Save code"}
-              </button>
-            </div>
-          </form>
-        </div>
+              {formError ? <p className="mt-3 text-sm text-red-700">{formError}</p> : null}
+              <div className="mt-6 flex justify-end gap-2">
+                <button type="button" onClick={() => setOpen(false)} className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium">
+                  Cancel
+                </button>
+                <button type="submit" disabled={creating || updating} className="rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
+                  {creating || updating ? "Saving…" : "Save code"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </ModalPortal>
       ) : null}
     </div>
   );

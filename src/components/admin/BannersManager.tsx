@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { apiError } from "@/store/apiError";
+import { ModalPortal } from "@/components/admin/ModalPortal";
 import {
   useCreateBannerMutation,
   useDeleteBannerMutation,
@@ -149,64 +150,66 @@ export function BannersManager() {
       </div>
 
       {open ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
-          <form onSubmit={save} className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6">
-            <h2 className="text-lg font-semibold text-gray-900">{editing ? "Edit banner" : "Add banner"}</h2>
-            <p className="mt-1 text-sm text-gray-500">Upload one picture for computers and a different picture for phones.</p>
+        <ModalPortal>
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
+            <form onSubmit={save} className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6">
+              <h2 className="text-lg font-semibold text-gray-900">{editing ? "Edit banner" : "Add banner"}</h2>
+              <p className="mt-1 text-sm text-gray-500">Upload one picture for computers and a different picture for phones.</p>
 
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <ImageField
-                label="Web banner"
-                hint="Laptops and desktops, full screen: 1920 × 1080 px (16:9). Keep the main subject in the centre; edges may be cropped."
-                url={form.image}
-                wide
-                uploading={uploadingField === "image"}
-                onFile={(file) => upload(file, "image")}
-              />
-              <ImageField
-                label="Mobile banner"
-                hint="Phones, rounded card: 1080 × 1440 px (3:4). Keep the main subject in the centre; top and bottom may be cropped on taller phones."
-                url={form.mobileImage}
-                wide={false}
-                uploading={uploadingField === "mobileImage"}
-                onFile={(file) => upload(file, "mobileImage")}
-                onClear={form.mobileImage ? () => setForm((current) => ({ ...current, mobileImage: "" })) : undefined}
-              />
-            </div>
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <ImageField
+                  label="Web banner"
+                  hint="Laptops and desktops, full screen: 1920 × 1080 px (16:9). Keep the main subject in the centre; edges may be cropped."
+                  url={form.image}
+                  wide
+                  uploading={uploadingField === "image"}
+                  onFile={(file) => upload(file, "image")}
+                />
+                <ImageField
+                  label="Mobile banner"
+                  hint="Phones, rounded card: 1080 × 1440 px (3:4). Keep the main subject in the centre; top and bottom may be cropped on taller phones."
+                  url={form.mobileImage}
+                  wide={false}
+                  uploading={uploadingField === "mobileImage"}
+                  onFile={(file) => upload(file, "mobileImage")}
+                  onClear={form.mobileImage ? () => setForm((current) => ({ ...current, mobileImage: "" })) : undefined}
+                />
+              </div>
 
-            <label className="mt-4 block text-sm font-medium text-gray-700">
-              Description
-              <input
-                value={form.alt}
-                onChange={(event) => setForm({ ...form, alt: event.target.value })}
-                placeholder="Levish new arrivals"
-                className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
-              />
-            </label>
-            <label className="mt-4 block text-sm font-medium text-gray-700">
-              Link (optional)
-              <input
-                value={form.href}
-                onChange={(event) => setForm({ ...form, href: event.target.value })}
-                placeholder="/shoes or https://..."
-                className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
-              />
-            </label>
-            <label className="mt-4 flex items-center gap-2 text-sm text-gray-700">
-              <input type="checkbox" checked={form.active} onChange={(event) => setForm({ ...form, active: event.target.checked })} />
-              Show on the homepage
-            </label>
-            {formError ? <p className="mt-3 text-sm text-red-700">{formError}</p> : null}
-            <div className="mt-6 flex justify-end gap-2">
-              <button type="button" onClick={() => setOpen(false)} className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium">
-                Cancel
-              </button>
-              <button type="submit" disabled={creating || Boolean(uploadingField) || !form.image} className="rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
-                {creating ? "Saving…" : "Save banner"}
-              </button>
-            </div>
-          </form>
-        </div>
+              <label className="mt-4 block text-sm font-medium text-gray-700">
+                Description
+                <input
+                  value={form.alt}
+                  onChange={(event) => setForm({ ...form, alt: event.target.value })}
+                  placeholder="Levish new arrivals"
+                  className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </label>
+              <label className="mt-4 block text-sm font-medium text-gray-700">
+                Link (optional)
+                <input
+                  value={form.href}
+                  onChange={(event) => setForm({ ...form, href: event.target.value })}
+                  placeholder="/shoes or https://..."
+                  className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </label>
+              <label className="mt-4 flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" checked={form.active} onChange={(event) => setForm({ ...form, active: event.target.checked })} />
+                Show on the homepage
+              </label>
+              {formError ? <p className="mt-3 text-sm text-red-700">{formError}</p> : null}
+              <div className="mt-6 flex justify-end gap-2">
+                <button type="button" onClick={() => setOpen(false)} className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium">
+                  Cancel
+                </button>
+                <button type="submit" disabled={creating || Boolean(uploadingField) || !form.image} className="rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
+                  {creating ? "Saving…" : "Save banner"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </ModalPortal>
       ) : null}
     </div>
   );

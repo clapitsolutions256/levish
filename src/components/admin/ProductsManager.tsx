@@ -19,6 +19,7 @@ import {
 import { apiError } from "@/store/apiError";
 import { Skeleton } from "@/components/Skeleton";
 import { Spinner } from "@/components/Spinner";
+import { ModalPortal } from "@/components/admin/ModalPortal";
 
 type DraftVariant = { size: string; color: string; stock: string };
 
@@ -592,435 +593,439 @@ export function ProductsManager() {
       </div>
 
       {saleProduct ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4" onClick={() => setSaleProduct(null)}>
-          <form
-            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
-            onClick={(event) => event.stopPropagation()}
-            onSubmit={(event) => {
-              event.preventDefault();
-              saveSale(Number(saleInput));
-            }}
-          >
-            <h2 className="text-lg font-semibold">Sale</h2>
-            <p className="mt-1 text-sm text-gray-500">{saleProduct.name}</p>
-            <p className="mt-3 text-sm text-gray-700">Original price: Rs. {Number(saleProduct.price).toLocaleString()}</p>
-            <Field label="How much % off?">
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min="1"
-                  max={MAX_SALE_PERCENT}
-                  step="1"
-                  autoFocus
-                  value={saleInput}
-                  onChange={(event) => setSaleInput(event.target.value)}
-                  placeholder="e.g. 50"
-                  className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
-                />
-                <span className="text-sm text-gray-500">%</span>
-              </div>
-            </Field>
-            {salePreview != null ? (
-              <p className="mt-3 text-sm">
-                Sale price: <span className="font-semibold text-[var(--accent)]">Rs. {salePreview.toLocaleString()}</span>
-              </p>
-            ) : null}
-            {saleError ? <p className="mt-3 text-sm text-red-700">{saleError}</p> : null}
-            <button type="submit" disabled={savingSale || salePreview == null} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] py-3 font-semibold text-white disabled:opacity-50">
-              {savingSale ? <><Spinner /> Saving…</> : saleProduct.salePercent ? "Update sale" : "Add sale"}
-            </button>
-            {saleProduct.salePercent ? (
-              <button type="button" disabled={savingSale} onClick={() => saveSale(0)} className="mt-2 w-full rounded-xl border border-gray-200 py-3 text-sm font-medium text-red-700 disabled:opacity-50">
-                Remove sale
+        <ModalPortal>
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4" onClick={() => setSaleProduct(null)}>
+            <form
+              className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+              onClick={(event) => event.stopPropagation()}
+              onSubmit={(event) => {
+                event.preventDefault();
+                saveSale(Number(saleInput));
+              }}
+            >
+              <h2 className="text-lg font-semibold">Sale</h2>
+              <p className="mt-1 text-sm text-gray-500">{saleProduct.name}</p>
+              <p className="mt-3 text-sm text-gray-700">Original price: Rs. {Number(saleProduct.price).toLocaleString()}</p>
+              <Field label="How much % off?">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min="1"
+                    max={MAX_SALE_PERCENT}
+                    step="1"
+                    autoFocus
+                    value={saleInput}
+                    onChange={(event) => setSaleInput(event.target.value)}
+                    placeholder="e.g. 50"
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
+                  />
+                  <span className="text-sm text-gray-500">%</span>
+                </div>
+              </Field>
+              {salePreview != null ? (
+                <p className="mt-3 text-sm">
+                  Sale price: <span className="font-semibold text-[var(--accent)]">Rs. {salePreview.toLocaleString()}</span>
+                </p>
+              ) : null}
+              {saleError ? <p className="mt-3 text-sm text-red-700">{saleError}</p> : null}
+              <button type="submit" disabled={savingSale || salePreview == null} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] py-3 font-semibold text-white disabled:opacity-50">
+                {savingSale ? <><Spinner /> Saving…</> : saleProduct.salePercent ? "Update sale" : "Add sale"}
               </button>
-            ) : null}
-            <button type="button" onClick={() => setSaleProduct(null)} className="mt-2 w-full py-2 text-sm text-gray-500">Cancel</button>
-          </form>
-        </div>
+              {saleProduct.salePercent ? (
+                <button type="button" disabled={savingSale} onClick={() => saveSale(0)} className="mt-2 w-full rounded-xl border border-gray-200 py-3 text-sm font-medium text-red-700 disabled:opacity-50">
+                  Remove sale
+                </button>
+              ) : null}
+              <button type="button" onClick={() => setSaleProduct(null)} className="mt-2 w-full py-2 text-sm text-gray-500">Cancel</button>
+            </form>
+          </div>
+        </ModalPortal>
       ) : null}
 
       {formOpen ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4" onClick={closeForm}>
-          <form
-            onSubmit={save}
-            onClick={(event) => event.stopPropagation()}
-            className="flex max-h-[min(92vh,900px)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
-          >
-            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
-              <h2 className="text-lg font-semibold">{editing ? "Edit product" : "New product"}</h2>
-              <button type="button" onClick={closeForm} className="text-sm text-gray-500">Close</button>
-            </div>
-            <div className="space-y-4 overflow-y-auto px-6 py-5">
-              <Field label="Name">
-                <input required value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
-              </Field>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Price (Rs.)">
-                  <input required type="number" min="1" value={draft.price} onChange={(event) => setDraft({ ...draft, price: event.target.value })} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
-                </Field>
-                <Field label="Compare-at price">
-                  <input type="number" min="1" value={draft.compareAtPrice} onChange={(event) => setDraft({ ...draft, compareAtPrice: event.target.value })} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
-                </Field>
+        <ModalPortal>
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4" onClick={closeForm}>
+            <form
+              onSubmit={save}
+              onClick={(event) => event.stopPropagation()}
+              className="flex max-h-[min(92vh,900px)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
+            >
+              <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+                <h2 className="text-lg font-semibold">{editing ? "Edit product" : "New product"}</h2>
+                <button type="button" onClick={closeForm} className="text-sm text-gray-500">Close</button>
               </div>
-              <Field label="Category">
-                <select
-                  value={draft.categoryId}
-                  onChange={(event) => {
-                    const categoryId = event.target.value;
-                    // Keep the chosen type when the new category offers it too.
-                    const kept = typeOptionsFor(categoryId).find((item) => item.toLowerCase() === draft.subcategory.trim().toLowerCase());
-                    setTypingType(false);
-                    setDraft({ ...draft, categoryId, subcategory: kept ?? "" });
-                  }}
-                  className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
-                >
-                  {productCategories.map((item) => (
-                    <option key={item.id} value={item.id}>{item.name}</option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="Type">
-                {typingType ? (
-                  <div className="flex gap-2">
-                    <input
-                      autoFocus
+              <div className="space-y-4 overflow-y-auto px-6 py-5">
+                <Field label="Name">
+                  <input required value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
+                </Field>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Price (Rs.)">
+                    <input required type="number" min="1" value={draft.price} onChange={(event) => setDraft({ ...draft, price: event.target.value })} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
+                  </Field>
+                  <Field label="Compare-at price">
+                    <input type="number" min="1" value={draft.compareAtPrice} onChange={(event) => setDraft({ ...draft, compareAtPrice: event.target.value })} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
+                  </Field>
+                </div>
+                <Field label="Category">
+                  <select
+                    value={draft.categoryId}
+                    onChange={(event) => {
+                      const categoryId = event.target.value;
+                      // Keep the chosen type when the new category offers it too.
+                      const kept = typeOptionsFor(categoryId).find((item) => item.toLowerCase() === draft.subcategory.trim().toLowerCase());
+                      setTypingType(false);
+                      setDraft({ ...draft, categoryId, subcategory: kept ?? "" });
+                    }}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
+                  >
+                    {productCategories.map((item) => (
+                      <option key={item.id} value={item.id}>{item.name}</option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Type">
+                  {typingType ? (
+                    <div className="flex gap-2">
+                      <input
+                        autoFocus
+                        value={draft.subcategory}
+                        onChange={(event) => setDraft({ ...draft, subcategory: event.target.value.slice(0, 40) })}
+                        onKeyDown={(event) => {
+                          if (event.key !== "Enter") return;
+                          event.preventDefault();
+                          setDraft({ ...draft, subcategory: draft.subcategory.trim().replace(/\s+/g, " ") });
+                          setTypingType(false);
+                        }}
+                        placeholder="Custom type, e.g. Shorts"
+                        className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDraft({ ...draft, subcategory: draft.subcategory.trim().replace(/\s+/g, " ") });
+                          setTypingType(false);
+                        }}
+                        className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]"
+                      >
+                        Done
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDraft({ ...draft, subcategory: "" });
+                          setTypingType(false);
+                        }}
+                        className="shrink-0 rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-600"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <select
                       value={draft.subcategory}
-                      onChange={(event) => setDraft({ ...draft, subcategory: event.target.value.slice(0, 40) })}
-                      onKeyDown={(event) => {
-                        if (event.key !== "Enter") return;
-                        event.preventDefault();
-                        setDraft({ ...draft, subcategory: draft.subcategory.trim().replace(/\s+/g, " ") });
-                        setTypingType(false);
+                      onChange={(event) => {
+                        if (event.target.value === NEW_TYPE) {
+                          setTypingType(true);
+                          setDraft({ ...draft, subcategory: "" });
+                        } else setDraft({ ...draft, subcategory: event.target.value });
                       }}
-                      placeholder="Custom type, e.g. Shorts"
                       className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDraft({ ...draft, subcategory: draft.subcategory.trim().replace(/\s+/g, " ") });
-                        setTypingType(false);
-                      }}
-                      className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]"
                     >
-                      Done
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDraft({ ...draft, subcategory: "" });
-                        setTypingType(false);
-                      }}
-                      className="shrink-0 rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-600"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
-                  <select
-                    value={draft.subcategory}
-                    onChange={(event) => {
-                      if (event.target.value === NEW_TYPE) {
-                        setTypingType(true);
-                        setDraft({ ...draft, subcategory: "" });
-                      } else setDraft({ ...draft, subcategory: event.target.value });
-                    }}
-                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
-                  >
-                    <option value="">Any</option>
-                    {subcategoryOptions.map((item) => (
-                      <option key={item} value={item}>{item}</option>
-                    ))}
-                    <option value={NEW_TYPE}>+ Custom type…</option>
-                  </select>
-                )}
-              </Field>
-              <Field label="Brand">
-                {typingBrand ? (
-                  <div className="flex gap-2">
-                    <input
-                      autoFocus
+                      <option value="">Any</option>
+                      {subcategoryOptions.map((item) => (
+                        <option key={item} value={item}>{item}</option>
+                      ))}
+                      <option value={NEW_TYPE}>+ Custom type…</option>
+                    </select>
+                  )}
+                </Field>
+                <Field label="Brand">
+                  {typingBrand ? (
+                    <div className="flex gap-2">
+                      <input
+                        autoFocus
+                        value={draft.brand}
+                        onChange={(event) => setDraft({ ...draft, brand: event.target.value })}
+                        onKeyDown={(event) => {
+                          if (event.key !== "Enter") return;
+                          event.preventDefault();
+                          setDraft({ ...draft, brand: draft.brand.trim().replace(/\s+/g, " ") });
+                          setTypingBrand(false);
+                        }}
+                        placeholder="New brand name, e.g. Nike"
+                        className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDraft({ ...draft, brand: draft.brand.trim().replace(/\s+/g, " ") });
+                          setTypingBrand(false);
+                        }}
+                        className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]"
+                      >
+                        Done
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTypingBrand(false);
+                          if (!brandOptions.includes(draft.brand.trim())) setDraft({ ...draft, brand: "" });
+                        }}
+                        className="shrink-0 rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-600"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <select
                       value={draft.brand}
-                      onChange={(event) => setDraft({ ...draft, brand: event.target.value })}
+                      onChange={(event) => {
+                        if (event.target.value === NEW_BRAND) {
+                          setTypingBrand(true);
+                          setDraft({ ...draft, brand: "" });
+                        } else setDraft({ ...draft, brand: event.target.value });
+                      }}
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
+                    >
+                      <option value="">No brand</option>
+                      {[...new Set([...brandOptions, draft.brand].filter(Boolean))].map((item) => (
+                        <option key={item} value={item}>{item}</option>
+                      ))}
+                      <option value={NEW_BRAND}>+ New brand…</option>
+                    </select>
+                  )}
+                </Field>
+                <div>
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">Colors</span>
+                    <span className="text-xs text-gray-500">
+                      {draft.variants.reduce((sum, variant) => sum + Math.max(0, Math.floor(Number(variant.stock) || 0)), 0)} articles
+                    </span>
+                  </div>
+                  <p className="mb-2 text-xs text-gray-500">Add every color this product comes in. The same size is kept separately in each color, with its own stock.</p>
+                  <div className="mb-3 flex gap-2">
+                    <input
+                      value={colorInput}
+                      onChange={(event) => setColorInput(event.target.value)}
                       onKeyDown={(event) => {
                         if (event.key !== "Enter") return;
                         event.preventDefault();
-                        setDraft({ ...draft, brand: draft.brand.trim().replace(/\s+/g, " ") });
-                        setTypingBrand(false);
+                        addColor(colorInput);
                       }}
-                      placeholder="New brand name, e.g. Nike"
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
+                      placeholder="Color, e.g. Black"
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm"
+                    />
+                    <button type="button" onClick={() => addColor(colorInput)} className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]">
+                      Add color
+                    </button>
+                  </div>
+                  {palette.length > 0 ? (
+                    <div className="mb-4 flex flex-wrap gap-1.5">
+                      {palette.map((color) => (
+                        <span key={color} className="inline-flex items-center gap-1 rounded-full bg-[var(--accent)] px-2.5 py-1 text-xs font-medium text-white">
+                          {color}
+                          <button type="button" onClick={() => removeColor(color)} className="text-white/80" aria-label={`Remove ${color}`}>
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                  <p className="mb-2 text-xs text-gray-500">{sizes.hint}</p>
+                  {sizes.sizes.length > 0 ? (
+                    <div className="mb-3 flex flex-wrap gap-1.5">
+                      {sizes.sizes.map((size) => {
+                        const selected = palette.length > 0 && palette.every((color) => draft.variants.some((variant) => sameOption(variant, size, color)));
+                        return (
+                          <button
+                            key={size}
+                            type="button"
+                            onClick={() => addVariantSize(size)}
+                            className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
+                              selected ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "border-gray-200 text-[var(--accent)]"
+                            }`}
+                          >
+                            {size}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+                  <div className="mb-3 flex gap-2">
+                    <input
+                      value={customSize}
+                      onChange={(event) => setCustomSize(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key !== "Enter") return;
+                        event.preventDefault();
+                        addVariantSize(customSize);
+                      }}
+                      placeholder={
+                        draft.categoryId === "shoes"
+                          ? "Custom shoe size, e.g. 44"
+                          : sizes.sizes.length
+                            ? "Custom waist, e.g. 33"
+                            : "Custom size"
+                      }
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm"
                     />
                     <button
                       type="button"
-                      onClick={() => {
-                        setDraft({ ...draft, brand: draft.brand.trim().replace(/\s+/g, " ") });
-                        setTypingBrand(false);
-                      }}
+                      onClick={() => addVariantSize(customSize)}
                       className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]"
                     >
-                      Done
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTypingBrand(false);
-                        if (!brandOptions.includes(draft.brand.trim())) setDraft({ ...draft, brand: "" });
-                      }}
-                      className="shrink-0 rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-600"
-                    >
-                      Cancel
+                      Add size
                     </button>
                   </div>
-                ) : (
-                  <select
-                    value={draft.brand}
-                    onChange={(event) => {
-                      if (event.target.value === NEW_BRAND) {
-                        setTypingBrand(true);
-                        setDraft({ ...draft, brand: "" });
-                      } else setDraft({ ...draft, brand: event.target.value });
-                    }}
-                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
-                  >
-                    <option value="">No brand</option>
-                    {[...new Set([...brandOptions, draft.brand].filter(Boolean))].map((item) => (
-                      <option key={item} value={item}>{item}</option>
-                    ))}
-                    <option value={NEW_BRAND}>+ New brand…</option>
-                  </select>
-                )}
-              </Field>
-              <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">Colors</span>
-                  <span className="text-xs text-gray-500">
-                    {draft.variants.reduce((sum, variant) => sum + Math.max(0, Math.floor(Number(variant.stock) || 0)), 0)} articles
-                  </span>
-                </div>
-                <p className="mb-2 text-xs text-gray-500">Add every color this product comes in. The same size is kept separately in each color, with its own stock.</p>
-                <div className="mb-3 flex gap-2">
-                  <input
-                    value={colorInput}
-                    onChange={(event) => setColorInput(event.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key !== "Enter") return;
-                      event.preventDefault();
-                      addColor(colorInput);
-                    }}
-                    placeholder="Color, e.g. Black"
-                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm"
-                  />
-                  <button type="button" onClick={() => addColor(colorInput)} className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]">
-                    Add color
-                  </button>
-                </div>
-                {palette.length > 0 ? (
-                  <div className="mb-4 flex flex-wrap gap-1.5">
-                    {palette.map((color) => (
-                      <span key={color} className="inline-flex items-center gap-1 rounded-full bg-[var(--accent)] px-2.5 py-1 text-xs font-medium text-white">
-                        {color}
-                        <button type="button" onClick={() => removeColor(color)} className="text-white/80" aria-label={`Remove ${color}`}>
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
-                <p className="mb-2 text-xs text-gray-500">{sizes.hint}</p>
-                {sizes.sizes.length > 0 ? (
-                  <div className="mb-3 flex flex-wrap gap-1.5">
-                    {sizes.sizes.map((size) => {
-                      const selected = palette.length > 0 && palette.every((color) => draft.variants.some((variant) => sameOption(variant, size, color)));
+                  {sizeError ? <p className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700">{sizeError}</p> : null}
+                  <div className="space-y-3">
+                    {palette.map((color) => {
+                      const rows = draft.variants.filter((variant) => variant.color.trim().toLowerCase() === color.toLowerCase() && variant.size.trim());
                       return (
-                        <button
-                          key={size}
-                          type="button"
-                          onClick={() => addVariantSize(size)}
-                          className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
-                            selected ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "border-gray-200 text-[var(--accent)]"
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      );
-                    })}
-                  </div>
-                ) : null}
-                <div className="mb-3 flex gap-2">
-                  <input
-                    value={customSize}
-                    onChange={(event) => setCustomSize(event.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key !== "Enter") return;
-                      event.preventDefault();
-                      addVariantSize(customSize);
-                    }}
-                    placeholder={
-                      draft.categoryId === "shoes"
-                        ? "Custom shoe size, e.g. 44"
-                        : sizes.sizes.length
-                          ? "Custom waist, e.g. 33"
-                          : "Custom size"
-                    }
-                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => addVariantSize(customSize)}
-                    className="shrink-0 rounded-xl bg-[var(--sage-tint)] px-3 py-2 text-sm font-medium text-[var(--accent)]"
-                  >
-                    Add size
-                  </button>
-                </div>
-                {sizeError ? <p className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700">{sizeError}</p> : null}
-                <div className="space-y-3">
-                  {palette.map((color) => {
-                    const rows = draft.variants.filter((variant) => variant.color.trim().toLowerCase() === color.toLowerCase() && variant.size.trim());
-                    return (
-                      <div key={color} className="rounded-xl border border-gray-200 p-3">
-                        <p className="text-sm font-semibold text-[var(--accent)]">{color}</p>
-                        {rows.length === 0 ? (
-                          <p className="mt-2 text-xs text-gray-500">Add a size and it will show here for this color.</p>
-                        ) : (
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {rows.map((variant) => (
-                              <div key={`${color}-${variant.size}`} className="flex items-center gap-1 rounded-lg border border-gray-200 px-2 py-1">
-                                <span className="min-w-6 text-sm font-medium">{variant.size}</span>
-                                <input
-                                  type="number"
-                                  min="0"
-                                  value={variant.stock}
-                                  aria-label={`${color} ${variant.size} stock`}
-                                  onChange={(event) => setVariantStock(variant.size, color, event.target.value)}
-                                  className="w-14 rounded-lg border border-gray-200 px-2 py-1 text-sm"
-                                />
-                                <button type="button" onClick={() => removeVariant(variant.size, color)} className="px-1 text-xs font-medium text-red-700" aria-label={`Remove ${color} ${variant.size}`}>
-                                  ×
+                        <div key={color} className="rounded-xl border border-gray-200 p-3">
+                          <p className="text-sm font-semibold text-[var(--accent)]">{color}</p>
+                          {rows.length === 0 ? (
+                            <p className="mt-2 text-xs text-gray-500">Add a size and it will show here for this color.</p>
+                          ) : (
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {rows.map((variant) => (
+                                <div key={`${color}-${variant.size}`} className="flex items-center gap-1 rounded-lg border border-gray-200 px-2 py-1">
+                                  <span className="min-w-6 text-sm font-medium">{variant.size}</span>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={variant.stock}
+                                    aria-label={`${color} ${variant.size} stock`}
+                                    onChange={(event) => setVariantStock(variant.size, color, event.target.value)}
+                                    className="w-14 rounded-lg border border-gray-200 px-2 py-1 text-sm"
+                                  />
+                                  <button type="button" onClick={() => removeVariant(variant.size, color)} className="px-1 text-xs font-medium text-red-700" aria-label={`Remove ${color} ${variant.size}`}>
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <p className="mt-3 text-xs text-gray-500">Photos for {color}. These show when a customer selects this color.</p>
+                          <div className="mt-2 grid grid-cols-4 gap-2">
+                            {colorPhotos(color).map((url, index) => (
+                              <div key={`${color}-${url}-${index}`} className="relative">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={url} alt="" className="h-16 w-full rounded-lg bg-gray-100 object-cover" />
+                                <button
+                                  type="button"
+                                  onClick={() => updateColorPhotos(color, colorPhotos(color).filter((_, itemIndex) => itemIndex !== index))}
+                                  className="absolute right-1 top-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-red-700"
+                                >
+                                  Remove
                                 </button>
                               </div>
                             ))}
+                            {uploadingColor === color ? <Skeleton className="h-16 w-full rounded-lg" /> : null}
                           </div>
-                        )}
-                        <p className="mt-3 text-xs text-gray-500">Photos for {color}. These show when a customer selects this color.</p>
-                        <div className="mt-2 grid grid-cols-4 gap-2">
-                          {colorPhotos(color).map((url, index) => (
-                            <div key={`${color}-${url}-${index}`} className="relative">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={url} alt="" className="h-16 w-full rounded-lg bg-gray-100 object-cover" />
-                              <button
-                                type="button"
-                                onClick={() => updateColorPhotos(color, colorPhotos(color).filter((_, itemIndex) => itemIndex !== index))}
-                                className="absolute right-1 top-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-red-700"
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          ))}
-                          {uploadingColor === color ? <Skeleton className="h-16 w-full rounded-lg" /> : null}
+                          <label className="mt-2 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-[var(--accent)]">
+                            {uploadingColor === color ? <><Spinner className="h-3.5 w-3.5" /> Uploading…</> : `Upload ${color} photos`}
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              multiple
+                              className="sr-only"
+                              onChange={(event) => {
+                                const files = [...(event.target.files ?? [])];
+                                event.target.value = "";
+                                if (files.length) uploadColorImages(color, files);
+                              }}
+                            />
+                          </label>
                         </div>
-                        <label className="mt-2 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-[var(--accent)]">
-                          {uploadingColor === color ? <><Spinner className="h-3.5 w-3.5" /> Uploading…</> : `Upload ${color} photos`}
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp"
-                            multiple
-                            className="sr-only"
-                            onChange={(event) => {
-                              const files = [...(event.target.files ?? [])];
-                              event.target.value = "";
-                              if (files.length) uploadColorImages(color, files);
-                            }}
-                          />
-                        </label>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-              <Field label="Description">
-                <textarea value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} rows={3} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
-              </Field>
-              <Field label="Images">
-                <p className="mb-2 text-xs text-gray-500">Backup photos, used when a color does not have its own pictures. Add up to 8.</p>
-                <div className="grid grid-cols-3 gap-2">
-                  {draft.images.map((url, index) => (
-                    <div key={`${url}-${index}`} className="relative">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt="" className="h-24 w-full rounded-lg object-cover bg-gray-100" />
-                      <span className="absolute left-1 top-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
-                        {index === 0 ? "Cover" : index + 1}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setDraft((current) => {
-                            const images = current.images.filter((_, itemIndex) => itemIndex !== index);
-                            return { ...current, images, image: images[0] ?? "" };
-                          })
-                        }
-                        className="absolute right-1 top-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-red-700"
-                      >
-                        Remove
-                      </button>
-                      {index > 0 ? (
+                <Field label="Description">
+                  <textarea value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} rows={3} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
+                </Field>
+                <Field label="Images">
+                  <p className="mb-2 text-xs text-gray-500">Backup photos, used when a color does not have its own pictures. Add up to 8.</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {draft.images.map((url, index) => (
+                      <div key={`${url}-${index}`} className="relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={url} alt="" className="h-24 w-full rounded-lg object-cover bg-gray-100" />
+                        <span className="absolute left-1 top-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
+                          {index === 0 ? "Cover" : index + 1}
+                        </span>
                         <button
                           type="button"
                           onClick={() =>
                             setDraft((current) => {
-                              const images = [...current.images];
-                              const [chosen] = images.splice(index, 1);
-                              images.unshift(chosen);
-                              return { ...current, images, image: images[0] };
+                              const images = current.images.filter((_, itemIndex) => itemIndex !== index);
+                              return { ...current, images, image: images[0] ?? "" };
                             })
                           }
-                          className="absolute bottom-1 left-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]"
+                          className="absolute right-1 top-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-red-700"
                         >
-                          Make cover
+                          Remove
                         </button>
-                      ) : null}
-                    </div>
-                  ))}
-                  {uploading && !uploadingColor ? <Skeleton className="h-24 w-full rounded-lg" /> : null}
-                </div>
-                <label className="mt-3 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-[var(--accent)]">
-                  {uploading && !uploadingColor ? <><Spinner className="h-3.5 w-3.5" /> Uploading…</> : "Upload images"}
+                        {index > 0 ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setDraft((current) => {
+                                const images = [...current.images];
+                                const [chosen] = images.splice(index, 1);
+                                images.unshift(chosen);
+                                return { ...current, images, image: images[0] };
+                              })
+                            }
+                            className="absolute bottom-1 left-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]"
+                          >
+                            Make cover
+                          </button>
+                        ) : null}
+                      </div>
+                    ))}
+                    {uploading && !uploadingColor ? <Skeleton className="h-24 w-full rounded-lg" /> : null}
+                  </div>
+                  <label className="mt-3 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-[var(--accent)]">
+                    {uploading && !uploadingColor ? <><Spinner className="h-3.5 w-3.5" /> Uploading…</> : "Upload images"}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      multiple
+                      className="sr-only"
+                      onChange={(event) => {
+                        const files = [...(event.target.files ?? [])];
+                        event.target.value = "";
+                        if (files.length) uploadImages(files);
+                      }}
+                    />
+                  </label>
                   <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    multiple
-                    className="sr-only"
-                    onChange={(event) => {
-                      const files = [...(event.target.files ?? [])];
-                      event.target.value = "";
-                      if (files.length) uploadImages(files);
+                    placeholder="Or paste an image address and press Enter"
+                    className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
+                    onKeyDown={(event) => {
+                      if (event.key !== "Enter") return;
+                      event.preventDefault();
+                      const input = event.currentTarget;
+                      addImageUrl(input.value);
+                      input.value = "";
                     }}
                   />
-                </label>
-                <input
-                  placeholder="Or paste an image address and press Enter"
-                  className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
-                  onKeyDown={(event) => {
-                    if (event.key !== "Enter") return;
-                    event.preventDefault();
-                    const input = event.currentTarget;
-                    addImageUrl(input.value);
-                    input.value = "";
-                  }}
-                />
-              </Field>
-              <div className="flex flex-wrap gap-4 text-sm">
-                <label className="flex items-center gap-2"><input type="checkbox" checked={draft.active} onChange={(event) => setDraft({ ...draft, active: event.target.checked })} /> Visible in store</label>
-                <label className="flex items-center gap-2"><input type="checkbox" checked={draft.new} onChange={(event) => setDraft({ ...draft, new: event.target.checked })} /> New arrival</label>
-                <label className="flex items-center gap-2"><input type="checkbox" checked={draft.featured} onChange={(event) => setDraft({ ...draft, featured: event.target.checked })} /> Featured</label>
+                </Field>
+                <div className="flex flex-wrap gap-4 text-sm">
+                  <label className="flex items-center gap-2"><input type="checkbox" checked={draft.active} onChange={(event) => setDraft({ ...draft, active: event.target.checked })} /> Visible in store</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" checked={draft.new} onChange={(event) => setDraft({ ...draft, new: event.target.checked })} /> New arrival</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" checked={draft.featured} onChange={(event) => setDraft({ ...draft, featured: event.target.checked })} /> Featured</label>
+                </div>
+                {formError ? <p className="text-sm text-red-700">{formError}</p> : null}
+                <button type="submit" disabled={saving || uploading} className="w-full py-3 rounded-xl bg-[var(--accent)] text-white font-semibold disabled:opacity-50">
+                  {saving ? <span className="inline-flex items-center gap-2"><Spinner /> Saving…</span> : "Save product"}
+                </button>
               </div>
-              {formError ? <p className="text-sm text-red-700">{formError}</p> : null}
-              <button type="submit" disabled={saving || uploading} className="w-full py-3 rounded-xl bg-[var(--accent)] text-white font-semibold disabled:opacity-50">
-                {saving ? <span className="inline-flex items-center gap-2"><Spinner /> Saving…</span> : "Save product"}
-              </button>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        </ModalPortal>
       ) : null}
     </div>
   );
