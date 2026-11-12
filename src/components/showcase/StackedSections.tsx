@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { useCalmMotion } from "@/lib/useCalmMotion";
 
 export type StackPanel = {
   word: string;
@@ -53,7 +54,7 @@ function FanCard({ piece, index, spread }: { piece: StackPanel["pieces"][number]
 
 function Panel({ panel, index, total, stack }: { panel: StackPanel; index: number; total: number; stack: MotionValue<number> }) {
   const ref = useRef<HTMLDivElement>(null);
-  const still = useReducedMotion();
+  const still = useCalmMotion();
   const tone = tones[panel.tone];
   // The fan opens while this panel slides into place.
   const { scrollYProgress: arrive } = useScroll({ target: ref, offset: ["start end", "start start"] });
@@ -70,7 +71,7 @@ function Panel({ panel, index, total, stack }: { panel: StackPanel; index: numbe
         style={{ scale }}
         className={`relative h-[calc(100svh-8.75rem)] w-full md:h-[calc(100svh-8rem)] max-w-[90rem] origin-top overflow-hidden rounded-[2.5rem] shadow-[0_-20px_60px_rgba(11,11,11,0.12)] ${tone.card}`}
       >
-        <div className={`pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full blur-3xl ${tone.glow}`} aria-hidden="true" />
+        <div className={`pointer-events-none absolute -right-24 -top-24 hidden h-96 w-96 rounded-full blur-3xl md:block ${tone.glow}`} aria-hidden="true" />
         <div className="relative grid h-full gap-6 p-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] md:p-12">
           <div className="flex flex-col justify-between">
             <div className={`flex items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] ${tone.muted}`}>

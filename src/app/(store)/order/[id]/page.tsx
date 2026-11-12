@@ -1,267 +1,226 @@
-"use client";
-
-import { use } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { useGetOrderQuery } from "@/store/checkoutApi";
+import { getOrder, isUuid } from "@/lib/orders";
+import { hasCurrentPhoto } from "@/lib/cartToken";
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
 }
 
 function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-PK", {
-    weekday: "long",
+  return new Date(dateStr).toLocaleString("en-PK", {
+    timeZone: "Asia/Karachi",
     day: "numeric",
-    month: "long",
+    month: "short",
     year: "numeric",
-    hour: "2-digit",
+    hour: "numeric",
     minute: "2-digit",
   });
 }
 
 const STATUS_STEPS = [
-  { key: "pending", label: "Order Placed" },
-  { key: "confirmed", label: "Confirmed" },
-  { key: "processing", label: "Processing" },
-  { key: "shipped", label: "Shipped" },
-  { key: "delivered", label: "Delivered" },
+  { key: "pending", label: "Order placed", text: "We have received your order." },
+  { key: "confirmed", label: "Confirmed", text: "We called you and confirmed it." },
+  { key: "processing", label: "Packing", text: "Your order is being packed." },
+  { key: "shipped", label: "On the way", text: "Your parcel is with the courier." },
+  { key: "delivered", label: "Delivered", text: "Your parcel has been delivered." },
 ];
 
 const statusColors: Record<string, string> = {
-  pending: "text-yellow-600 bg-yellow-50 border-yellow-200",
-  confirmed: "text-blue-600 bg-blue-50 border-blue-200",
-  processing: "text-indigo-600 bg-indigo-50 border-indigo-200",
-  shipped: "text-purple-600 bg-purple-50 border-purple-200",
-  delivered: "text-green-600 bg-green-50 border-green-200",
-  cancelled: "text-red-600 bg-red-50 border-red-200",
+  pending: "text-yellow-700 bg-yellow-50 border-yellow-200",
+  confirmed: "text-blue-700 bg-blue-50 border-blue-200",
+  processing: "text-indigo-700 bg-indigo-50 border-indigo-200",
+  shipped: "text-purple-700 bg-purple-50 border-purple-200",
+  delivered: "text-green-700 bg-green-50 border-green-200",
+  cancelled: "text-red-700 bg-red-50 border-red-200",
 };
 
-export default function OrderDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const { data: order, isLoading, error } = useGetOrderQuery(id);
+function Tick() {
+  return (
+    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
 
-  if (isLoading) {
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-16">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-[var(--border)] rounded w-64" />
-          <div className="h-4 bg-[var(--border)] rounded w-40" />
-          <div className="h-32 bg-[var(--border)] rounded-2xl" />
-          <div className="h-48 bg-[var(--border)] rounded-2xl" />
-        </div>
-      </div>
-    );
-  }
+function NotFound() {
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+      <h1 className="section-heading">Order not found</h1>
+      <p className="mt-2 text-sm text-[var(--muted)]">We couldn&apos;t find an order with this ID. Please check and try again.</p>
+      <Link href="/" className="mt-6 inline-block rounded-full px-6 py-3 font-medium skeuo-ink">
+        Go to homepage
+      </Link>
+    </div>
+  );
+}
 
-  if (error || !order) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <svg className="w-16 h-16 text-[var(--accent)] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <h1 className="section-heading">Order not found</h1>
-        <p className="mt-2 text-[var(--muted)] text-sm">
-          We couldn&apos;t find an order with this ID. Please check and try again.
-        </p>
-        <Link
-          href="/"
-          className="inline-block mt-6 px-6 py-3 skeuo-ink font-medium rounded-full"
-        >
-          Go to homepage
-        </Link>
-      </div>
-    );
-  }
+// Rendered on the server, so the order shows straight away with no loading step on the phone.
+export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const order = isUuid(id) ? await getOrder(id).catch(() => null) : null;
+  if (!order) return <NotFound />;
 
   const currentStep = STATUS_STEPS.findIndex((s) => s.key === order.status);
   const isCancelled = order.status === "cancelled";
+  const statusLabel = isCancelled ? "Cancelled" : (STATUS_STEPS[currentStep]?.label ?? order.status);
+  const shortId = order._id.slice(-6).toUpperCase();
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-      <nav className="text-sm text-[var(--muted)] mb-6 animate-fade-up">
-        <Link href="/" className="hover:text-[var(--accent)]">Home</Link>
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
+      <nav className="mb-5 text-sm text-[var(--muted)]">
+        <Link href="/" className="hover:text-[var(--accent)]">
+          Home
+        </Link>
         <span className="mx-1">/</span>
-        <span className="text-[var(--foreground)]">Order #{order._id.slice(-6)}</span>
+        <span className="text-[var(--foreground)]">Order #{shortId}</span>
       </nav>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8 animate-fade-up">
-        <div>
-          <h1 className="section-heading">
-            Order #{order._id.slice(-6)}
-          </h1>
-          <p className="text-sm text-[var(--muted)] mt-1">
-            Placed on {formatDate(order.createdAt)}
-          </p>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="section-heading">Order #{shortId}</h1>
+          <p className="mt-1 text-sm text-[var(--muted)]">Placed on {formatDate(order.createdAt)}</p>
         </div>
         <span
-          className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold capitalize border ${
-            statusColors[order.status] || "text-gray-600 bg-gray-50 border-gray-200"
+          className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-semibold ${
+            statusColors[order.status] || "border-gray-200 bg-gray-50 text-gray-600"
           }`}
         >
-          {order.status}
+          {statusLabel}
         </span>
       </div>
 
-      {/* Status tracker */}
-      {!isCancelled && (
-        <section className="bg-[var(--card)] rounded-2xl p-6 border border-[var(--border)] mb-6 animate-fade-up animation-delay-100">
-          <h2 className="font-semibold text-sm text-[var(--muted)] uppercase tracking-wider mb-6">
-            Order Progress
-          </h2>
-          <div className="flex items-center justify-between">
+      {isCancelled ? (
+        <section className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5">
+          <p className="font-semibold text-red-700">Order cancelled</p>
+          <p className="text-sm text-red-600">This order has been cancelled.</p>
+        </section>
+      ) : (
+        <section className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 sm:p-6">
+          <h2 className="mb-5 text-sm font-semibold uppercase tracking-wider text-[var(--muted)]">Order progress</h2>
+
+          {/* Phones: one step per line, top to bottom, so nothing has to squeeze side by side. */}
+          <ol className="sm:hidden">
             {STATUS_STEPS.map((step, i) => {
               const done = i <= currentStep;
-              const isCurrent = i === currentStep;
+              const last = i === STATUS_STEPS.length - 1;
               return (
-                <div key={step.key} className="flex items-center flex-1 last:flex-none">
-                  <div className="flex flex-col items-center gap-2">
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                        done
-                          ? "bg-[var(--accent)] text-white"
-                          : "bg-[var(--border)] text-[var(--muted)]"
-                      } ${isCurrent ? "ring-4 ring-[var(--accent)]/20" : ""}`}
-                    >
-                      {done ? (
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                        </svg>
-                      ) : (
-                        i + 1
-                      )}
-                    </div>
-                    <span className={`text-[11px] font-medium text-center ${done ? "text-[var(--foreground)]" : "text-[var(--muted)]"}`}>
-                      {step.label}
-                    </span>
+                <li key={step.key} className="relative flex gap-3 pb-5 last:pb-0">
+                  {!last ? (
+                    <span
+                      className={`absolute left-[15px] top-8 h-[calc(100%-2rem)] w-0.5 ${i < currentStep ? "bg-[var(--accent)]" : "bg-[var(--border)]"}`}
+                      aria-hidden="true"
+                    />
+                  ) : null}
+                  <span
+                    className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                      done ? "bg-[var(--accent)] text-white" : "bg-[var(--border)] text-[var(--muted)]"
+                    } ${i === currentStep ? "ring-4 ring-[var(--accent)]/20" : ""}`}
+                  >
+                    {done ? <Tick /> : i + 1}
+                  </span>
+                  <div className="min-w-0 pt-1">
+                    <p className={`text-sm font-semibold ${done ? "text-[var(--foreground)]" : "text-[var(--muted)]"}`}>{step.label}</p>
+                    {i === currentStep ? <p className="mt-0.5 text-sm text-[var(--muted)]">{step.text}</p> : null}
                   </div>
-                  {i < STATUS_STEPS.length - 1 && (
-                    <div className={`flex-1 h-0.5 mx-2 mb-6 rounded ${i < currentStep ? "bg-[var(--accent)]" : "bg-[var(--border)]"}`} />
-                  )}
-                </div>
+                </li>
               );
             })}
-          </div>
+          </ol>
+
+          {/* Wider screens: the steps in one row. */}
+          <ol className="hidden items-start sm:flex">
+            {STATUS_STEPS.map((step, i) => {
+              const done = i <= currentStep;
+              return (
+                <li key={step.key} className="flex flex-1 items-start last:flex-none">
+                  <div className="flex w-20 flex-col items-center gap-2">
+                    <span
+                      className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${
+                        done ? "bg-[var(--accent)] text-white" : "bg-[var(--border)] text-[var(--muted)]"
+                      } ${i === currentStep ? "ring-4 ring-[var(--accent)]/20" : ""}`}
+                    >
+                      {done ? <Tick /> : i + 1}
+                    </span>
+                    <span className={`text-center text-xs font-medium ${done ? "text-[var(--foreground)]" : "text-[var(--muted)]"}`}>{step.label}</span>
+                  </div>
+                  {i < STATUS_STEPS.length - 1 ? (
+                    <span className={`mt-5 h-0.5 flex-1 rounded ${i < currentStep ? "bg-[var(--accent)]" : "bg-[var(--border)]"}`} aria-hidden="true" />
+                  ) : null}
+                </li>
+              );
+            })}
+          </ol>
+          {currentStep >= 0 ? <p className="mt-5 hidden text-sm text-[var(--muted)] sm:block">{STATUS_STEPS[currentStep].text}</p> : null}
         </section>
       )}
 
-      {isCancelled && (
-        <section className="bg-red-50 rounded-2xl p-6 border border-red-200 mb-6 animate-fade-up animation-delay-100">
-          <div className="flex items-center gap-3">
-            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            <div>
-              <p className="font-semibold text-red-700">Order Cancelled</p>
-              <p className="text-sm text-red-600">This order has been cancelled.</p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-        {/* Delivery address */}
-        <section className="bg-[var(--card)] rounded-2xl p-6 border border-[var(--border)] animate-fade-up animation-delay-100">
-          <h2 className="font-semibold text-sm text-[var(--muted)] uppercase tracking-wider mb-3">
-            Delivery Address
-          </h2>
-          <div className="text-sm space-y-1">
-            <p className="font-medium text-[var(--foreground)]">
-              {order.deliveryAddress.firstName} {order.deliveryAddress.lastName}
-            </p>
-            <p className="text-[var(--muted)]">{order.deliveryAddress.address}</p>
-            {order.deliveryAddress.apartment && (
-              <p className="text-[var(--muted)]">{order.deliveryAddress.apartment}</p>
-            )}
-            <p className="text-[var(--muted)]">
-              {order.deliveryAddress.city}
-              {order.deliveryAddress.state && `, ${order.deliveryAddress.state}`}
-              {order.deliveryAddress.postalCode && ` ${order.deliveryAddress.postalCode}`}
-            </p>
-            <p className="text-[var(--muted)]">{order.deliveryAddress.phone}</p>
-          </div>
-        </section>
-
-        {/* Contact */}
-        <section className="bg-[var(--card)] rounded-2xl p-6 border border-[var(--border)] animate-fade-up animation-delay-200">
-          <h2 className="font-semibold text-sm text-[var(--muted)] uppercase tracking-wider mb-3">
-            Contact
-          </h2>
-          <div className="text-sm space-y-2">
-            <div>
-              <span className="text-[var(--muted)]">Email</span>
-              <p className="font-medium text-[var(--foreground)]">{order.contact.email}</p>
-            </div>
-            <div>
-              <span className="text-[var(--muted)]">Phone</span>
-              <p className="font-medium text-[var(--foreground)]">{order.deliveryAddress.phone}</p>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {/* Order items */}
-      <section className="bg-[var(--card)] rounded-2xl p-6 border border-[var(--border)] animate-fade-up animation-delay-200">
-        <h2 className="font-semibold text-sm text-[var(--muted)] uppercase tracking-wider mb-4">
-          Items
-        </h2>
-        <div className="divide-y divide-[var(--border)]">
-          {order.orderItems.map((item, i) => (
-            <div key={i} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-lg bg-[var(--cream)] flex items-center justify-center text-[var(--accent)]">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-[var(--foreground)]">{item.name}</p>
-                  <p className="text-xs text-[var(--muted)]">
-                    {item.variant}
-                    {item.size && ` · Size: ${item.size}`}
-                    {" · "}Qty: {item.quantity}
-                  </p>
-                </div>
-              </div>
-              <p className="text-sm font-semibold text-[var(--foreground)]">
-                {formatPrice(item.price * item.quantity)}
-              </p>
-            </div>
-          ))}
+      <section className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 sm:p-6">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--muted)]">Delivering to</h2>
+        <div className="space-y-1 break-words text-sm">
+          <p className="font-medium text-[var(--foreground)]">
+            {order.deliveryAddress.firstName} {order.deliveryAddress.lastName}
+          </p>
+          <p className="text-[var(--muted)]">
+            {[order.deliveryAddress.address, order.deliveryAddress.apartment].filter(Boolean).join(", ")}
+          </p>
+          <p className="text-[var(--muted)]">
+            {[order.deliveryAddress.city, order.deliveryAddress.state, order.deliveryAddress.postalCode].filter(Boolean).join(", ")}
+          </p>
+          <p className="text-[var(--muted)]">{order.deliveryAddress.phone}</p>
+          <p className="text-[var(--muted)]">{order.contact.email}</p>
         </div>
+        <p className="mt-3 border-t border-[var(--border)] pt-3 text-sm">
+          <span className="text-[var(--muted)]">Payment: </span>
+          <span className="font-medium text-[var(--foreground)]">{order.paymentMethod === "transfer" ? "Online transfer" : "Cash on delivery"}</span>
+        </p>
+      </section>
 
-        {/* Totals */}
-        <div className="mt-4 pt-4 border-t border-[var(--border)] space-y-2">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 sm:p-6">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--muted)]">Items</h2>
+        <ul className="divide-y divide-[var(--border)]">
+          {order.orderItems.map((item, i) => (
+            <li key={i} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+              <div className="relative h-14 w-12 shrink-0 overflow-hidden rounded-lg bg-[var(--cream)]">
+                {hasCurrentPhoto(item.image) ? <Image src={item.image!} alt="" fill className="object-cover" sizes="48px" /> : null}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="line-clamp-2 text-sm font-medium text-[var(--foreground)]">{item.name}</p>
+                <p className="mt-0.5 text-xs text-[var(--muted)]">
+                  {[item.variant, item.size && `Size ${item.size}`, `Qty ${item.quantity}`].filter(Boolean).join(" · ")}
+                </p>
+              </div>
+              <p className="shrink-0 text-sm font-semibold text-[var(--foreground)]">{formatPrice(item.price * item.quantity)}</p>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-4 space-y-2 border-t border-[var(--border)] pt-4">
           <div className="flex justify-between text-sm">
             <span className="text-[var(--muted)]">Subtotal</span>
             <span>{formatPrice(order.subtotal)}</span>
           </div>
+          {order.discount ? (
+            <div className="flex justify-between text-sm">
+              <span className="text-[var(--muted)]">Discount{order.promoCode ? ` (${order.promoCode})` : ""}</span>
+              <span>- {formatPrice(order.discount)}</span>
+            </div>
+          ) : null}
           <div className="flex justify-between text-sm">
             <span className="text-[var(--muted)]">Shipping</span>
             <span>{order.shipping}</span>
           </div>
-          <div className="flex justify-between font-semibold text-lg pt-2 border-t border-[var(--border)]">
+          <div className="flex justify-between border-t border-[var(--border)] pt-2 text-lg font-semibold">
             <span>Total</span>
             <span>{formatPrice(order.total)}</span>
           </div>
         </div>
       </section>
 
-      {/* Order ID footer */}
-      <div className="mt-6 text-center text-xs text-[var(--muted)] animate-fade-up animation-delay-200">
-        <p>Order ID: <span className="font-mono">{order._id}</span></p>
-        {order.updatedAt && <p className="mt-1">Last updated: {formatDate(order.updatedAt)}</p>}
-      </div>
+      <p className="mt-6 break-all text-center text-xs text-[var(--muted)]">Order ID: {order._id}</p>
 
-      <div className="mt-8 text-center animate-fade-up animation-delay-200">
-        <Link
-          href="/"
-          className="inline-block px-6 py-3 skeuo-ink font-medium rounded-full"
-        >
+      <div className="mt-6 text-center">
+        <Link href="/" className="inline-block rounded-full px-6 py-3 font-medium skeuo-ink">
           Continue shopping
         </Link>
       </div>

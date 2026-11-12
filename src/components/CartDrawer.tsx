@@ -73,7 +73,7 @@ export function CartDrawer({ suggestions = [] }: { suggestions?: CartSuggestion[
   return (
     <>
       <div
-        className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-50 transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        className={`fixed inset-0 bg-black/30 z-50 transition-opacity duration-300 ${isOpen ? "opacity-100 md:backdrop-blur-sm" : "opacity-0 pointer-events-none"}`}
         onClick={closeCart}
         aria-hidden
       />

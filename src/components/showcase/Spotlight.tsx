@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useCalmMotion } from "@/lib/useCalmMotion";
 import type { Product } from "@/types";
 
 function formatPrice(price: number) {
@@ -18,7 +19,7 @@ const rise = {
 /** Giant word behind a featured piece, with glass cards drifting at different scroll speeds. */
 export function Spotlight({ product, pieceCount }: { product: Product; pieceCount: number }) {
   const ref = useRef<HTMLElement>(null);
-  const still = useReducedMotion();
+  const still = useCalmMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const wordX = useTransform(scrollYProgress, [0, 1], still ? ["0%", "0%"] : ["12%", "-22%"]);
   const imageY = useTransform(scrollYProgress, [0, 1], still ? [0, 0] : [60, -60]);
