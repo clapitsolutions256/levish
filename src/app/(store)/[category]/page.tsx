@@ -185,7 +185,10 @@ function StylePage({
   list: Product[];
   gender: Gender | null;
 }) {
-  const shown = gender ? list.filter((product) => forGender(product, gender)) : list;
+  // Sale pieces lead the page; everything else keeps its newest-first order.
+  const shown = (gender ? list.filter((product) => forGender(product, gender)) : list).toSorted(
+    (a, b) => Number(Boolean(b.salePercent)) - Number(Boolean(a.salePercent))
+  );
   const title = gender ? `${genderInfo[gender].who}'s ${heading}` : heading;
   return (
     <div className="max-w-[90rem] mx-auto px-4 sm:px-6 py-10">
