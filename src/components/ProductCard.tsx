@@ -10,6 +10,7 @@ import { ProductQuickView } from "@/components/ProductQuickView";
 import { findVariant, galleryFor, isSold, uniqueValues } from "@/lib/variants";
 import { SoldBadge } from "@/components/SoldBadge";
 import { SaleTag } from "@/components/SaleTag";
+import { LingerieBadges } from "@/components/LingerieBadges";
 import { trackAddToCart } from "@/lib/metaPixel";
 
 function formatPrice(price: number) {
@@ -392,6 +393,7 @@ export function ProductCard({ product, index = 0, priority = false }: ProductCar
             {product.brand}
           </span>
         ) : null}
+        <LingerieBadges subcategory={product.subcategory} compact />
         <h3 className={`${product.brand ? "mt-0.5" : "mt-2"} h-10 overflow-hidden text-[15px] font-medium leading-5 text-[var(--foreground)] line-clamp-2 transition-colors duration-200 group-hover:text-[var(--accent)]`}>
           {product.name}
         </h3>

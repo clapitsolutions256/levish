@@ -5,6 +5,7 @@ import { productCategories } from "@/data/productCategories";
 import type { ColorGallery, Product } from "@/types";
 import { isSold, totalStock } from "@/lib/variants";
 import { MAX_SALE_PERCENT, salePrice } from "@/lib/sale";
+import { MAX_PRODUCT_IMAGES } from "@/lib/productImageLimits";
 import {
   useCreateProductMutation,
   useDeleteProductMutation,
@@ -202,7 +203,7 @@ export function ProductsManager() {
 
   function updateColorPhotos(color: string, images: string[]) {
     setDraft((current) => {
-      const next = images.slice(0, 8);
+      const next = images.slice(0, MAX_PRODUCT_IMAGES);
       const exists = current.colorImages.some((item) => item.color.toLowerCase() === color.toLowerCase());
       const colorImages = exists
         ? current.colorImages.map((item) => (item.color.toLowerCase() === color.toLowerCase() ? { ...item, images: next } : item))
@@ -222,7 +223,7 @@ export function ProductsManager() {
       const urls = data.urls ?? [];
       setDraft((current) => {
         const existing = current.colorImages.find((item) => item.color.toLowerCase() === color.toLowerCase())?.images ?? [];
-        const images = [...existing, ...urls].slice(0, 8);
+        const images = [...existing, ...urls].slice(0, MAX_PRODUCT_IMAGES);
         const colorImages = current.colorImages.some((item) => item.color.toLowerCase() === color.toLowerCase())
           ? current.colorImages.map((item) => (item.color.toLowerCase() === color.toLowerCase() ? { ...item, images } : item))
           : [...current.colorImages, { color, images }];
@@ -335,7 +336,7 @@ export function ProductsManager() {
       const data = await uploadImagesRequest(body).unwrap();
       const urls = data.urls ?? [];
       setDraft((current) => {
-        const images = [...current.images, ...urls].slice(0, 8);
+        const images = [...current.images, ...urls].slice(0, MAX_PRODUCT_IMAGES);
         return { ...current, images, image: images[0] ?? "" };
       });
     } catch (err) {
@@ -347,7 +348,7 @@ export function ProductsManager() {
     const next = url.trim();
     if (!next) return;
     setDraft((current) => {
-      const images = [...current.images, next].slice(0, 8);
+      const images = [...current.images, next].slice(0, MAX_PRODUCT_IMAGES);
       return { ...current, images, image: images[0] ?? "" };
     });
   }
@@ -370,7 +371,7 @@ export function ProductsManager() {
       colorImages: palette
         .map((color) => ({
           color,
-          images: (draft.colorImages.find((item) => item.color.toLowerCase() === color.toLowerCase())?.images ?? []).slice(0, 8),
+          images: (draft.colorImages.find((item) => item.color.toLowerCase() === color.toLowerCase())?.images ?? []).slice(0, MAX_PRODUCT_IMAGES),
         }))
         .filter((item) => item.images.length),
     };
@@ -946,7 +947,7 @@ export function ProductsManager() {
                   <textarea value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} rows={3} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
                 </Field>
                 <Field label="Images">
-                  <p className="mb-2 text-xs text-gray-500">Backup photos, used when a color does not have its own pictures. Add up to 8.</p>
+                  <p className="mb-2 text-xs text-gray-500">Backup photos, used when a color does not have its own pictures. Add up to {MAX_PRODUCT_IMAGES}.</p>
                   <div className="grid grid-cols-3 gap-2">
                     {draft.images.map((url, index) => (
                       <div key={`${url}-${index}`} className="relative">

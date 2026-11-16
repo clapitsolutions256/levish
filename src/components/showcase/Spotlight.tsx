@@ -17,7 +17,7 @@ const rise = {
 };
 
 /** Giant word behind a featured piece, with glass cards drifting at different scroll speeds. */
-export function Spotlight({ product, pieceCount }: { product: Product; pieceCount: number }) {
+export function Spotlight({ product }: { product: Product }) {
   const ref = useRef<HTMLElement>(null);
   const still = useCalmMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
@@ -68,8 +68,8 @@ export function Spotlight({ product, pieceCount }: { product: Product; pieceCoun
 
           <motion.div style={{ y: fast }} className="absolute right-0 top-20 z-10 hidden md:right-[8%] md:top-24 md:block">
             <motion.div variants={rise} initial="hidden" whileInView="shown" viewport={{ once: true }} custom={0.2} className="glass rounded-3xl px-4 py-3 text-right">
-              <p className="text-3xl font-semibold tracking-tight">{pieceCount}+</p>
-              <p className="text-xs text-[var(--muted)]">pieces in store</p>
+              <p className="text-lg font-semibold tracking-tight">Premium Quality</p>
+              <p className="mt-0.5 text-xs text-[var(--muted)]">Carefully selected</p>
             </motion.div>
           </motion.div>
 

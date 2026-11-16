@@ -13,6 +13,7 @@ import { galleryFor, isSold, uniqueValues } from "@/lib/variants";
 import { sameType } from "@/lib/productTypes";
 import { SoldBadge } from "@/components/SoldBadge";
 import { SaleTag } from "@/components/SaleTag";
+import { LingerieBadges } from "@/components/LingerieBadges";
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
@@ -178,6 +179,7 @@ export function ProductQuickView({ product, onClose }: { product: Product; onClo
           <h2 id={titleId} className="section-heading mt-1.5 text-[var(--foreground)]">
             {product.name}
           </h2>
+          <LingerieBadges subcategory={product.subcategory} />
           <div className="mt-2 flex items-baseline gap-3">
             <p className="text-2xl font-semibold text-[var(--accent)]">{formatPrice(product.price)}</p>
             {product.compareAtPrice ? (

@@ -39,6 +39,7 @@ export default async function HomePage() {
   const saleProducts = catalog.filter((product) => product.salePercent);
   const styles = styleCards(catalog);
   const spotlight =
+    catalog.find((product) => product.slug === "gym-suit" && !isSold(product)) ??
     catalog.find((product) => product.featured && !isSold(product) && wornBy("women")(product)) ??
     catalog.find((product) => product.featured && !isSold(product)) ??
     catalog[0];
@@ -106,22 +107,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {spotlight ? (
-        <Spotlight product={spotlight} pieceCount={catalog.length} />
-      ) : (
-        <section className="mx-auto max-w-[90rem] px-4 pt-10 sm:px-6 md:pt-14">
-          <h1 className="section-heading">Original men&apos;s and women&apos;s fashion</h1>
-        </section>
-      )}
-
-      {PRODUCTS_PAUSED ? null : <StackedSections panels={panels} />}
-
-      {PRODUCTS_PAUSED ? (
-        <section className="max-w-[90rem] mx-auto px-4 sm:px-6 pb-8">
-          <ProductsPausedNotice />
-        </section>
-      ) : null}
-
       {saleProducts.length ? (
         <section className="max-w-[90rem] mx-auto px-4 sm:px-6 pt-4 pb-16 md:pb-20">
           <div className="mb-10 animate-fade-up">
@@ -133,6 +118,22 @@ export default async function HomePage() {
               <ProductCard key={product.id} product={product} index={i} />
             ))}
           </div>
+        </section>
+      ) : null}
+
+      {spotlight ? (
+        <Spotlight product={spotlight} />
+      ) : (
+        <section className="mx-auto max-w-[90rem] px-4 pt-10 sm:px-6 md:pt-14">
+          <h1 className="section-heading">Original men&apos;s and women&apos;s fashion</h1>
+        </section>
+      )}
+
+      {PRODUCTS_PAUSED ? null : <StackedSections panels={panels} />}
+
+      {PRODUCTS_PAUSED ? (
+        <section className="max-w-[90rem] mx-auto px-4 sm:px-6 pb-8">
+          <ProductsPausedNotice />
         </section>
       ) : null}
 

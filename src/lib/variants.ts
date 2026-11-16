@@ -1,3 +1,5 @@
+import { MAX_PRODUCT_IMAGES } from "@/lib/productImageLimits";
+
 export type ProductVariant = {
   size: string;
   color: string;
@@ -69,10 +71,10 @@ export function normalizeColorImages(input: unknown): ColorGallery[] {
     const images = (Array.isArray(row.images) ? row.images : [])
       .map((image) => String(image).trim())
       .filter(Boolean)
-      .slice(0, 8);
+      .slice(0, MAX_PRODUCT_IMAGES);
     const key = color.toLowerCase();
     const existing = merged.get(key);
-    if (existing) existing.images = [...new Set([...existing.images, ...images])].slice(0, 8);
+    if (existing) existing.images = [...new Set([...existing.images, ...images])].slice(0, MAX_PRODUCT_IMAGES);
     else merged.set(key, { color, images });
   }
   return [...merged.values()].slice(0, 20);

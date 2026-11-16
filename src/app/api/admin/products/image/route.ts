@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyAdmin, unauthorizedResponse } from "@/lib/auth";
 import { getSupabase, STORAGE_BUCKET } from "@/lib/supabase";
 import { compressImage, IMAGE_CACHE_SECONDS } from "@/lib/compressImage";
+import { MAX_PRODUCT_IMAGES } from "@/lib/productImageLimits";
 
 const TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -22,8 +23,8 @@ export async function POST(request: Request) {
     if (!files.length) {
       return NextResponse.json({ error: "Choose an image." }, { status: 400 });
     }
-    if (files.length > 8) {
-      return NextResponse.json({ error: "Upload up to 8 images at a time." }, { status: 400 });
+    if (files.length > MAX_PRODUCT_IMAGES) {
+      return NextResponse.json({ error: `Upload up to ${MAX_PRODUCT_IMAGES} images at a time.` }, { status: 400 });
     }
 
     const supabase = getSupabase();

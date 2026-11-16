@@ -6,6 +6,7 @@ import { normalizeColorImages, normalizeVariants, type ColorGallery } from "@/li
 import { cleanSalePercent, withSale } from "@/lib/sale";
 import { sameType } from "@/lib/productTypes";
 import { PRODUCTS_PAUSED } from "@/lib/storeStatus";
+import { MAX_PRODUCT_IMAGES } from "@/lib/productImageLimits";
 
 type ProductRow = {
   id: string;
@@ -71,7 +72,7 @@ function toProduct(row: ProductRow): Product {
 export function collectImages(body: Record<string, unknown>) {
   const listed = Array.isArray(body.images) ? body.images.map((item) => String(item).trim()).filter(Boolean) : [];
   const single = String(body.image ?? "").trim();
-  const images = [...new Set(listed.length ? listed : single ? [single] : [])].slice(0, 8);
+  const images = [...new Set(listed.length ? listed : single ? [single] : [])].slice(0, MAX_PRODUCT_IMAGES);
   if (!images.length) return { error: "Add at least one product image." as const };
   return { image: images[0], images };
 }

@@ -12,6 +12,7 @@ import { SaleTag } from "@/components/SaleTag";
 import { trackViewContent } from "@/lib/metaPixel";
 import { ProductPromises } from "@/components/ProductPromises";
 import { ProductBuyBar } from "@/components/ProductBuyBar";
+import { LingerieBadges } from "@/components/LingerieBadges";
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
@@ -74,6 +75,7 @@ export function ProductDetail({ product, initialColor }: { product: Product; ini
           {product.color}
         </p>
         <h1 className="section-heading mt-2">{product.name}</h1>
+        <LingerieBadges subcategory={product.subcategory} />
         <div className="mt-4 flex items-baseline gap-3">
           <span className="text-xl font-semibold">{formatPrice(product.price)}</span>
           {product.compareAtPrice ? (
