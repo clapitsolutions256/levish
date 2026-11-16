@@ -11,10 +11,6 @@ const promises = [
     text: "Free shipping on orders above Rs. 5,000",
     icon: "M20 12v8H4v-8M2 7h20v5H2V7zm10 0v13M12 7H8.5a2.5 2.5 0 110-5C11 2 12 7 12 7zm0 0h3.5a2.5 2.5 0 100-5C13 2 12 7 12 7z",
   },
-  {
-    text: "Easy returns within 14 days",
-    icon: "M4 4v5h5M4.6 15a8 8 0 101.5-8.4L4 9",
-  },
 ];
 
 /** What every order comes with, in plain words, under the buy button. */
