@@ -131,11 +131,18 @@ export async function listSavedBrands() {
   }));
 }
 
+// Store pages read saved brands from the same cache as products, so the pages themselves can be cached.
+const cachedSavedBrands = unstable_cache(listSavedBrands, ["saved-brands"], { tags: [PRODUCTS_TAG], revalidate: 300 });
+
+export function getSavedBrands() {
+  return cachedSavedBrands();
+}
+
 // Brands set up for a product type (e.g. "trouser") that may not have products yet.
 export async function getBrandNamesForType(type: string) {
   const key = type.toLowerCase();
   try {
-    return (await listSavedBrands()).filter((brand) => brand.types.some((item) => sameType(item, key))).map((brand) => brand.name);
+    return (await getSavedBrands()).filter((brand) => brand.types.some((item) => sameType(item, key))).map((brand) => brand.name);
   } catch (err) {
     console.error("Brands error:", err);
     return [];
@@ -148,10 +155,11 @@ export async function saveBrand(name: string) {
   if (!clean || !slug) return;
   const { error } = await getSupabase().from("brands").upsert({ slug, name: clean }, { onConflict: "slug", ignoreDuplicates: true });
   if (error) throw error;
+  refreshCatalog();
 }
 
 export async function getBrands() {
-  const [products, saved] = await Promise.all([getActiveProducts(), listSavedBrands()]);
+  const [products, saved] = await Promise.all([getActiveProducts(), getSavedBrands()]);
   return summarizeBrands(products, saved);
 }
 

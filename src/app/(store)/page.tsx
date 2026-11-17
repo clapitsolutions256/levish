@@ -16,7 +16,7 @@ import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { AboutUs } from "@/components/AboutUs";
 import { Reviews } from "@/components/Reviews";
 import { reviews } from "@/data/reviews";
-import { blogs } from "@/data/blogs";
+import { blogs, HOME_POSTS } from "@/data/blogs";
 import { getActiveProducts } from "@/lib/catalog";
 import { JsonLd } from "@/components/JsonLd";
 import { siteGraphJsonLd } from "@/lib/seo";
@@ -46,7 +46,7 @@ export default async function HomePage() {
     catalog.find((product) => product.featured && !isSold(product)) ??
     catalog[0];
   // Reviews link to a product only while it is still in the shop.
-  const reviewedSlugs = new Set(reviews.map((review) => review.product));
+  const reviewedSlugs = new Set(reviews.map((review) => review.product ?? review.relatedProduct));
   const reviewedProducts = Object.fromEntries(
     catalog
       .filter((product) => reviewedSlugs.has(product.slug))
@@ -134,7 +134,7 @@ export default async function HomePage() {
         <Spotlight product={spotlight} />
       ) : (
         <section className="mx-auto max-w-[90rem] px-4 pt-10 sm:px-6 md:pt-14">
-          <h1 className="section-heading">Original men&apos;s and women&apos;s fashion</h1>
+          <h1 className="section-heading">Bras, lingerie and women&apos;s fashion in Pakistan</h1>
         </section>
       )}
 
@@ -173,7 +173,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {blogs.slice(0, 3).map((post) => (
+          {HOME_POSTS.flatMap((slug) => blogs.filter((post) => post.slug === slug)).map((post) => (
             <BlogCard key={post.slug} post={post} />
           ))}
         </div>

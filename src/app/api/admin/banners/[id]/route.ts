@@ -1,6 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { verifyAdmin, unauthorizedResponse } from "@/lib/auth";
-import { cleanBanner } from "@/lib/banners";
+import { cleanBanner, refreshBanners } from "@/lib/banners";
 import { getSupabase } from "@/lib/supabase";
 import { bannerPhotoUrls, removeUnusedPhotos } from "@/lib/productImages";
 
@@ -28,6 +28,7 @@ export async function PATCH(request: Request, context: Context) {
     if (error) throw error;
     // A replaced banner image is removed once nothing else shows it.
     after(() => removeUnusedPhotos(bannerPhotoUrls(previous), bannerPhotoUrls(saved)));
+    refreshBanners();
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Update banner error:", err);
@@ -48,6 +49,7 @@ export async function DELETE(request: Request, context: Context) {
     const { data, error } = await supabase.from("banners").delete().eq("id", id).select("image, mobile_image");
     if (error) throw error;
     after(() => removeUnusedPhotos(bannerPhotoUrls(data?.[0])));
+    refreshBanners();
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Delete banner error:", err);

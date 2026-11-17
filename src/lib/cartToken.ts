@@ -86,24 +86,9 @@ export function readCartSnapshot<T>() {
   }
 }
 
-export function readCartCookie(value?: string) {
-  if (!value) return [];
-  try {
-    const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? slimCartSnapshot(parsed) : [];
-  } catch {
-    return [];
-  }
-}
-
 export function writeCartSnapshot(items: SnapshotLine[]) {
   if (typeof window === "undefined") return;
-  const slim = slimCartSnapshot(items);
-  const json = JSON.stringify(slim);
-  localStorage.setItem(SNAPSHOT_KEY, json);
-  const encoded = encodeURIComponent(json);
-  if (encoded.length > 3500) return;
-  document.cookie = `${SNAPSHOT_KEY}=${encoded}; Path=/; Max-Age=2592000; SameSite=Lax`;
+  localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(slimCartSnapshot(items)));
 }
 
 export { GUEST_KEY };

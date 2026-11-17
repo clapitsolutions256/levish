@@ -8,7 +8,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
       <div className="relative aspect-[4/5] overflow-hidden rounded-[1.4rem] bg-[var(--sage-tint)]">
         <Image
           src={post.image}
-          alt={post.title}
+          alt={post.imageAlt}
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 33vw"

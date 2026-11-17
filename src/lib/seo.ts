@@ -25,7 +25,7 @@ export function plainDescription(text: string | undefined, max = 160) {
 export function productSummary(product: Product) {
   const brand = product.brand && !product.name.toLowerCase().includes(product.brand.toLowerCase()) ? ` by ${product.brand}` : "";
   const color = product.color && product.color !== "—" ? ` in ${product.color}` : "";
-  return `${product.name.replace(/\.$/, "")}${brand}${color}, Rs. ${product.price.toLocaleString()}. 100% original, delivery across Pakistan.`;
+  return `${product.name.replace(/\.$/, "")}${brand}${color}, Rs. ${product.price.toLocaleString()}. 100% original, cash on delivery across Pakistan.`;
 }
 
 const returnPolicy = {
@@ -144,8 +144,22 @@ function productInStock(product: Product) {
   return product.variants.some((variant) => variant.stock > 0);
 }
 
-export function productJsonLd(product: Product) {
+export function productJsonLd(product: Product, reviews: { name: string; date?: string; text: string; paraphrased?: boolean; rating?: 5 }[] = []) {
   const description = plainDescription(product.description, 5000) || productSummary(product);
+  // Every review we carried over is five stars; the rating is only sent when reviews are shown on the page.
+  const ratedReviews = reviews.filter((review) => !review.paraphrased || review.rating === 5);
+  const rated = ratedReviews.length
+    ? {
+        aggregateRating: { "@type": "AggregateRating", ratingValue: 5, bestRating: 5, reviewCount: ratedReviews.length },
+        review: ratedReviews.slice(0, 10).map((review) => ({
+          "@type": "Review",
+          author: { "@type": "Person", name: review.name },
+          datePublished: review.date,
+          reviewBody: review.text,
+          reviewRating: { "@type": "Rating", ratingValue: 5, bestRating: 5 },
+        })),
+      }
+    : {};
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -167,6 +181,7 @@ export function productJsonLd(product: Product) {
       shippingDetails: shippingDetails(product.price),
       hasMerchantReturnPolicy: returnPolicy,
     },
+    ...rated,
   };
 }
 
@@ -182,22 +197,21 @@ export function faqJsonLd(items: { q: string; a: string }[]) {
   };
 }
 
-export function articleJsonLd(post: {
-  slug: string;
-  title: string;
-  excerpt: string;
-  date: string;
-  image: string;
-  category: string;
-}) {
+export function articleJsonLd(
+  post: { slug: string; title: string; excerpt: string; date: string; updated?: string; image: string; imageAlt: string; category: string },
+  wordCount?: number
+) {
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date,
-    image: absoluteUrl(post.image),
+    dateModified: post.updated ?? post.date,
+    image: { "@type": "ImageObject", url: absoluteUrl(post.image), caption: post.imageAlt },
     articleSection: post.category,
+    wordCount,
+    inLanguage: "en-PK",
     mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
     author: { "@id": `${SITE_URL}/#organization` },
     publisher: { "@id": `${SITE_URL}/#organization` },

@@ -7,6 +7,9 @@ export const metadata: Metadata = privateMeta({
   path: "/order",
 });
 
+// An order's status changes, so its page is built fresh on every visit.
+export const dynamic = "force-dynamic";
+
 export default function OrderLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

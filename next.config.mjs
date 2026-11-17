@@ -34,6 +34,8 @@ const nextConfig = {
         }))
       ),
       { source: "/shoes/:gender(women|men)", destination: "/shoes?gender=:gender", permanent: true },
+      // The shoe post went when shoes left the shop.
+      { source: "/blog/the-shoe-that-finishes-the-outfit", destination: "/blog", permanent: true },
     ];
   },
   // This project sits inside another Next.js project; keep builds rooted here.
@@ -42,6 +44,9 @@ const nextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [75, 80],
+    // Fewer widths than Next's default sixteen: every image tag lists them all, and the home page has over a hundred.
+    deviceSizes: [640, 828, 1200, 1920],
+    imageSizes: [48, 96, 128, 256, 384],
     // Product and banner uploads get new file names, so optimised copies can be kept for a month.
     minimumCacheTTL: 2678400,
     remotePatterns: [

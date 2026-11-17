@@ -3,7 +3,10 @@ import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
 import { FloatingNav } from "@/components/FloatingNav";
 import { getActiveProducts } from "@/lib/catalog";
-import { menuThumbnails, suggestionPool } from "@/lib/showcase";
+import { menuThumbnails } from "@/lib/showcase";
+
+// Store pages are served from a cache and rebuilt at most every five minutes; saving a product refreshes them at once.
+export const revalidate = 300;
 
 export default async function StoreLayout({
   children,
@@ -19,7 +22,7 @@ export default async function StoreLayout({
       <main className="flex-1">{children}</main>
       <Footer />
       <FloatingNav thumbs={thumbs} />
-      <CartDrawer suggestions={suggestionPool(products)} />
+      <CartDrawer />
     </div>
   );
 }

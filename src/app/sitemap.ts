@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { categories } from "@/data/categories";
 import { blogs } from "@/data/blogs";
-import { getActiveProducts, listSavedBrands } from "@/lib/catalog";
+import { getActiveProducts, getSavedBrands } from "@/lib/catalog";
 import { summarizeBrands } from "@/lib/brands";
 import { sameType } from "@/lib/productTypes";
 import { wornBy } from "@/lib/showcase";
@@ -43,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let products: Product[] = [];
   let savedBrands: { slug: string; name: string }[] = [];
   try {
-    [products, savedBrands] = await Promise.all([getActiveProducts(), listSavedBrands()]);
+    [products, savedBrands] = await Promise.all([getActiveProducts(), getSavedBrands()]);
   } catch {
     // Keep the sitemap available if the live catalog is unreachable.
   }

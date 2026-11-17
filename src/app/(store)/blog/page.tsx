@@ -5,8 +5,9 @@ import { blogs } from "@/data/blogs";
 import { pageMeta } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta({
-  title: "Blogs",
-  description: "Style notes from Levish on hoodies, trousers and jeans, and how to wear them.",
+  title: "Blog: Bra Guides, Lingerie Care & Style Tips",
+  description:
+    "Practical guides from Levish: how to measure your bra size, which bra to wear when, period panties, shapewear, gym wear and easy outfits.",
   path: "/blog",
 });
 
@@ -17,10 +18,10 @@ export default function BlogsPage() {
         <p className="eyebrow mb-2">The journal</p>
         <h1 className="section-heading">Blogs</h1>
         <p className="type-copy mt-3 text-[var(--muted)]">
-          Short notes on how to wear the clothes already in the shop.
+          Practical guides on bras, lingerie, activewear and easy outfits, written for women shopping in Pakistan.
         </p>
       </div>
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {blogs.map((post) => (
           <BlogCard key={post.slug} post={post} />
         ))}

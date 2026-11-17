@@ -1,7 +1,15 @@
 /** Customer reviews brought over from our earlier Shopify store, newest first. */
-export type Review = { name: string; date: string; text: string; product?: string; photo?: string };
+export type Review = { name: string; date?: string; paraphrased?: boolean; rating?: 5; text: string; product?: string; relatedProduct?: string; photo?: string };
 
+// Paraphrased entries reflect positive feedback supplied by the store owner;
+// Five-star ratings supplied by the store owner; customer dates were not supplied.
 export const reviews: Review[] = [
+  { name: "Ali", paraphrased: true, rating: 5, text: "I’m happy with my hoodie.", relatedProduct: "tommy-hilfiger-premium-fleece-hoodie-off-white" },
+  { name: "Amna", paraphrased: true, rating: 5, text: "I’m pleased with my Bunny Bra.", product: "bunny-bra" },
+  { name: "Hamza", paraphrased: true, rating: 5, text: "I’m happy with my sweatshirt.", relatedProduct: "polo-ralph-lauren-relaxed-fit-fleece-graphic-polo-sweatshirt-beige" },
+  { name: "Gulsheen", paraphrased: true, rating: 5, text: "I’m pleased with my body shaper.", relatedProduct: "premium-high-waist-tummy-control-body-shaper" },
+  { name: "Laiba", paraphrased: true, rating: 5, text: "I’m happy with my Gym Suit.", product: "gym-suit" },
+  { name: "Farheen", paraphrased: true, rating: 5, text: "I’m pleased with my GUESS Vintage Wash Wide Leg Jeans.", product: "guess-women-s-vintage-wash-wide-leg-jeans" },
   { name: "Rukhsar fatima", date: "2026-11-15", text: "Bohat shukrya ap ka bohat achi bra ha" },
   { name: "Rukhsar fatima", date: "2026-11-15", text: "Bohat shukrya ap ka achi bra ha", product: "seamless-crisscross-back-push-up-bra-comfortable-breathable" },
   { name: "Naila mushtaq", date: "2026-11-15", text: "Thanks ap ka ap nay dokha ni diya jo mangwaya wahi Mila bohat achi quality ha bra ki stuff bohat soft ha ❤", product: "seamless-crisscross-back-push-up-bra-comfortable-breathable" },
@@ -53,3 +61,8 @@ export const reviews: Review[] = [
   { name: "Ali", date: "2026-10-08", text: "Bohat pyari nightwear hai, quality bhi zabardast hai. Bohat comfortable hai, highly recommended ❤️" },
   { name: "Aysha", date: "2026-10-08", text: "Very excellent! The delivery was super fast, and the product is 100% original and exactly as described. I’m really happy with my order and the quality is amazing. I highly recommend Levish to everyone. You can order from them with confidence. Thank you so much, Levish! ❤️" },
 ];
+
+/** Reviews written about one product, newest first. */
+export function reviewsFor(slug: string) {
+  return reviews.filter((review) => review.product === slug);
+}

@@ -18,11 +18,10 @@ function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
 }
 
-export function ProductDetail({ product, initialColor }: { product: Product; initialColor?: string }) {
-  const [color, setColor] = useState(() => {
-    const colors = uniqueValues(product.variants ?? [], "color");
-    return colors.find((item) => item.toLowerCase() === initialColor?.trim().toLowerCase()) ?? colors[0] ?? "";
-  });
+export function ProductDetail({ product }: { product: Product }) {
+  const [color, setColor] = useState(() => uniqueValues(product.variants ?? [], "color")[0] ?? "");
+  // A link can open a colour (?color=Black). It is read here, in the browser, so the page itself can be cached.
+  const [linkedColor, setLinkedColor] = useState("");
   const photos = galleryFor(product, color);
   const [active, setActive] = useState(0);
   const purchase = useRef<HTMLDivElement>(null);
@@ -32,6 +31,14 @@ export function ProductDetail({ product, initialColor }: { product: Product; ini
       return next;
     });
   }, []);
+
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get("color")?.trim().toLowerCase();
+    const match = wanted ? uniqueValues(product.variants ?? [], "color").find((item) => item.toLowerCase() === wanted) : undefined;
+    if (!match) return;
+    setColor(match);
+    setLinkedColor(match);
+  }, [product.variants]);
 
   useEffect(() => {
     trackViewContent({
@@ -105,7 +112,7 @@ export function ProductDetail({ product, initialColor }: { product: Product; ini
         ) : null}
 
         <div ref={purchase} className="scroll-mt-24">
-          <ProductPurchase compact product={product} onColorChange={onColorChange} initialColor={color} />
+          <ProductPurchase key={linkedColor} compact product={product} onColorChange={onColorChange} initialColor={linkedColor || color} />
         </div>
         <ProductPromises />
 

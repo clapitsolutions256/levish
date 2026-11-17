@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyAdmin, unauthorizedResponse } from "@/lib/auth";
-import { cleanBanner, listBanners } from "@/lib/banners";
+import { cleanBanner, listBanners, refreshBanners } from "@/lib/banners";
 import { getSupabase } from "@/lib/supabase";
 
 export async function GET(request: Request) {
@@ -41,6 +41,7 @@ export async function POST(request: Request) {
 
     const { data, error } = await supabase.from("banners").insert(cleaned.value).select("id").single();
     if (error) throw error;
+    refreshBanners();
     return NextResponse.json({ id: data.id });
   } catch (err) {
     console.error("Create banner error:", err);

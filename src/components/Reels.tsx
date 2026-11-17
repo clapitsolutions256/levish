@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 const reels = [
-  { src: "/reels/levish-reel.mp4", label: "Bunny Bra unboxing" },
+  { src: "/reels/bra.mp4", label: "Seamless Push-Up Bra try-on" },
   { src: "/reels/sale.mp4", label: "Bunny Bra sale" },
   { src: "/reels/gym-suit.mp4", label: "Gym Suit in Lavender" },
   { src: "/reels/seamless-bra.mp4", label: "Seamless Push-Up Bra" },
-  { src: "/reels/bra.mp4", label: "Seamless Push-Up Bra try-on" },
+  { src: "/reels/levish-reel.mp4", label: "Bunny Bra unboxing" },
 ];
 
 export function Reels() {

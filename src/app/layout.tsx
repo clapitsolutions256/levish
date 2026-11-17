@@ -1,13 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
 import { Instrument_Serif, Poppins } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { CartProvider, type CartItem } from "@/context/CartContext";
+import { CartProvider } from "@/context/CartContext";
 import { MetaPixelPageView } from "@/components/MetaPixel";
 import { META_PIXEL_ID } from "@/lib/metaPixel";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { readCartCookie } from "@/lib/cartToken";
 import { ReduxProvider } from "@/store/ReduxProvider";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SHARE_IMAGE, SITE_TITLE } from "@/lib/site";
 
@@ -78,16 +76,11 @@ export const viewport: Viewport = {
   themeColor: "#a6cdab",
 };
 
-export const dynamic = "force-dynamic";
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const initialItems = readCartCookie(cookieStore.get("empulse_cart_items")?.value) as CartItem[];
-
   return (
     <html lang="en-PK" className={`${poppins.variable} ${display.variable}`} suppressHydrationWarning>
       <head>
@@ -141,7 +134,7 @@ export default async function RootLayout({
           })();
         `}</Script>
         <ReduxProvider>
-          <CartProvider initialItems={initialItems}>
+          <CartProvider>
             {children}
             <WhatsAppButton />
           </CartProvider>

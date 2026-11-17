@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// Admin always shows the live data, never a cached copy.
+export const dynamic = "force-dynamic";
+
 export default function AdminLayout({
   children,
 }: {

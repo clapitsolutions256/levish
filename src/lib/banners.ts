@@ -1,3 +1,4 @@
+import { revalidateTag, unstable_cache } from "next/cache";
 import { getSupabase } from "@/lib/supabase";
 
 export type Banner = {
@@ -39,10 +40,22 @@ export async function listBanners() {
   return ((data ?? []) as BannerRow[]).map(toBanner);
 }
 
+const BANNERS_TAG = "banners";
+
+// The home page reads banners from a server cache; saving a banner in admin clears it at once.
+const cachedActiveBanners = unstable_cache(
+  async () => (await listBanners()).filter((banner) => banner.active && banner.image),
+  ["active-banners"],
+  { tags: [BANNERS_TAG], revalidate: 300 }
+);
+
+export function refreshBanners() {
+  revalidateTag(BANNERS_TAG, { expire: 0 });
+}
+
 export async function listActiveBanners() {
   try {
-    const banners = await listBanners();
-    return banners.filter((banner) => banner.active && banner.image);
+    return await cachedActiveBanners();
   } catch (err) {
     console.error("Banners error:", err);
     return [];

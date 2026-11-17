@@ -10,8 +10,10 @@ import { breadcrumbJsonLd, categoryLabel, productJsonLd, productSummary } from "
 import { pageMeta, SITE_NAME } from "@/lib/site";
 import { articleKey, differentArticles } from "@/lib/showcase";
 import { ProductDetail } from "./ProductDetail";
+import { ProductReviews } from "@/components/ProductReviews";
+import { reviewsFor } from "@/data/reviews";
 
-type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ color?: string }> };
+type Props = { params: Promise<{ slug: string }> };
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
@@ -54,9 +56,8 @@ async function findMergedProduct(slug: string) {
     .find(Boolean);
 }
 
-export default async function ProductPage({ params, searchParams }: Props) {
+export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const { color } = await searchParams;
   if (PRODUCTS_PAUSED) {
     return (
       <div className="mx-auto max-w-[100rem] px-4 py-8 sm:px-6 lg:px-10">
@@ -71,6 +72,8 @@ export default async function ProductPage({ params, searchParams }: Props) {
     notFound();
   }
 
+  const productReviews = reviewsFor(product.slug);
+
   // Other pieces, not this one in other colours: its colours are already on the page.
   const article = articleKey(product);
   const related = differentArticles(
@@ -81,7 +84,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
   // Extra room at the bottom on phones so the buy bar never covers the last row.
   return (
     <div className="mx-auto max-w-[100rem] px-4 py-8 max-md:pb-24 sm:px-6 lg:px-10">
-      <JsonLd data={productJsonLd(product)} />
+      <JsonLd data={productJsonLd(product, productReviews)} />
       <JsonLd
         data={breadcrumbJsonLd([
           { name: "Home", path: "/" },
@@ -104,7 +107,9 @@ export default async function ProductPage({ params, searchParams }: Props) {
         <span>{product.name}</span>
       </nav>
 
-      <ProductDetail product={product} initialColor={color} />
+      <ProductDetail product={product} />
+
+      <ProductReviews reviews={productReviews} />
 
       {related.length > 0 && (
         <section className="mt-20 pt-16 border-t border-[var(--border)]">

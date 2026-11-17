@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
@@ -59,7 +60,7 @@ function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
 }
 
-export function CartDrawer({ suggestions = [] }: { suggestions?: CartSuggestion[] }) {
+export function CartDrawer() {
   const {
     items,
     isOpen,
@@ -69,6 +70,17 @@ export function CartDrawer({ suggestions = [] }: { suggestions?: CartSuggestion[
     itemCount,
     total,
   } = useCart();
+  // Suggestions load the first time the bag opens, not with every page.
+  const [suggestions, setSuggestions] = useState<CartSuggestion[]>([]);
+  const [asked, setAsked] = useState(false);
+  useEffect(() => {
+    if (!isOpen || asked) return;
+    setAsked(true);
+    fetch("/api/suggestions")
+      .then((response) => (response.ok ? response.json() : []))
+      .then((pool: CartSuggestion[]) => setSuggestions(Array.isArray(pool) ? pool : []))
+      .catch(() => undefined);
+  }, [isOpen, asked]);
 
   return (
     <>
