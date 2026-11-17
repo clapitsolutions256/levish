@@ -13,6 +13,7 @@ import { trackViewContent } from "@/lib/metaPixel";
 import { ProductPromises } from "@/components/ProductPromises";
 import { ProductBuyBar } from "@/components/ProductBuyBar";
 import { LingerieBadges } from "@/components/LingerieBadges";
+import { RatingLine } from "@/components/RatingLine";
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
@@ -82,6 +83,7 @@ export function ProductDetail({ product }: { product: Product }) {
           {product.color}
         </p>
         <h1 className="section-heading mt-2">{product.name}</h1>
+        <RatingLine count={product.reviewCount} average={product.reviewAverage} storeRating={product.storeRating} size="md" linked />
         <LingerieBadges subcategory={product.subcategory} />
         <div className="mt-4 flex items-baseline gap-3">
           <span className="text-xl font-semibold">{formatPrice(product.price)}</span>

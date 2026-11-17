@@ -4,6 +4,7 @@ import { getSupabase } from "@/lib/supabase";
 import { brandSlug, summarizeBrands } from "@/lib/brands";
 import { normalizeColorImages, normalizeVariants, type ColorGallery } from "@/lib/variants";
 import { cleanSalePercent, withSale } from "@/lib/sale";
+import { averageRating, getAllReviews } from "@/lib/reviews";
 import { sameType } from "@/lib/productTypes";
 import { PRODUCTS_PAUSED } from "@/lib/storeStatus";
 import { MAX_PRODUCT_IMAGES } from "@/lib/productImageLimits";
@@ -110,7 +111,18 @@ const cachedActiveProducts = unstable_cache(
 
 export async function getActiveProducts() {
   if (PRODUCTS_PAUSED) return [];
-  return cachedActiveProducts();
+  // Ratings come from their own cache (approved reviews change separately from products), so they are added here.
+  const [products, reviews] = await Promise.all([cachedActiveProducts(), getAllReviews()]);
+  const storeRating = averageRating(reviews);
+  return products.map((product) => {
+    const own = reviews.filter((review) => review.product === product.slug);
+    return {
+      ...product,
+      storeReviewCount: reviews.length,
+      storeRating,
+      ...(own.length ? { reviewCount: own.length, reviewAverage: averageRating(own) } : {}),
+    };
+  });
 }
 
 export function refreshCatalog() {

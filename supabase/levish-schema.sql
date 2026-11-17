@@ -57,6 +57,22 @@ create table if not exists levish.banners (
 );
 create index if not exists banners_active_sort_idx on levish.banners (active, sort_order);
 
+-- Reviews customers write on the site. They stay hidden until an admin approves them.
+create table if not exists levish.reviews (
+  id uuid primary key default gen_random_uuid(),
+  product_slug text,
+  product_name text not null default '',
+  name text not null,
+  email text not null default '',
+  rating smallint not null check (rating between 1 and 5),
+  body text not null,
+  photos text[] not null default '{}',
+  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  created_at timestamptz not null default now(),
+  reviewed_at timestamptz
+);
+create index if not exists reviews_status_created_idx on levish.reviews (status, created_at desc);
+
 -- Customer accounts (Levish's own sign-in, separate from Empulse)
 create table if not exists levish.profiles (
   id uuid primary key default gen_random_uuid(),
@@ -167,7 +183,7 @@ $$;
 do $$
 declare t text;
 begin
-  foreach t in array array['products','brands','banners','profiles','carts','cart_items','orders','order_notes','promo_codes'] loop
+  foreach t in array array['products','brands','banners','reviews','profiles','carts','cart_items','orders','order_notes','promo_codes'] loop
     execute format('alter table levish.%I enable row level security', t);
   end loop;
 end $$;

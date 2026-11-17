@@ -144,19 +144,21 @@ function productInStock(product: Product) {
   return product.variants.some((variant) => variant.stock > 0);
 }
 
-export function productJsonLd(product: Product, reviews: { name: string; date?: string; text: string; paraphrased?: boolean; rating?: 5 }[] = []) {
+export function productJsonLd(product: Product, reviews: { name: string; date?: string; text: string; paraphrased?: boolean; rating?: number }[] = []) {
   const description = plainDescription(product.description, 5000) || productSummary(product);
-  // Every review we carried over is five stars; the rating is only sent when reviews are shown on the page.
-  const ratedReviews = reviews.filter((review) => !review.paraphrased || review.rating === 5);
+  // The rating is only sent when the reviews are shown on the page; reviews without stars count as five.
+  const ratedReviews = reviews.filter((review) => !review.paraphrased || review.rating);
+  const stars = (review: { rating?: number }) => review.rating ?? 5;
+  const average = ratedReviews.length ? Math.round((ratedReviews.reduce((sum, review) => sum + stars(review), 0) / ratedReviews.length) * 10) / 10 : 0;
   const rated = ratedReviews.length
     ? {
-        aggregateRating: { "@type": "AggregateRating", ratingValue: 5, bestRating: 5, reviewCount: ratedReviews.length },
+        aggregateRating: { "@type": "AggregateRating", ratingValue: average, bestRating: 5, reviewCount: ratedReviews.length },
         review: ratedReviews.slice(0, 10).map((review) => ({
           "@type": "Review",
           author: { "@type": "Person", name: review.name },
           datePublished: review.date,
           reviewBody: review.text,
-          reviewRating: { "@type": "Rating", ratingValue: 5, bestRating: 5 },
+          reviewRating: { "@type": "Rating", ratingValue: stars(review), bestRating: 5 },
         })),
       }
     : {};

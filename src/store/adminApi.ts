@@ -31,6 +31,19 @@ export type BannerInput = {
   active?: boolean;
 };
 
+export type AdminReview = {
+  id: string;
+  productSlug: string | null;
+  productName: string;
+  name: string;
+  email: string;
+  rating: number;
+  text: string;
+  photos: string[];
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+};
+
 export type AdminPromo = {
   code: string;
   owner: string;
@@ -81,7 +94,7 @@ export type ProductPayload = {
 export const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: adminBaseQuery,
-  tagTypes: ["AdminProduct", "AdminSession", "AdminBanner", "AdminBrand", "AdminPromo"],
+  tagTypes: ["AdminProduct", "AdminSession", "AdminBanner", "AdminBrand", "AdminPromo", "AdminReview"],
   refetchOnFocus: true,
   refetchOnReconnect: true,
   keepUnusedDataFor: 120,
@@ -197,6 +210,18 @@ export const adminApi = createApi({
       query: (code) => ({ url: `/admin/promos/${encodeURIComponent(code)}`, method: "DELETE" }),
       invalidatesTags: ["AdminPromo"],
     }),
+    getReviews: builder.query<AdminReview[], void>({
+      query: () => "/admin/reviews",
+      providesTags: ["AdminReview"],
+    }),
+    setReviewStatus: builder.mutation<{ ok: boolean }, { id: string; status: AdminReview["status"] }>({
+      query: ({ id, status }) => ({ url: `/admin/reviews/${id}`, method: "PATCH", body: { status } }),
+      invalidatesTags: ["AdminReview"],
+    }),
+    deleteReview: builder.mutation<{ ok: boolean }, string>({
+      query: (id) => ({ url: `/admin/reviews/${id}`, method: "DELETE" }),
+      invalidatesTags: ["AdminReview"],
+    }),
   }),
 });
 
@@ -221,4 +246,7 @@ export const {
   useCreatePromoMutation,
   useUpdatePromoMutation,
   useDeletePromoMutation,
+  useGetReviewsQuery,
+  useSetReviewStatusMutation,
+  useDeleteReviewMutation,
 } = adminApi;

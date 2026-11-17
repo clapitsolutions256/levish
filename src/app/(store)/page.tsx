@@ -15,7 +15,7 @@ import { isSold } from "@/lib/variants";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { AboutUs } from "@/components/AboutUs";
 import { Reviews } from "@/components/Reviews";
-import { reviews } from "@/data/reviews";
+import { getAllReviews } from "@/lib/reviews";
 import { blogs, HOME_POSTS } from "@/data/blogs";
 import { getActiveProducts } from "@/lib/catalog";
 import { JsonLd } from "@/components/JsonLd";
@@ -46,6 +46,7 @@ export default async function HomePage() {
     catalog.find((product) => product.featured && !isSold(product)) ??
     catalog[0];
   // Reviews link to a product only while it is still in the shop.
+  const reviews = await getAllReviews();
   const reviewedSlugs = new Set(reviews.map((review) => review.product ?? review.relatedProduct));
   const reviewedProducts = Object.fromEntries(
     catalog
@@ -151,7 +152,7 @@ export default async function HomePage() {
 
       <div className="bg-[var(--background)]">
       <WhyChooseUs />
-      <Reviews products={reviewedProducts} />
+      <Reviews reviews={reviews} products={reviewedProducts} shop={catalog.map(({ slug, name }) => ({ slug, name }))} />
       <AboutUs />
 
       <Reels />

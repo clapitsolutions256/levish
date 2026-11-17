@@ -11,7 +11,7 @@ import { pageMeta, SITE_NAME } from "@/lib/site";
 import { articleKey, differentArticles } from "@/lib/showcase";
 import { ProductDetail } from "./ProductDetail";
 import { ProductReviews } from "@/components/ProductReviews";
-import { reviewsFor } from "@/data/reviews";
+import { getProductReviews } from "@/lib/reviews";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -72,7 +72,7 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
-  const productReviews = reviewsFor(product.slug);
+  const productReviews = await getProductReviews(product.slug);
 
   // Other pieces, not this one in other colours: its colours are already on the page.
   const article = articleKey(product);
@@ -109,7 +109,7 @@ export default async function ProductPage({ params }: Props) {
 
       <ProductDetail product={product} />
 
-      <ProductReviews reviews={productReviews} />
+      <ProductReviews reviews={productReviews} product={{ slug: product.slug, name: product.name }} />
 
       {related.length > 0 && (
         <section className="mt-20 pt-16 border-t border-[var(--border)]">

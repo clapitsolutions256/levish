@@ -8,9 +8,9 @@ export type StyleCard = { name: string; href: string; image: string };
 // Types on these categories become style cards and style pages (/jackets, /shorts, ...).
 const CLOTHING = new Set(["women", "men", "unisex"]);
 
-// Built-in styles keep their order and their existing pages.
-const BUILT_IN = [
-  { key: "undergarments", name: "Lingerie", href: "/undergarments" },
+// Built-in styles keep their order and their existing pages. A cover names the product whose photo leads the card.
+const BUILT_IN: { key: string; name: string; href: string; cover?: string }[] = [
+  { key: "undergarments", name: "Lingerie", href: "/undergarments", cover: "seamless-crisscross-back-push-up-bra-comfortable-breathable" },
   { key: "bodysuit", name: "Bodysuits", href: "/bodysuits" },
   { key: "Co-ord Sets", name: "Co-ord Sets", href: "/co-ord-sets" },
   { key: "jacket", name: "Jackets", href: "/jackets" },
@@ -60,7 +60,8 @@ export function styleCards(products: Product[]): StyleCard[] {
   if (shoe) cards.push({ name: "Shoes", href: "/shoes", image: shoe.image });
 
   for (const style of BUILT_IN) {
-    const product = products.find((item) => sameType(clothingType(item), style.key));
+    const product =
+      products.find((item) => item.slug === style.cover) ?? products.find((item) => sameType(clothingType(item), style.key));
     if (product) cards.push({ name: style.name, href: style.href, image: product.image });
   }
 

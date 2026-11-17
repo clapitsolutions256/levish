@@ -267,3 +267,21 @@ export function sendContactMessage(msg: ContactMessage) {
           </td></tr>`);
   return send(to, `Contact form · ${msg.subject} · ${msg.name}`, html, msg.email);
 }
+
+export type ReviewAlert = { name: string; email: string; rating: number; text: string; productName: string; photos: number };
+
+/** Tells the store a customer wrote a review that is waiting for approval in admin. */
+export function sendNewReviewAlert(review: ReviewAlert) {
+  const to = (process.env.ORDER_ALERT_EMAIL || DEFAULT_ALERT_TO).split(",").map((address) => address.trim());
+  const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
+  const html = frame(`
+          <tr><td style="padding:24px 32px 0">
+            <p style="margin:0;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#4f7d57">New review to approve</p>
+            <h1 style="margin:10px 0 0;font-size:20px;line-height:1.3;color:${INK}">${escape(review.productName || "Store review")}</h1>
+            <p style="margin:8px 0 0;font-size:16px;color:#e0a526">${stars}</p>
+            <p style="margin:6px 0 0;font-size:13px;color:${MUTED}">From ${escape(review.name)}${review.email ? ` · ${escape(review.email)}` : ""}${review.photos ? ` · ${review.photos} photo${review.photos === 1 ? "" : "s"}` : ""}</p>
+            <div style="margin-top:16px;padding:16px;border-radius:14px;background:${PAPER};font-size:14px;line-height:1.7;color:${INK};white-space:pre-wrap">${escape(review.text)}</div>
+            <p style="margin:16px 0 0;font-size:13px;color:${MUTED}">Approve or reject it in admin → Reviews.</p>
+          </td></tr>`);
+  return send(to, `New review · ${stars} · ${review.name}`, html, review.email || undefined);
+}

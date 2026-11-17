@@ -12,11 +12,12 @@ const CARD_SECONDS = 9; // how long each card takes to pass, so both rows drift 
 const AVATAR_TONES = ["bg-[#f3e1e4] text-[#a2485a]", "bg-[var(--sage-tint)] text-[var(--accent)]", "bg-[#efe6d8] text-[#8a6a3b]", "bg-[#e4e6f3] text-[#4d5596]"];
 
 /** Five stars drawn from the one star shape defined in ReviewStarSymbol, so each card adds a few bytes, not five paths. */
-export function Stars({ size = 16 }: { size?: number }) {
+export function Stars({ size = 16, value = 5 }: { size?: number; value?: number }) {
+  const filled = Math.round(value);
   return (
-    <svg width={size * 5 + 8} height={size} viewBox="0 0 108 20" className="text-[#e0a526]" fill="currentColor" role="img" aria-label="5 out of 5 stars">
-      {[0, 22, 44, 66, 88].map((x) => (
-        <use key={x} href="#review-star" x={x} />
+    <svg width={size * 5 + 8} height={size} viewBox="0 0 108 20" role="img" aria-label={`${value} out of 5 stars`}>
+      {[0, 22, 44, 66, 88].map((x, i) => (
+        <use key={x} href="#review-star" x={x} y={0} width={20} height={20} fill={i < filled ? "#e0a526" : "#e5e1d8"} />
       ))}
     </svg>
   );
@@ -41,7 +42,7 @@ function ReviewCard({ review, product }: { review: Review; product?: ReviewedPro
     // Every card is the same height so the two rows stay even; the quote gets more lines when there is no product below it.
     <figure className="flex h-[17rem] w-[17.5rem] shrink-0 flex-col rounded-[var(--radius-lg)] border border-[var(--border)] bg-white p-5 shadow-[0_10px_30px_-18px_var(--shadow-warm-md)] sm:w-[21rem]">
       <div className="flex items-center justify-between gap-3">
-        <div><Stars />{review.paraphrased ? <p className="mt-1 text-[10px] text-[var(--muted)]">Feedback paraphrased</p> : null}</div>
+        <div><Stars value={review.rating ?? 5} />{review.paraphrased ? <p className="mt-1 text-[10px] text-[var(--muted)]">Feedback paraphrased</p> : null}</div>
         {review.date ? <span className="text-xs text-[var(--muted)]">{monthOf(review.date)}</span> : null}
       </div>
       <blockquote className="mt-3 text-[0.9rem] leading-relaxed text-[var(--foreground)]" dir="auto">

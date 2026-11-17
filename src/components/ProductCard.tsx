@@ -10,6 +10,7 @@ import { ProductQuickView } from "@/components/ProductQuickView";
 import { findVariant, galleryFor, isSold, uniqueValues } from "@/lib/variants";
 import { SoldBadge } from "@/components/SoldBadge";
 import { SaleTag } from "@/components/SaleTag";
+import { RatingLine } from "@/components/RatingLine";
 import { LingerieBadges } from "@/components/LingerieBadges";
 import { trackAddToCart } from "@/lib/metaPixel";
 
@@ -397,6 +398,7 @@ export function ProductCard({ product, index = 0, priority = false }: ProductCar
         <h3 className={`${product.brand ? "mt-0.5" : "mt-2"} h-10 overflow-hidden text-[15px] font-medium leading-5 text-[var(--foreground)] line-clamp-2 transition-colors duration-200 group-hover:text-[var(--accent)]`}>
           {product.name}
         </h3>
+        <RatingLine count={product.reviewCount} average={product.reviewAverage} storeRating={product.storeRating} />
         <p className="mt-1.5 flex flex-wrap items-baseline gap-x-2 text-[15px] font-semibold text-[var(--accent)]">
           {formatPrice(product.price)}
           {product.compareAtPrice && product.compareAtPrice > product.price ? (

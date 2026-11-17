@@ -1,5 +1,17 @@
-/** Customer reviews brought over from our earlier Shopify store, newest first. */
-export type Review = { name: string; date?: string; paraphrased?: boolean; rating?: 5; text: string; product?: string; relatedProduct?: string; photo?: string };
+/** Customer reviews brought over from our earlier Shopify store, newest first. Reviews written on this site live in the database (src/lib/reviews.ts). */
+export type Review = {
+  name: string;
+  date?: string;
+  paraphrased?: boolean;
+  /** 1 to 5; reviews without one are five stars. */
+  rating?: number;
+  text: string;
+  product?: string;
+  relatedProduct?: string;
+  photo?: string;
+  /** Every photo a customer added on this site; `photo` is the first. */
+  photos?: string[];
+};
 
 // Paraphrased entries reflect positive feedback supplied by the store owner;
 // Five-star ratings supplied by the store owner; customer dates were not supplied.
@@ -61,8 +73,3 @@ export const reviews: Review[] = [
   { name: "Ali", date: "2026-10-08", text: "Bohat pyari nightwear hai, quality bhi zabardast hai. Bohat comfortable hai, highly recommended ❤️" },
   { name: "Aysha", date: "2026-10-08", text: "Very excellent! The delivery was super fast, and the product is 100% original and exactly as described. I’m really happy with my order and the quality is amazing. I highly recommend Levish to everyone. You can order from them with confidence. Thank you so much, Levish! ❤️" },
 ];
-
-/** Reviews written about one product, newest first. */
-export function reviewsFor(slug: string) {
-  return reviews.filter((review) => review.product === slug);
-}

@@ -49,6 +49,12 @@ export interface Product {
   new?: boolean;
   active?: boolean;
   updatedAt?: string;
+  /** Customer reviews shown for this product, and their average stars (store pages only). */
+  reviewCount?: number;
+  reviewAverage?: number;
+  /** Reviews of the store as a whole, shown as a store rating on products without their own reviews. */
+  storeReviewCount?: number;
+  storeRating?: number;
 }
 
 export interface CartItem {
