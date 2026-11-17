@@ -1,5 +1,7 @@
 // Levish's own Pixel. Empty means no tracking at all, so Levish never reports into another store's Pixel.
 export const META_PIXEL_ID = /^\d+$/.test(process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "") ? process.env.NEXT_PUBLIC_META_PIXEL_ID! : "";
+import { identifyTikTokUser, tiktokContents, tiktokTrack } from "@/lib/tiktokPixel";
+
 const CURRENCY = "PKR";
 
 type MetaParams = Record<string, unknown>;
@@ -43,6 +45,7 @@ export function identifyMetaUser(user: {
   postalCode?: string;
   externalId?: string;
 }) {
+  identifyTikTokUser({ email: user.email, phone: normalizePhone(user.phone), externalId: user.externalId });
   if (typeof window === "undefined" || typeof window.fbq !== "function") return;
   const data: Record<string, string> = { country: "pk" };
   const email = user.email?.trim().toLowerCase();
@@ -72,6 +75,7 @@ function normalizePhone(phone?: string) {
 }
 
 export function trackViewContent(product: { id: string; name: string; category?: string; price: number }) {
+  tiktokTrack("ViewContent", tiktokContents([{ id: product.id, quantity: 1, item_price: product.price }], CURRENCY, { name: product.name }));
   send(
     "ViewContent",
     contentPayload([{ id: product.id, quantity: 1, item_price: product.price }], {
@@ -93,6 +97,7 @@ export function trackCatalogView(input: { name: string; category: string; ids: s
 }
 
 export function trackAddToCart(product: { id: string; name: string; category?: string; price: number }, quantity = 1) {
+  tiktokTrack("AddToCart", tiktokContents([{ id: product.id, quantity, item_price: product.price }], CURRENCY, { name: product.name }));
   send(
     "AddToCart",
     contentPayload([{ id: product.id, quantity, item_price: product.price }], {
@@ -105,6 +110,7 @@ export function trackAddToCart(product: { id: string; name: string; category?: s
 export function trackSearch(searchString: string, ids: string[]) {
   const query = searchString.trim();
   if (!query) return;
+  tiktokTrack("Search", { query, contents: ids.slice(0, 10).map((id) => ({ content_id: id, content_type: "product" })), currency: CURRENCY });
   send("Search", {
     search_string: query,
     content_ids: ids.slice(0, 10),
@@ -115,11 +121,13 @@ export function trackSearch(searchString: string, ids: string[]) {
 
 export function trackInitiateCheckout(contents: MetaContent[], value?: number) {
   if (!contents.length) return;
+  tiktokTrack("InitiateCheckout", tiktokContents(contents, CURRENCY, { value }));
   send("InitiateCheckout", contentPayload(contents, value == null ? undefined : { value }));
 }
 
 export function trackAddPaymentInfo(contents: MetaContent[], value?: number) {
   if (!contents.length) return;
+  tiktokTrack("AddPaymentInfo", tiktokContents(contents, CURRENCY, { value }));
   send("AddPaymentInfo", contentPayload(contents, value == null ? undefined : { value }));
 }
 
@@ -132,6 +140,7 @@ export function trackPurchase(orderId: string, contents: MetaContent[], value: n
   } catch {
     // Still send the event if storage is blocked. The order id is the dedupe key.
   }
+  tiktokTrack("Purchase", tiktokContents(contents, CURRENCY, { value }), orderId);
   send(
     "Purchase",
     contentPayload(contents, { value, order_id: orderId }),
@@ -140,6 +149,7 @@ export function trackPurchase(orderId: string, contents: MetaContent[], value: n
 }
 
 export function trackCompleteRegistration(email?: string) {
+  tiktokTrack("CompleteRegistration", { content_name: "Levish account" });
   send("CompleteRegistration", { status: true, content_name: "Levish account", currency: CURRENCY });
   if (email) identifyMetaUser({ email });
 }
