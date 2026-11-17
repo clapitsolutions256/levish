@@ -14,6 +14,8 @@ import type { Product } from "@/types";
 import { isSold } from "@/lib/variants";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { AboutUs } from "@/components/AboutUs";
+import { Reviews } from "@/components/Reviews";
+import { reviews } from "@/data/reviews";
 import { blogs } from "@/data/blogs";
 import { getActiveProducts } from "@/lib/catalog";
 import { JsonLd } from "@/components/JsonLd";
@@ -43,6 +45,13 @@ export default async function HomePage() {
     catalog.find((product) => product.featured && !isSold(product) && wornBy("women")(product)) ??
     catalog.find((product) => product.featured && !isSold(product)) ??
     catalog[0];
+  // Reviews link to a product only while it is still in the shop.
+  const reviewedSlugs = new Set(reviews.map((review) => review.product));
+  const reviewedProducts = Object.fromEntries(
+    catalog
+      .filter((product) => reviewedSlugs.has(product.slug))
+      .map((product) => [product.slug, { name: product.name, image: product.image }])
+  );
   const pieces = (list: Product[]) => list.map(({ id, slug, name, image }) => ({ id, slug, name, image }));
   const panels: StackPanel[] = [
     {
@@ -142,6 +151,7 @@ export default async function HomePage() {
 
       <div className="bg-[var(--background)]">
       <WhyChooseUs />
+      <Reviews products={reviewedProducts} />
       <AboutUs />
 
       <Reels />

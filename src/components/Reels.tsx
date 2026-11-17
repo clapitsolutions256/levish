@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const reels = [{ src: "/kairo/herobgvideo.mp4", label: "Levish" }];
+const reels = [
+  { src: "/reels/levish-reel.mp4", label: "Bunny Bra unboxing" },
+  { src: "/reels/sale.mp4", label: "Bunny Bra sale" },
+  { src: "/reels/gym-suit.mp4", label: "Gym Suit in Lavender" },
+  { src: "/reels/seamless-bra.mp4", label: "Seamless Push-Up Bra" },
+  { src: "/reels/bra.mp4", label: "Seamless Push-Up Bra try-on" },
+];
 
 export function Reels() {
   const scroller = useRef<HTMLDivElement>(null);
@@ -97,7 +103,7 @@ function ReelCard({ src, label }: { src: string; label: string }) {
   return (
     <article
       ref={frame}
-      className="relative aspect-[3/4] w-[72vw] max-w-[280px] shrink-0 overflow-hidden rounded-2xl bg-[var(--border)] sm:w-[240px] md:w-[270px]"
+      className="relative aspect-[9/16] w-[72vw] max-w-[280px] shrink-0 overflow-hidden rounded-2xl bg-[var(--border)] sm:w-[240px] md:w-[270px]"
     >
       <video
         ref={video}
