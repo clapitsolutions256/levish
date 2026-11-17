@@ -85,20 +85,24 @@ export default function RootLayout({
   return (
     <html lang="en-PK" className={`${poppins.variable} ${display.variable}`} suppressHydrationWarning>
       <head>
-        {META_PIXEL_ID ? (
-          <Script id="meta-pixel" strategy="beforeInteractive">{`
-          !function(f,b,e,v,n,t,s)
-          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-          n.queue=[];t=b.createElement(e);t.async=!0;
-          t.src=v;s=b.getElementsByTagName(e)[0];
-          s.parentNode.insertBefore(t,s)}(window, document,'script',
-          'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '${META_PIXEL_ID}');
-          if (location.pathname.indexOf('/admin') !== 0) fbq('track', 'PageView');
-        `}</Script>
-        ) : null}
+        {/* Meta Pixel Code. A plain script tag, like the TikTok base code below, so checkers find it in the HTML. */}
+        <script
+          id="meta-pixel"
+          dangerouslySetInnerHTML={{
+            __html: `
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '${META_PIXEL_ID}');
+if (location.pathname.indexOf('/admin') !== 0) fbq('track', 'PageView');
+`,
+          }}
+        />
         {/* TikTok Pixel Code Start: TikTok's base code exactly as given, as a plain script tag so TikTok's checker finds it in the HTML. */}
         <script
           id="tiktok-pixel"
@@ -119,17 +123,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         {/* TikTok Pixel Code End */}
       </head>
       <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
-        {META_PIXEL_ID ? (
-          <noscript>
-            <img
-              height="1"
-              width="1"
-              style={{ display: "none" }}
-              src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
-              alt=""
-            />
-          </noscript>
-        ) : null}
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+            alt=""
+          />
+        </noscript>
         <MetaPixelPageView />
         <TikTokPageView />
         <Script id="strip-bis" strategy="beforeInteractive">{`

@@ -1,5 +1,6 @@
-// Levish's own Pixel. Empty means no tracking at all, so Levish never reports into another store's Pixel.
-export const META_PIXEL_ID = /^\d+$/.test(process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "") ? process.env.NEXT_PUBLIC_META_PIXEL_ID! : "";
+// Levish's own Pixel (Meta Events Manager). NEXT_PUBLIC_META_PIXEL_ID overrides it; pixel ids are public.
+const LEVISH_META_PIXEL_ID = "4546837712230474";
+export const META_PIXEL_ID = /^\d+$/.test(process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "") ? process.env.NEXT_PUBLIC_META_PIXEL_ID! : LEVISH_META_PIXEL_ID;
 import { identifyTikTokUser, tiktokContents, tiktokTrack } from "@/lib/tiktokPixel";
 
 const CURRENCY = "PKR";
