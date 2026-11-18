@@ -21,10 +21,11 @@ type Props = {
 const categorySlugs = categories.map((c) => c.slug);
 
 // `search` is the name used in page titles for Google when it differs from the heading;
-// `womenOnly` styles are titled "for Women" rather than "for Men & Women".
-const stylePages: Record<string, { heading: string; subcategory: string; search?: string; womenOnly?: boolean }> = {
-  undergarments: { heading: "Lingerie", subcategory: "undergarments", search: "Lingerie & Undergarments", womenOnly: true },
-  lingerie: { heading: "Lingerie", subcategory: "undergarments", search: "Lingerie & Undergarments", womenOnly: true },
+// `womenOnly` styles are titled "for Women" rather than "for Men & Women"; `lead` names the product shown first.
+const LINGERIE_LEAD = "seamless-crisscross-back-push-up-bra-comfortable-breathable";
+const stylePages: Record<string, { heading: string; subcategory: string; search?: string; womenOnly?: boolean; lead?: string }> = {
+  undergarments: { heading: "Lingerie", subcategory: "undergarments", search: "Lingerie & Undergarments", womenOnly: true, lead: LINGERIE_LEAD },
+  lingerie: { heading: "Lingerie", subcategory: "undergarments", search: "Lingerie & Undergarments", womenOnly: true, lead: LINGERIE_LEAD },
   bodysuits: { heading: "Bodysuits", subcategory: "bodysuit", womenOnly: true },
   bodysuit: { heading: "Bodysuits", subcategory: "bodysuit", womenOnly: true },
   "co-ord-sets": { heading: "Co-ord Sets", subcategory: "Co-ord Sets", womenOnly: true },
@@ -178,16 +179,19 @@ function StylePage({
   category,
   list,
   gender,
+  lead,
 }: {
   heading: string;
   path: string;
   category: string;
   list: Product[];
   gender: Gender | null;
+  lead?: string;
 }) {
-  // Sale pieces lead the page; everything else keeps its newest-first order.
+  // The page's lead product comes first, then sale pieces; everything else keeps its newest-first order.
   const shown = (gender ? list.filter((product) => forGender(product, gender)) : list).toSorted(
-    (a, b) => Number(Boolean(b.salePercent)) - Number(Boolean(a.salePercent))
+    (a, b) =>
+      Number(b.slug === lead) - Number(a.slug === lead) || Number(Boolean(b.salePercent)) - Number(Boolean(a.salePercent))
   );
   const title = gender ? `${genderInfo[gender].who}'s ${heading}` : heading;
   return (
@@ -233,6 +237,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         category={style.subcategory}
         list={products.filter((product) => sameType(product.subcategory, style.subcategory))}
         gender={genderFilter}
+        lead={style.lead}
       />
     );
   }
