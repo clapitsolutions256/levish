@@ -1,6 +1,7 @@
 import { getActiveProducts } from "@/lib/catalog";
 import { SHIPPING_FEE, SHIPPING_THRESHOLD } from "@/lib/shipping";
 import { SITE_URL } from "@/lib/site";
+import { cleanEnv } from "@/lib/whatsapp";
 
 // Phase 1 of the WhatsApp sales agent: answers questions about the live catalog with Gemini.
 // It does not take orders yet. The customer's phone number is never sent to Gemini.
@@ -62,8 +63,9 @@ RULES:
 
 /** Builds the reply for one customer message. Falls back to a fixed greeting if Gemini is not configured or fails. */
 export async function replyTo(customerKey: string, text: string) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  const model = process.env.GEMINI_MODEL || "gemini-flash-latest";
+  const apiKey = cleanEnv(process.env.GEMINI_API_KEY);
+  // A second model to try when the first stays busy; optional.
+  const models = [cleanEnv(process.env.GEMINI_MODEL) || "gemini-flash-latest", cleanEnv(process.env.GEMINI_FALLBACK_MODEL)].filter(Boolean);
   if (!apiKey) return FALLBACK;
 
   const turns = remember(customerKey, { role: "user", text: text.slice(0, 2000) });
@@ -73,17 +75,19 @@ export async function replyTo(customerKey: string, text: string) {
       contents: turns.map((t) => ({ role: t.role, parts: [{ text: t.text }] })),
       generationConfig: { maxOutputTokens: 500, temperature: 0.4 },
     });
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
     // The free tier answers 503 (busy) or 429 (rate limit) at peak times; those usually clear within seconds.
     let response: Response | undefined;
-    for (const wait of [0, 1500, 4000]) {
-      if (wait) await new Promise((resolve) => setTimeout(resolve, wait));
-      response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-        body,
-      });
-      if (response.status !== 503 && response.status !== 429) break;
+    models: for (const model of models) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+      for (const wait of [0, 1500, 4000]) {
+        if (wait) await new Promise((resolve) => setTimeout(resolve, wait));
+        response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+          body,
+        });
+        if (response.status !== 503 && response.status !== 429) break models;
+      }
     }
     if (!response || !response.ok) throw new Error(`Gemini ${response?.status}: ${await response?.text()}`);
     const data = (await response.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };

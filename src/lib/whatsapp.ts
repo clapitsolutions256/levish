@@ -5,7 +5,7 @@ const GRAPH_VERSION = process.env.WHATSAPP_GRAPH_VERSION || "v25.0";
 
 /** True when Meta's x-hub-signature-256 header matches the raw request body signed with the app secret. */
 export function validSignature(rawBody: string, header: string | null) {
-  const secret = process.env.WHATSAPP_APP_SECRET;
+  const secret = cleanEnv(process.env.WHATSAPP_APP_SECRET);
   if (!secret || !header) return false;
   const expected = `sha256=${crypto.createHmac("sha256", secret).update(rawBody, "utf8").digest("hex")}`;
   const a = Buffer.from(header);
@@ -13,10 +13,20 @@ export function validSignature(rawBody: string, header: string | null) {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
+/** Env values pasted into a hosting panel often carry stray spaces, newlines or quotes. */
+export function cleanEnv(value: string | undefined) {
+  return (value ?? "").trim().replace(/^["']|["']$/g, "").trim();
+}
+
+/** Describes the token without revealing it, so a bad paste can be told from an expired token. */
+function tokenShape(token: string) {
+  return { length: token.length, startsWithEAA: token.startsWith("EAA"), hasWhitespace: /\s/.test(token) };
+}
+
 /** Sends a plain text reply. Only works inside the 24-hour window the customer's own message opened. */
 export async function sendText(to: string, body: string) {
-  const token = process.env.WHATSAPP_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  const token = cleanEnv(process.env.WHATSAPP_TOKEN);
+  const phoneNumberId = cleanEnv(process.env.WHATSAPP_PHONE_NUMBER_ID);
   if (!token || !phoneNumberId) throw new Error("Set WHATSAPP_TOKEN and WHATSAPP_PHONE_NUMBER_ID.");
 
   const response = await fetch(`https://graph.facebook.com/${GRAPH_VERSION}/${phoneNumberId}/messages`, {
@@ -29,7 +39,10 @@ export async function sendText(to: string, body: string) {
       text: { body: body.slice(0, 4000) },
     }),
   });
-  if (!response.ok) throw new Error(`WhatsApp send failed (${response.status}): ${await response.text()}`);
+  if (!response.ok) {
+    if (response.status === 401) console.warn("[whatsapp] token rejected", tokenShape(token), { phoneNumberIdLength: phoneNumberId.length });
+    throw new Error(`WhatsApp send failed (${response.status}): ${await response.text()}`);
+  }
 }
 
 export interface IncomingMessage {
