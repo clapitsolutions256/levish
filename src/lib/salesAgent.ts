@@ -68,19 +68,24 @@ export async function replyTo(customerKey: string, text: string) {
 
   const turns = remember(customerKey, { role: "user", text: text.slice(0, 2000) });
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-      {
+    const body = JSON.stringify({
+      systemInstruction: { parts: [{ text: systemPrompt(await catalogText()) }] },
+      contents: turns.map((t) => ({ role: t.role, parts: [{ text: t.text }] })),
+      generationConfig: { maxOutputTokens: 500, temperature: 0.4 },
+    });
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+    // The free tier answers 503 (busy) or 429 (rate limit) at peak times; those usually clear within seconds.
+    let response: Response | undefined;
+    for (const wait of [0, 1500, 4000]) {
+      if (wait) await new Promise((resolve) => setTimeout(resolve, wait));
+      response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemPrompt(await catalogText()) }] },
-          contents: turns.map((t) => ({ role: t.role, parts: [{ text: t.text }] })),
-          generationConfig: { maxOutputTokens: 500, temperature: 0.4 },
-        }),
-      }
-    );
-    if (!response.ok) throw new Error(`Gemini ${response.status}: ${await response.text()}`);
+        body,
+      });
+      if (response.status !== 503 && response.status !== 429) break;
+    }
+    if (!response || !response.ok) throw new Error(`Gemini ${response?.status}: ${await response?.text()}`);
     const data = (await response.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
     const reply = (data.candidates?.[0]?.content?.parts ?? []).map((p) => p.text ?? "").join("").trim();
     if (!reply) throw new Error("Gemini returned no text");
