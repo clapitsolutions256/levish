@@ -29,16 +29,26 @@ const FALLBACK =
   "Assalam o Alaikum! Levish mein khush aamdeed 💚 Hamari team jald aap se rabta karegi. Tab tak aap " +
   `${SITE_URL} par saare products dekh sakti hain.`;
 
+const rs = (n: number) => `Rs ${n.toLocaleString("en-PK")}`;
+
+/** The price exactly as the product page shows it: the price to pay, and the struck-through original when discounted. */
+function priceText(price: number, compareAtPrice?: number, salePercent?: number) {
+  if (!compareAtPrice || compareAtPrice <= price) return `PRICE ${rs(price)}`;
+  const percent = salePercent || Math.round((1 - price / compareAtPrice) * 100);
+  return `PRICE ${rs(price)} after ${percent}% discount (original ${rs(compareAtPrice)})`;
+}
+
 async function catalogText() {
+  // getActiveProducts already applies sales, so price is what the customer pays, as on the website.
   const products = await getActiveProducts();
   return products
-    .slice(0, 60)
+    .slice(0, 300)
     .map((p) => {
       const inStock = (p.variants ?? []).filter((v) => v.stock > 0);
       const sizes = [...new Set(inStock.map((v) => v.size).filter(Boolean))].join(", ");
       const colors = [...new Set(inStock.map((v) => v.color).filter(Boolean))].join(", ");
       const stock = p.variants?.length ? (inStock.length ? `sizes: ${sizes || "-"}; colors: ${colors || p.color}` : "OUT OF STOCK") : `color: ${p.color}`;
-      return `- ${p.name} | Rs ${p.price}${p.compareAtPrice ? ` (was Rs ${p.compareAtPrice})` : ""} | ${stock} | ${SITE_URL}/product/${p.slug}`;
+      return `- ${p.name} | ${priceText(p.price, p.compareAtPrice, p.salePercent)} | ${stock} | ${SITE_URL}/product/${p.slug}`;
     })
     .join("\n");
 }
@@ -55,6 +65,8 @@ ${catalog || "(catalog unavailable right now)"}
 
 RULES:
 - Only state prices, sizes, colors and stock that appear in the catalog above. If something is not listed, say you will check with the team.
+- PRICES: always quote the exact PRICE from the catalog, digit for digit; never round, estimate or calculate a different number. When a product shows a discount, say the price is after the discount and mention the original, for example: "Rs 2,940 (51% discount ke baad, asal qeemat Rs 6,000)".
+- Match the product the customer names to the closest catalog name; if several products fit (for example several bras), list the matching ones with their prices.
 - Never invent discounts, delivery times, policies or order confirmations.
 - You cannot place orders yet: when the customer wants to buy, share the product link so they can order on the website, or say the team will confirm the order on WhatsApp.
 - Never ask for card numbers, passwords or bank details.
