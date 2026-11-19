@@ -16,3 +16,5 @@ alter table levish.whatsapp_chats enable row level security;
 alter table levish.whatsapp_seen enable row level security;
 grant all on levish.whatsapp_chats to service_role;
 grant all on levish.whatsapp_seen to service_role;
+-- Let the API see the new tables right away.
+notify pgrst, 'reload schema';
