@@ -6,6 +6,7 @@ import { sendNewOrderAlert, sendOrderConfirmation } from "@/lib/email";
 import { PAUSED_NOTICE, PRODUCTS_PAUSED } from "@/lib/storeStatus";
 import { checkPromo, cleanCode, serverSubtotal } from "@/lib/promo";
 import { shippingFor } from "@/lib/shipping";
+import { capiRequestContext, sendCapiPurchase } from "@/lib/metaCapi";
 
 export async function POST(request: Request) {
   if (PRODUCTS_PAUSED) {
@@ -107,7 +108,26 @@ export async function POST(request: Request) {
       promoCode: promo?.promo_code,
       paymentMethod: paymentMethod || "cod",
     };
-    after(() => Promise.all([sendOrderConfirmation(placed), sendNewOrderAlert(placed)]));
+    // The same Purchase the browser pixel sends, from the server too (deduplicated by the order id).
+    const capi = {
+      orderId: data.id,
+      value: priced.total,
+      contents: orderItems.map((item: { productId?: string; quantity?: number; price?: number }) => ({
+        id: String(item.productId ?? ""),
+        quantity: Math.max(1, Math.floor(Number(item.quantity) || 1)),
+        item_price: Number(item.price) || 0,
+      })),
+      email: placed.email,
+      phone: placed.phone,
+      firstName: placed.firstName,
+      lastName: placed.lastName,
+      city: placed.city,
+      state: (state || "").trim(),
+      postalCode: (postalCode || "").trim(),
+      customerId: customer?.id,
+      context: capiRequestContext(request),
+    };
+    after(() => Promise.all([sendOrderConfirmation(placed), sendNewOrderAlert(placed), sendCapiPurchase(capi)]));
 
     return NextResponse.json(
       { message: "Order placed successfully!", orderId: data.id, total: priced.total },
