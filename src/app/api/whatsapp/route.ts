@@ -37,7 +37,13 @@ export function GET(request: Request) {
 
 export async function POST(request: Request) {
   const raw = await request.text();
-  if (!validSignature(raw, request.headers.get("x-hub-signature-256"))) {
+  const signature = request.headers.get("x-hub-signature-256");
+  if (!validSignature(raw, signature)) {
+    // No secrets or message content here: only enough to tell a wrong app secret from a stray request.
+    console.warn("[whatsapp] rejected webhook: bad signature", {
+      hasSignature: Boolean(signature),
+      appSecretSet: Boolean(process.env.WHATSAPP_APP_SECRET),
+    });
     return new Response("Invalid signature", { status: 401 });
   }
 
@@ -49,6 +55,12 @@ export async function POST(request: Request) {
   }
 
   const messages = incomingMessages(payload).filter((m) => firstTime(m.id));
+  console.log("[whatsapp] webhook received", {
+    messages: messages.length,
+    types: messages.map((m) => m.type),
+    geminiKeySet: Boolean(process.env.GEMINI_API_KEY),
+    tokenSet: Boolean(process.env.WHATSAPP_TOKEN),
+  });
 
   // Answer Meta at once; replying can take a few seconds and Meta retries slow webhooks.
   after(async () => {
