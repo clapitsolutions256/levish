@@ -25,6 +25,11 @@ function tokenShape(token: string) {
 
 /** Sends a plain text reply. Only works inside the 24-hour window the customer's own message opened. */
 export async function sendText(to: string, body: string) {
+  // Local testing: WHATSAPP_DRY_RUN=1 prints the reply instead of sending it.
+  if (process.env.WHATSAPP_DRY_RUN === "1") {
+    console.log(`[whatsapp dry run] reply:\n${body}\n---`);
+    return;
+  }
   const token = cleanEnv(process.env.WHATSAPP_TOKEN);
   const phoneNumberId = cleanEnv(process.env.WHATSAPP_PHONE_NUMBER_ID);
   if (!token || !phoneNumberId) throw new Error("Set WHATSAPP_TOKEN and WHATSAPP_PHONE_NUMBER_ID.");
