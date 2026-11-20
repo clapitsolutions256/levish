@@ -20,8 +20,14 @@ export async function POST(request: Request) {
       subtotal, shipping, total, paymentMethod, promoCode,
     } = await request.json();
 
-    if (!email || !firstName || !lastName || !address || !city || !phone) {
-      return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
+    // Checkout asks for full name, phone, full address and city. Email is optional: guests leave it out,
+    // signed-in customers send their account email so the order lands on their account.
+    if (!String(firstName ?? "").trim() || !String(address ?? "").trim() || !String(city ?? "").trim() || !String(phone ?? "").trim()) {
+      return NextResponse.json({ error: "Please fill in your name, phone number, address and city." }, { status: 400 });
+    }
+    const cleanEmail = String(email ?? "").trim().toLowerCase();
+    if (cleanEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
     }
 
     if (!orderItems || orderItems.length === 0) {
@@ -36,7 +42,7 @@ export async function POST(request: Request) {
       if (realSubtotal === null) {
         return NextResponse.json({ error: "Your cart has changed. Please refresh the page." }, { status: 400 });
       }
-      const result = await checkPromo({ code: promoCode, subtotal: realSubtotal, email, phone });
+      const result = await checkPromo({ code: promoCode, subtotal: realSubtotal, email: cleanEmail, phone });
       if ("error" in result) return NextResponse.json({ error: result.error }, { status: 400 });
       const fee = shippingFor(realSubtotal);
       priced = {
@@ -64,9 +70,9 @@ export async function POST(request: Request) {
     const { data, error } = await supabase
       .from("orders")
       .insert({
-        email: email.toLowerCase().trim(),
+        email: cleanEmail,
         first_name: firstName.trim(),
-        last_name: lastName.trim(),
+        last_name: String(lastName ?? "").trim(),
         address: address.trim(),
         apartment: (apartment || "").trim(),
         city: city.trim(),
@@ -93,9 +99,9 @@ export async function POST(request: Request) {
     // Email the customer, and alert the store, once the response has gone out so checkout stays fast.
     const placed = {
       id: data.id,
-      email: email.toLowerCase().trim(),
+      email: cleanEmail,
       firstName: firstName.trim(),
-      lastName: lastName.trim(),
+      lastName: String(lastName ?? "").trim(),
       address: address.trim(),
       apartment: (apartment || "").trim(),
       city: city.trim(),
@@ -127,7 +133,7 @@ export async function POST(request: Request) {
       customerId: customer?.id,
       context: capiRequestContext(request),
     };
-    after(() => Promise.all([sendOrderConfirmation(placed), sendNewOrderAlert(placed), sendCapiPurchase(capi)]));
+    after(() => Promise.all([placed.email ? sendOrderConfirmation(placed) : Promise.resolve(false), sendNewOrderAlert(placed), sendCapiPurchase(capi)]));
 
     return NextResponse.json(
       { message: "Order placed successfully!", orderId: data.id, total: priced.total },

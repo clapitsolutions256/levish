@@ -28,15 +28,15 @@ export default function CheckoutPage() {
   const [paidTotal, setPaidTotal] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [apiError, setApiError] = useState<string | null>(null);
+  // The form asks only for full name, phone, full address and city. Email comes from a signed-in
+  // account when there is one; guests order without it.
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [address, setAddress] = useState("");
-  const [apartment, setApartment] = useState("");
   const [city, setCity] = useState("");
-  const [stateName, setStateName] = useState("");
-  const [postalCode, setPostalCode] = useState("");
   const [phone, setPhone] = useState("");
+  const [firstName, ...otherNames] = fullName.trim().split(/\s+/);
+  const lastName = otherNames.join(" ");
 
   const [placeOrder, { isLoading: loading }] = usePlaceOrderMutation();
   const [promoInput, setPromoInput] = useState("");
@@ -53,9 +53,7 @@ export default function CheckoutPage() {
     if (session) {
       setSessionToken(session.token);
       setEmail(session.email);
-      const [savedFirst, ...savedRest] = session.name.split(" ");
-      setFirstName((current) => current || savedFirst || "");
-      setLastName((current) => current || savedRest.join(" "));
+      setFullName((current) => current || session.name || "");
     }
     setSessionChecked(true);
   }, []);
@@ -64,13 +62,11 @@ export default function CheckoutPage() {
     const user = account?.user;
     if (!user) return;
     if (user.email) setEmail(user.email);
-    if (user.firstName) setFirstName(user.firstName);
-    if (user.lastName) setLastName(user.lastName);
-    if (user.address) setAddress(user.address);
-    if (user.apartment) setApartment(user.apartment);
+    const savedName = [user.firstName, user.lastName].filter(Boolean).join(" ");
+    if (savedName) setFullName(savedName);
+    const savedAddress = [user.address, user.apartment].filter(Boolean).join(", ");
+    if (savedAddress) setAddress(savedAddress);
     if (user.city) setCity(user.city);
-    if (user.state) setStateName(user.state);
-    if (user.postalCode) setPostalCode(user.postalCode);
     if (user.phone) setPhone(user.phone);
   }, [account]);
 
@@ -114,19 +110,18 @@ export default function CheckoutPage() {
     trackInitiateCheckout(metaContents, orderTotal);
   }, [ready, placed, metaContents, orderTotal]);
 
+  // Match the shopper for the pixels once there is a phone number or an account email.
   useEffect(() => {
-    if (!email.includes("@")) return;
+    if (!email.includes("@") && phone.replace(/\D/g, "").length < 10) return;
     identifyMetaUser({
-      email,
+      email: email.includes("@") ? email : undefined,
       phone,
       firstName,
       lastName,
       city,
-      state: stateName,
-      postalCode,
       externalId: account?.user?.id,
     });
-  }, [email, phone, firstName, lastName, city, stateName, postalCode, account?.user?.id]);
+  }, [email, phone, firstName, lastName, city, account?.user?.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,10 +132,10 @@ export default function CheckoutPage() {
       firstName,
       lastName,
       address,
-      apartment,
+      apartment: "",
       city,
-      state: stateName,
-      postalCode,
+      state: "",
+      postalCode: "",
       phone,
       orderItems: items.map((item) => ({
         productId: item.product.id,
@@ -171,10 +166,10 @@ export default function CheckoutPage() {
           firstName,
           lastName,
           address,
-          apartment,
+          apartment: "",
           city,
-          state: stateName,
-          postalCode,
+          state: "",
+          postalCode: "",
           phone,
         })
           .unwrap()
@@ -225,7 +220,7 @@ export default function CheckoutPage() {
         </div>
         <h1 className="section-heading">Order placed</h1>
         <p className="type-copy mt-2 text-[var(--muted)]">
-          Thank you. We&apos;ll send a confirmation to your email shortly.
+          Thank you. We&apos;ll call you shortly to confirm your order.
         </p>
         {orderId && (
           <p className="mt-1 text-sm text-[var(--muted)]">
@@ -284,53 +279,28 @@ export default function CheckoutPage() {
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
           <div className="lg:col-span-3 space-y-8 animate-fade-up animation-delay-100">
-            {/* Contact */}
+            {/* Delivery details: full name, phone, full address, city */}
             <section className="bg-[var(--card)] rounded-2xl p-6 border border-[var(--border)]">
-              <h2 className="section-heading mb-4">Contact</h2>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)] mb-1">Email</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="you@example.com"
-                />
-                {sessionChecked && (
-                  <p className="mt-2 text-sm text-[var(--muted)]">
-                    {sessionToken ? (
-                      "You are signed in. This order is saved to your account."
-                    ) : (
-                      <>
-                        Place this order as a guest, or{" "}
-                        <Link href="/login" className="text-[var(--accent)] font-medium hover:text-[var(--accent-hover)]">
-                          sign in
-                        </Link>{" "}
-                        to keep it on your account.
-                      </>
-                    )}
-                  </p>
-                )}
-              </div>
-            </section>
-
-            {/* Delivery address */}
-            <section className="bg-[var(--card)] rounded-2xl p-6 border border-[var(--border)]">
-              <h2 className="section-heading mb-4">Delivery address</h2>
+              <h2 className="section-heading mb-1">Delivery details</h2>
+              {sessionChecked && (
+                <p className="mb-4 text-sm text-[var(--muted)]">
+                  {sessionToken ? (
+                    "You are signed in. This order is saved to your account."
+                  ) : (
+                    <>
+                      Order as a guest, or{" "}
+                      <Link href="/login" className="text-[var(--accent)] font-medium hover:text-[var(--accent-hover)]">
+                        sign in
+                      </Link>{" "}
+                      to keep it on your account.
+                    </>
+                  )}
+                </p>
+              )}
               <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-[var(--foreground)] mb-1">First name</label>
-                    <input id="firstName" name="firstName" type="text" required autoComplete="given-name" value={firstName} onChange={(event) => setFirstName(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="First name" />
-                  </div>
-                  <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-[var(--foreground)] mb-1">Last name</label>
-                    <input id="lastName" name="lastName" type="text" required autoComplete="family-name" value={lastName} onChange={(event) => setLastName(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Last name" />
-                  </div>
+                <div>
+                  <label htmlFor="fullName" className="block text-sm font-medium text-[var(--foreground)] mb-1">Full name</label>
+                  <input id="fullName" name="fullName" type="text" required autoComplete="name" value={fullName} onChange={(event) => setFullName(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Full name" />
                 </div>
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-[var(--foreground)] mb-1">Phone number</label>
@@ -338,28 +308,12 @@ export default function CheckoutPage() {
                   <p className="mt-1 text-xs text-[var(--muted)]">We&apos;ll call this number to confirm your order.</p>
                 </div>
                 <div>
-                  <label htmlFor="address" className="block text-sm font-medium text-[var(--foreground)] mb-1">Address</label>
-                  <input id="address" name="address" type="text" required autoComplete="street-address" value={address} onChange={(event) => setAddress(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="House no., street, area" />
+                  <label htmlFor="address" className="block text-sm font-medium text-[var(--foreground)] mb-1">Full address</label>
+                  <textarea id="address" name="address" required rows={2} autoComplete="street-address" value={address} onChange={(event) => setAddress(event.target.value)} className="w-full resize-none px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="House no., street, area, landmark" />
                 </div>
                 <div>
-                  <label htmlFor="address2" className="block text-sm font-medium text-[var(--foreground)] mb-1">Apartment, suite, etc. (optional)</label>
-                  <input id="address2" name="address2" type="text" autoComplete="address-line2" value={apartment} onChange={(event) => setApartment(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Apt, floor, building" />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="city" className="block text-sm font-medium text-[var(--foreground)] mb-1">City</label>
-                    <input id="city" name="city" type="text" required autoComplete="address-level2" value={city} onChange={(event) => setCity(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="City" />
-                  </div>
-                  <div>
-                    <label htmlFor="state" className="block text-sm font-medium text-[var(--foreground)] mb-1">Province (optional)</label>
-                    <input id="state" name="state" type="text" autoComplete="address-level1" value={stateName} onChange={(event) => setStateName(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="e.g. Punjab" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="postalCode" className="block text-sm font-medium text-[var(--foreground)] mb-1">Postal code (optional)</label>
-                    <input id="postalCode" name="postalCode" type="text" inputMode="numeric" autoComplete="postal-code" value={postalCode} onChange={(event) => setPostalCode(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Postal code" />
-                  </div>
+                  <label htmlFor="city" className="block text-sm font-medium text-[var(--foreground)] mb-1">City</label>
+                  <input id="city" name="city" type="text" required autoComplete="address-level2" value={city} onChange={(event) => setCity(event.target.value)} className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="City" />
                 </div>
               </div>
             </section>

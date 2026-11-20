@@ -190,7 +190,7 @@ function alertHtml(order: OrderEmail) {
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:${PAPER};border-radius:14px;padding:10px 16px">
               ${detail("Customer", escape(`${order.firstName} ${order.lastName}`))}
               ${detail("Phone", `<a href="tel:${escape(order.phone)}" style="color:${INK}">${escape(order.phone)}</a>`)}
-              ${detail("Email", `<a href="mailto:${escape(order.email)}" style="color:${INK}">${escape(order.email)}</a>`)}
+              ${order.email ? detail("Email", `<a href="mailto:${escape(order.email)}" style="color:${INK}">${escape(order.email)}</a>`) : ""}
               ${detail("Address", addressLines(order))}
               ${detail("Payment", paymentLabel(order))}
             </table>
