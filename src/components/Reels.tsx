@@ -6,8 +6,8 @@ const reels = [
   { src: "/reels/bra.mp4", label: "Seamless Push-Up Bra try-on" },
   { src: "/reels/sale.mp4", label: "Bunny Bra sale" },
   { src: "/reels/gym-suit.mp4", label: "Gym Suit in Lavender" },
-  { src: "/reels/seamless-bra.mp4", label: "Seamless Push-Up Bra" },
-  { src: "/reels/levish-reel.mp4", label: "Bunny Bra unboxing" },
+  { src: "/reels/levish-store-is-live.mp4", label: "Levish store is live" },
+  { src: "/reels/levish-delivery-cities.mp4", label: "Levish delivers to cities across Pakistan" },
 ];
 
 export function Reels() {
