@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
-import { flyProductToCart } from "@/lib/flyToCart";
-import { findVariant, galleryFor, uniqueValues } from "@/lib/variants";
+import { findVariant, uniqueValues } from "@/lib/variants";
 import { trackAddToCart } from "@/lib/metaPixel";
 import { SizeChartButton } from "@/components/SizeChart";
 
@@ -22,6 +22,7 @@ export function ProductPurchase({
   initialColor?: string;
 }) {
   const { addToCart, items } = useCart();
+  const router = useRouter();
   const variants = product.variants ?? [];
   const colors = useMemo(() => uniqueValues(variants, "color"), [variants]);
   // Open on something that can actually be bought: the linked colour, else the first colour with stock.
@@ -132,28 +133,35 @@ export function ProductPurchase({
       ) : null}
       {message ? <p className="mt-2 text-sm text-red-700">{message}</p> : null}
 
+      {/* "Shop now" puts the piece in the bag and goes straight to checkout: shoppers here read it more
+          easily than "Add to cart". The bag still collects several pieces; checkout lists them all. */}
       <button
         type="button"
-        disabled={out || atLimit}
-        onClick={(event) => {
+        disabled={out}
+        onClick={() => {
+          if (atLimit) {
+            onAdded?.();
+            router.push("/checkout");
+            return;
+          }
           if (tracked && !selected) {
             setMessage("Choose a size and color.");
             return;
           }
-          if (out || atLimit) return;
-          addToCart(product, 1, activeSize, activeColor);
+          if (out) return;
+          addToCart(product, 1, activeSize, activeColor, { openBag: false });
           trackAddToCart({
             id: product.id,
             name: product.name,
             category: product.categoryId,
             price: product.price,
           });
-          flyProductToCart(event.currentTarget, galleryFor(product, activeColor)[0] || product.image);
           onAdded?.();
+          router.push("/checkout");
         }}
         className={`${compact ? "mt-2 py-3" : "mt-4 py-4"} skeuo-ink w-full rounded-full px-10 font-medium disabled:cursor-not-allowed disabled:opacity-50 md:w-auto`}
       >
-        {out ? "Out of stock" : atLimit ? "Already in your bag" : "Add to cart"}
+        {out ? "Out of stock" : atLimit ? "Go to checkout" : "Shop now"}
       </button>
     </div>
   );

@@ -107,7 +107,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 
 interface CartContextValue extends CartState {
   ready: boolean;
-  addToCart: (product: Product, quantity?: number, size?: string, color?: string) => void;
+  /** `openBag: false` skips opening the bag, for "Shop now", which goes straight to checkout. */
+  addToCart: (product: Product, quantity?: number, size?: string, color?: string, options?: { openBag?: boolean }) => void;
   removeFromCart: (productId: string, size?: string, color?: string) => void;
   updateQuantity: (productId: string, quantity: number, size?: string, color?: string) => void;
   clearCart: () => Promise<void>;
@@ -214,11 +215,13 @@ export function CartProvider({
   useEffect(() => () => window.clearTimeout(openTimer.current), []);
 
   const addToCart = useCallback(
-    (product: Product, quantity = 1, size?: string, color?: string) => {
+    (product: Product, quantity = 1, size?: string, color?: string, options?: { openBag?: boolean }) => {
       dispatch({ type: "ADD", product, quantity, size, color });
       // Show the bag right after the product's fly-to-cart animation (about 760ms) lands.
       window.clearTimeout(openTimer.current);
-      openTimer.current = window.setTimeout(() => dispatch({ type: "OPEN_CART" }), 700);
+      if (options?.openBag !== false) {
+        openTimer.current = window.setTimeout(() => dispatch({ type: "OPEN_CART" }), 700);
+      }
       run(async (current) => {
         try {
           const data = await sendCart(
