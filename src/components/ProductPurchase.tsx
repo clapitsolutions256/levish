@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
-import { findVariant, uniqueValues } from "@/lib/variants";
+import { flyProductToCart } from "@/lib/flyToCart";
+import { findVariant, galleryFor, uniqueValues } from "@/lib/variants";
 import { trackAddToCart } from "@/lib/metaPixel";
 import { SizeChartButton } from "@/components/SizeChart";
 
@@ -63,6 +64,23 @@ export function ProductPurchase({
   useEffect(() => {
     onColorChange?.(activeColor);
   }, [activeColor, onColorChange]);
+
+  /** Puts the chosen size and colour in the bag and tells the pixels. False if nothing could be added. */
+  function add(options?: { openBag?: boolean }) {
+    if (tracked && !selected) {
+      setMessage("Choose a size and color.");
+      return false;
+    }
+    if (out || atLimit) return false;
+    addToCart(product, 1, activeSize, activeColor, options);
+    trackAddToCart({
+      id: product.id,
+      name: product.name,
+      category: product.categoryId,
+      price: product.price,
+    });
+    return true;
+  }
 
   return (
     <div>
@@ -133,36 +151,48 @@ export function ProductPurchase({
       ) : null}
       {message ? <p className="mt-2 text-sm text-red-700">{message}</p> : null}
 
-      {/* "Shop now" puts the piece in the bag and goes straight to checkout: shoppers here read it more
-          easily than "Add to cart". The bag still collects several pieces; checkout lists them all. */}
-      <button
-        type="button"
-        disabled={out}
-        onClick={() => {
-          if (atLimit) {
-            onAdded?.();
-            router.push("/checkout");
-            return;
-          }
-          if (tracked && !selected) {
-            setMessage("Choose a size and color.");
-            return;
-          }
-          if (out) return;
-          addToCart(product, 1, activeSize, activeColor, { openBag: false });
-          trackAddToCart({
-            id: product.id,
-            name: product.name,
-            category: product.categoryId,
-            price: product.price,
-          });
-          onAdded?.();
-          router.push("/checkout");
-        }}
-        className={`${compact ? "mt-2 py-3" : "mt-4 py-4"} skeuo-ink w-full rounded-full px-10 font-medium disabled:cursor-not-allowed disabled:opacity-50 md:w-auto`}
-      >
-        {out ? "Out of stock" : atLimit ? "Go to checkout" : "Shop now"}
-      </button>
+      {/* Two ways to buy: "Shop now" puts the piece in the bag and goes straight to checkout (shoppers here
+          read it more easily than "Add to cart"); "Add to cart" keeps them shopping and opens the bag. */}
+      {out ? (
+        <button
+          type="button"
+          disabled
+          className={`${compact ? "mt-2 py-3" : "mt-4 py-4"} skeuo-ink w-full cursor-not-allowed rounded-full px-10 font-medium opacity-50 md:w-auto`}
+        >
+          Out of stock
+        </button>
+      ) : (
+        <div className={`${compact ? "mt-2" : "mt-4"} flex gap-2 md:gap-3`}>
+          <button
+            type="button"
+            onClick={() => {
+              if (atLimit) {
+                onAdded?.();
+                router.push("/checkout");
+                return;
+              }
+              if (!add({ openBag: false })) return;
+              onAdded?.();
+              router.push("/checkout");
+            }}
+            className={`${compact ? "py-3" : "py-4"} skeuo-ink flex-1 rounded-full px-6 font-medium md:flex-none md:px-10`}
+          >
+            {atLimit ? "Go to checkout" : "Shop now"}
+          </button>
+          <button
+            type="button"
+            disabled={atLimit}
+            onClick={(event) => {
+              if (!add()) return;
+              flyProductToCart(event.currentTarget, galleryFor(product, activeColor)[0] || product.image);
+              onAdded?.();
+            }}
+            className={`${compact ? "py-3" : "py-4"} skeuo flex-1 rounded-full px-6 font-medium text-[var(--foreground)] disabled:cursor-not-allowed disabled:opacity-50 md:flex-none md:px-10`}
+          >
+            {atLimit ? "In your bag" : "Add to cart"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
