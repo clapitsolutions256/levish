@@ -244,6 +244,16 @@ export function Header({ thumbs }: { thumbs?: MenuThumbs }) {
                 </Link>
               </>
             )}
+            <Link
+              href="/track"
+              className="mx-1 flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--sage-tint)] hover:text-[var(--accent)]"
+              onClick={() => { setProfileOpen(false); setHelpMenuOpen(false); }}
+            >
+              <svg className="h-4 w-4 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7h11v9H3zM14 10h4l3 3v3h-7M7.5 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM17.5 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+              </svg>
+              Track your order
+            </Link>
             <div className="mx-3 my-2 border-t border-[var(--border)]" />
             <div className="relative">
               <button
