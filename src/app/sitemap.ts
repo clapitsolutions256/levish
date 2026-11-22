@@ -7,6 +7,7 @@ import { sameType } from "@/lib/productTypes";
 import { wornBy } from "@/lib/showcase";
 import { SITE_URL, absoluteUrl } from "@/lib/site";
 import type { Product } from "@/types";
+import { dealProducts } from "@/lib/deals";
 
 export const revalidate = 3600;
 
@@ -62,6 +63,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     add(`/${category.slug}`, products.filter((product) => product.categoryId === category.id), 0.8);
   }
   const shoes = products.filter((product) => product.categoryId === "shoes");
+  add("/deals", dealProducts(products), 0.8);
   add("/shoes?gender=men", shoes.filter((product) => product.subcategory?.toLowerCase() === "men"), 0.7);
   add("/shoes?gender=women", shoes.filter((product) => product.subcategory?.toLowerCase() === "woman"), 0.7);
   for (const style of styles) {

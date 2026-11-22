@@ -2,6 +2,7 @@ import type { Product } from "@/types";
 import { slugify } from "@/lib/catalog";
 import { sameType } from "@/lib/productTypes";
 import { wornBy } from "@/lib/showcase";
+import { dealProducts } from "@/lib/deals";
 
 export type StyleCard = { name: string; href: string; image: string };
 
@@ -81,5 +82,9 @@ export function styleCards(products: Product[]): StyleCard[] {
     const kind = products.filter((product) => clothingType(product) && typePath(clothingType(product)) === card.href);
     return kind.some(forWomen) ? 1 : 2;
   };
-  return [...cards, ...extra.sort((a, b) => a.name.localeCompare(b.name))].sort((a, b) => rank(a) - rank(b));
+  const styles = [...cards, ...extra.sort((a, b) => a.name.localeCompare(b.name))].sort((a, b) => rank(a) - rank(b));
+  const deals = dealProducts(products);
+  const cover = deals.find((product) => product.salePercent) ?? deals[0];
+  if (cover) styles.unshift({ name: "Deals", href: "/deals", image: cover.image });
+  return styles;
 }
