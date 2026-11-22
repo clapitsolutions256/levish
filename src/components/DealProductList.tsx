@@ -28,16 +28,18 @@ function ArticleCard({ products, index }: { products: Product[]; index: number }
   };
 
   return (
-    <div className="flex h-full flex-col">
-      <ProductCard key={`${product.id}-${color}`} product={shown} index={index} priority={index < 4} />
-      <div aria-label={`Colors for ${product.name}`} className="mt-3 flex flex-wrap gap-2">
+    <div className="flex h-full min-w-0 flex-col">
+      <div className="min-w-0 flex-1">
+        <ProductCard key={`${product.id}-${color}`} product={shown} index={index} priority={index < 4} />
+      </div>
+      <div aria-label={`Colors for ${product.name}`} className="mt-3 flex h-14 shrink-0 items-center gap-2 overflow-x-auto px-1 [scrollbar-width:thin]">
         {options.map((option, optionIndex) => (
           <button
             key={`${option.product.id}-${option.color}`}
             type="button"
             aria-pressed={selected === optionIndex}
             onClick={() => setSelected(optionIndex)}
-            className={`rounded-full px-3 py-1.5 text-xs font-medium ${selected === optionIndex ? "clay-ink" : "clay text-[var(--foreground)]"}`}
+            className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ${selected === optionIndex ? "clay-ink" : "clay text-[var(--foreground)]"}`}
           >
             {option.color || "Original"}
           </button>
