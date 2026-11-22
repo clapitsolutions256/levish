@@ -49,7 +49,7 @@ export function ProductBuyBar({ name, price, target }: { name: string; price: nu
           onClick={() => target.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
           className="skeuo-ink h-11 shrink-0 rounded-full px-5 text-sm font-medium"
         >
-          Add to cart
+          Shop now
         </button>
       </div>
     </div>
