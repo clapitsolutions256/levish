@@ -3,7 +3,16 @@
     "allow": [
       "ClaudeInChromeDomain(www.instagram.com)",
       "ClaudeInChromeDomain(127.0.0.1:8765)",
-      "ClaudeInChromeDomain(localhost:3100)"
+      "ClaudeInChromeDomain(localhost:3100)",
+      "ClaudeInChromeDomain(www.levish.store)",
+      "ClaudeInChromeDomain(analytics.tiktok.com)",
+      "ClaudeInChromeDomain(supabase.com)",
+      "ClaudeInChromeDomain(search.google.com)",
+      "ClaudeInChromeDomain(developers.facebook.com)",
+      "mcp__claude-in-chrome__tabs_create_mcp",
+      "ClaudeInChromeDomain(support.google.com)",
+      "ClaudeInChromeDomain(hpanel.hostinger.com)",
+      "ClaudeInChromeDomain(business.facebook.com)"
     ]
   }
 }

@@ -93,7 +93,7 @@ export function ShopByStyle({ categories }: { categories: StyleCategory[] }) {
   return (
     <section className="py-14 md:py-16" aria-label="Shop by style">
       <div className="mx-auto max-w-[90rem] px-4 sm:px-6">
-        <div className="mb-8 flex items-end justify-between gap-4">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="eyebrow mb-2">Explore</p>
             <h2 className="section-heading">Shop By Style</h2>
