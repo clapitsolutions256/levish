@@ -49,8 +49,61 @@ function absolute(url = "") {
   return url.startsWith("http") ? url : `${SITE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
 }
 
+// The same number the admin, the order page, the shipping label and order tracking show.
 function orderNumber(id: string) {
-  return id.slice(0, 8).toUpperCase();
+  return id.slice(-6).toUpperCase();
+}
+
+/** 03XX… / +92 3XX… -> 923XX… for a wa.me link; "" when it isn't a Pakistani mobile number. */
+function whatsappNumber(phone: string) {
+  let digits = phone.replace(/\D/g, "");
+  if (digits.startsWith("0092")) digits = digits.slice(2);
+  else if (digits.startsWith("0")) digits = `92${digits.slice(1)}`;
+  else if (digits.length === 10 && digits.startsWith("3")) digits = `92${digits}`;
+  return /^923\d{9}$/.test(digits) ? digits : "";
+}
+
+/** The message the store sends the customer on WhatsApp to confirm the order before it ships. */
+function whatsappConfirmationText(order: OrderEmail) {
+  const lines = order.items.map((item) => {
+    const details = [item.variant, item.size ? `Size ${item.size}` : ""].filter(Boolean).join(", ");
+    return `- ${item.quantity} x ${item.name}${details ? ` (${details})` : ""}: ${money(item.price * item.quantity)}`;
+  });
+  const payment = order.paymentMethod === "transfer" ? "Online transfer" : "Cash on delivery";
+  return [
+    `Hello ${order.firstName}!`,
+    "Thank you for shopping with Levish.",
+    "",
+    `Please confirm your order #${orderNumber(order.id)}:`,
+    ...lines,
+    "",
+    `Subtotal: ${money(order.subtotal)}`,
+    ...(order.discount ? [`Discount${order.promoCode ? ` (${order.promoCode})` : ""}: - ${money(order.discount)}`] : []),
+    `Delivery: ${order.shipping}`,
+    `Total: ${money(order.total)} (${payment})`,
+    "",
+    `Delivery address: ${[order.address, order.apartment, order.city].filter(Boolean).join(", ")}`,
+    `Phone: ${order.phone}`,
+    "",
+    "Reply YES to confirm your order, or let us know if you want any change.",
+    "Team Levish",
+  ].join("\n");
+}
+
+function whatsappConfirmationHtml(order: OrderEmail) {
+  const text = whatsappConfirmationText(order);
+  const number = whatsappNumber(order.phone);
+  return `
+          <tr><td style="padding:24px 32px 0">
+            <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${MUTED}">WhatsApp confirmation message</div>
+            <pre style="margin:10px 0 0;padding:16px;border:1px dashed ${SAGE};border-radius:14px;background:${SAGE_TINT};font-family:Menlo,Consolas,monospace;font-size:13px;line-height:1.6;color:${INK};white-space:pre-wrap;word-break:break-word">${escape(text)}</pre>
+          </td></tr>
+          <tr><td style="padding:16px 32px 0;text-align:center">
+            ${number
+              ? `<a href="https://wa.me/${number}?text=${encodeURIComponent(text)}" style="display:inline-block;padding:14px 28px;border-radius:999px;background:#25d366;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none">Send on WhatsApp</a>
+            <p style="margin:10px 0 0;font-size:12px;line-height:1.6;color:${MUTED}">The button opens the customer's chat with this message typed in. You can also copy the text above.</p>`
+              : `<p style="margin:0;font-size:12px;line-height:1.6;color:${MUTED}">The phone number doesn't look like a WhatsApp number. Copy the text above and send it yourself.</p>`}
+          </td></tr>`;
 }
 
 // Shared frame: logo on top, sage rule, white card on paper.
@@ -186,6 +239,7 @@ function alertHtml(order: OrderEmail) {
               Order #${orderNumber(order.id)}
             </p>
           </td></tr>
+          ${whatsappConfirmationHtml(order)}
           <tr><td style="padding:16px 32px 0">
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:${PAPER};border-radius:14px;padding:10px 16px">
               ${detail("Customer", escape(`${order.firstName} ${order.lastName}`))}
