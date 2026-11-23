@@ -36,6 +36,19 @@ const nextConfig = {
       { source: "/shoes/:gender(women|men)", destination: "/shoes?gender=:gender", permanent: true },
       // The shoe post went when shoes left the shop.
       { source: "/blog/the-shoe-that-finishes-the-outfit", destination: "/blog", permanent: true },
+      // One-colour products merged into one product with colour options. Most old links redirect on the
+      // product page (slug + "-" + colour); these old slugs don't follow that pattern.
+      ...[
+        ["white-croppsy-sweatshirt", "oversized-croppsy-sweatshirt", "White"],
+        ["brown-croppsy-sweatshirt", "oversized-croppsy-sweatshirt", "Brown"],
+        ["dark-green-croppsy-sweatshirt", "oversized-croppsy-sweatshirt", "Green"],
+        ["lacoste-paris-embossed-sweatshirt-stone", "lacoste-paris-embossed-sweatshirt", "Sand Gray"],
+        ["trouser-croppsy-dark-green", "trouser-croppsy", "Green"],
+      ].map(([from, to, color]) => ({
+        source: `/product/${from}`,
+        destination: `/product/${to}?color=${encodeURIComponent(color)}`,
+        permanent: true,
+      })),
     ];
   },
   // This project sits inside another Next.js project; keep builds rooted here.
