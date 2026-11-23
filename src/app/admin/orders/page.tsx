@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -11,6 +11,7 @@ import {
   useLazyExportOrdersQuery,
 } from "@/store/ordersApi";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { OrdersCalendar, dayKey, formatDayLabel, shiftDay } from "@/components/admin/OrdersCalendar";
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString()}`;
@@ -39,11 +40,25 @@ export default function OrdersPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
   const [bulkStatus, setBulkStatus] = useState("");
+  // Calendar: ?date=YYYY-MM-DD opens the page on one day's orders.
+  const initialDay = searchParams.get("date");
+  const [selectedDay, setSelectedDay] = useState<string | null>(initialDay && /^\d{4}-\d{2}-\d{2}$/.test(initialDay) ? initialDay : null);
+  const [showCalendar, setShowCalendar] = useState(Boolean(selectedDay));
 
-  const { data: orders, isLoading, isFetching } = useGetOrdersQuery({
+  const { data: allOrders, isLoading, isFetching } = useGetOrdersQuery({
     status: statusFilter,
     search: debouncedSearch,
   });
+  // The table shows the chosen day only; the calendar always counts every day.
+  const orders = useMemo(
+    () => (selectedDay ? allOrders?.filter((order) => dayKey(order.createdAt) === selectedDay) : allOrders),
+    [allOrders, selectedDay]
+  );
+  const dayTotal = orders?.reduce((sum, order) => sum + (Number(order.total) || 0), 0) ?? 0;
+  const pickDay = (day: string | null) => {
+    setSelectedDay(day);
+    setSelectedOrders(new Set());
+  };
 
   const [updateStatus, { isLoading: isUpdating }] = useUpdateOrderStatusMutation();
   const [deleteOrder, { isLoading: isDeleting }] = useDeleteOrderMutation();
@@ -110,6 +125,20 @@ export default function OrdersPage() {
         </div>
         <div className="flex items-center gap-2">
           <button
+            type="button"
+            onClick={() => setShowCalendar((open) => !open)}
+            aria-expanded={showCalendar}
+            className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+              showCalendar ? "text-white border-transparent" : "text-gray-700 bg-white border-gray-200 hover:bg-gray-50"
+            }`}
+            style={showCalendar ? { backgroundColor: "var(--accent)" } : undefined}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Calendar
+          </button>
+          <button
             onClick={handleExport}
             className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
@@ -154,6 +183,50 @@ export default function OrdersPage() {
         </div>
       </div>
 
+      {showCalendar && allOrders ? (
+        <OrdersCalendar orders={allOrders} selected={selectedDay} onSelect={pickDay} accent="var(--accent)" />
+      ) : null}
+
+      {selectedDay ? (
+        <div className="flex flex-wrap items-center gap-3 mb-4 p-3 bg-white border border-gray-200 rounded-xl">
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => pickDay(shiftDay(selectedDay, -1))}
+              className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100"
+              aria-label="Previous day"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <span className="text-sm font-bold text-gray-900">{formatDayLabel(selectedDay)}</span>
+            <button
+              type="button"
+              onClick={() => pickDay(shiftDay(selectedDay, 1))}
+              disabled={selectedDay >= dayKey(new Date())}
+              className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 disabled:opacity-30"
+              aria-label="Next day"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          <span className="text-sm text-gray-600">
+            <strong className="text-gray-900">{orders?.length ?? 0}</strong> order{(orders?.length ?? 0) === 1 ? "" : "s"} ·{" "}
+            <strong className="text-gray-900">{formatPrice(dayTotal)}</strong>
+          </span>
+          <button
+            type="button"
+            onClick={() => pickDay(null)}
+            className="ml-auto px-3 py-1.5 text-xs font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200"
+          >
+            Show all days
+          </button>
+        </div>
+      ) : null}
+
       {selectedOrders.size > 0 && (
         <div className="flex items-center gap-3 mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
           <span className="text-sm font-medium text-amber-800">
@@ -194,7 +267,7 @@ export default function OrdersPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
             <p className="text-gray-500 font-medium">No orders found</p>
-            <p className="text-sm text-gray-400 mt-1">Try adjusting your filters</p>
+            <p className="text-sm text-gray-400 mt-1">{selectedDay ? "No orders on this day" : "Try adjusting your filters"}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
