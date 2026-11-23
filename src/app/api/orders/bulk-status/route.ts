@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isUuid } from "@/lib/orders";
-import { getSupabase } from "@/lib/supabase";
+import { setOrdersStatus, stockNote } from "@/lib/orderStatus";
 import { verifyAdmin, unauthorizedResponse } from "@/lib/auth";
 
 const validStatuses = ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"];
@@ -24,16 +24,10 @@ export async function PATCH(request: Request) {
     if (ids.length === 0) {
       return NextResponse.json({ error: "No orders selected." }, { status: 400 });
     }
-    const supabase = getSupabase();
-    const { data, error } = await supabase
-      .from("orders")
-      .update({ status, updated_at: new Date().toISOString() })
-      .in("id", ids)
-      .select("id");
-    if (error) throw error;
+    const result = await setOrdersStatus(ids, status);
     return NextResponse.json({
-      message: `${data?.length ?? 0} order(s) updated.`,
-      modifiedCount: data?.length ?? 0,
+      message: `${result.count} order(s) updated. ${stockNote(result)}`.trim(),
+      modifiedCount: result.count,
     });
   } catch (err) {
     console.error("Bulk status error:", err);
