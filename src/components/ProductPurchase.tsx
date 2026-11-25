@@ -42,31 +42,42 @@ export function ProductPurchase({
   const firstInStock = (list: string[], forColor: string) =>
     list.find((item) => (findVariant(variants, item, forColor)?.stock ?? 0) > 0) ?? list[0] ?? "";
   const [size, setSize] = useState(() => firstInStock(sizes, color));
-  const activeSize = sizes.includes(size) ? size : (sizes[0] ?? "");
+  // Sets: the shopper picks the top size and the bottom size separately, and must pick both.
+  const paired = hasPairedSizes(variants);
+  const [pair, setPair] = useState({ top: "", bottom: "" });
+  const activeSize = paired
+    ? pair.top && pair.bottom
+      ? joinPairedSize(pair.top, pair.bottom)
+      : ""
+    : sizes.includes(size)
+      ? size
+      : (sizes[0] ?? "");
   const activeColor = colors.includes(color) ? color : (colors[0] ?? "");
-  const selected = variants.length ? findVariant(variants, activeSize, activeColor) : undefined;
+  const selected = variants.length && activeSize ? findVariant(variants, activeSize, activeColor) : undefined;
   const stock = selected?.stock ?? 0;
   const tracked = variants.length > 0;
   const inCart = items.find(
     (item) => item.product.id === product.id && (item.size ?? "") === activeSize && (item.color ?? "") === activeColor
   )?.quantity ?? 0;
   const atLimit = tracked && inCart >= stock && stock > 0;
-  const out = tracked && stock < 1;
+  // A set with a half still unpicked isn't out of stock; it waits for the choice.
+  const out = tracked && (paired ? Boolean(selected) && stock < 1 : stock < 1);
   const [message, setMessage] = useState("");
 
-  // Sets: the top and the bottom are sized separately, in two rows.
-  const paired = hasPairedSizes(variants);
   const tops = useMemo(() => [...new Set(sizes.map((item) => splitPairedSize(item).top))], [sizes]);
   const bottoms = useMemo(() => [...new Set(sizes.map((item) => splitPairedSize(item).bottom))], [sizes]);
-  const activePair = splitPairedSize(activeSize);
-  // The size a half's button would pick: the other half stays when that pair exists.
-  const pairWith = (half: "top" | "bottom", value: string) => {
-    const exact = half === "top" ? joinPairedSize(value, activePair.bottom) : joinPairedSize(activePair.top, value);
-    return sizes.includes(exact) ? exact : sizes.find((item) => splitPairedSize(item)[half] === value) ?? exact;
+  // A half is available while some pair with it (and with the other half, once picked) is in stock.
+  const halfInStock = (half: "top" | "bottom", value: string) => {
+    const other = half === "top" ? pair.bottom : pair.top;
+    return variants.some((variant) => {
+      if (variant.color !== activeColor || variant.stock < 1) return false;
+      const parts = splitPairedSize(variant.size);
+      return parts[half] === value && (!other || parts[half === "top" ? "bottom" : "top"] === other);
+    });
   };
 
-  function sizeButton(label: string, value: string, isActive: boolean) {
-    const unavailable = (findVariant(variants, value, activeColor)?.stock ?? 0) < 1;
+  function sizeButton(label: string, isActive: boolean, available: boolean, pick: () => void) {
+    const unavailable = !available;
     return (
       <button
         key={label}
@@ -75,7 +86,7 @@ export function ProductPurchase({
         aria-label={unavailable ? `${label}, out of stock` : label}
         aria-pressed={isActive}
         onClick={() => {
-          setSize(value);
+          pick();
           setMessage("");
         }}
         className={`min-w-11 rounded-lg border px-3 py-2 text-sm ${
@@ -102,6 +113,10 @@ export function ProductPurchase({
 
   /** Puts the chosen size and colour in the bag and tells the pixels. False if nothing could be added. */
   function add(options?: { openBag?: boolean }) {
+    if (paired && (!pair.top || !pair.bottom)) {
+      setMessage(!pair.top && !pair.bottom ? "Choose a top size and a bottom size." : !pair.top ? "Choose a top size." : "Choose a bottom size.");
+      return false;
+    }
     if (tracked && !selected) {
       setMessage("Choose a size and color.");
       return false;
@@ -150,7 +165,11 @@ export function ProductPurchase({
             <div key={row.half} className={compact ? "mt-3" : "mt-5"}>
               <p className="text-sm font-medium text-[var(--foreground)]">{row.label}</p>
               <div className="mt-2 flex flex-wrap gap-2">
-                {row.values.map((value) => sizeButton(value, pairWith(row.half, value), activePair[row.half] === value))}
+                {row.values.map((value) =>
+                  sizeButton(value, pair[row.half] === value, halfInStock(row.half, value), () =>
+                    setPair((current) => ({ ...current, [row.half]: value }))
+                  )
+                )}
               </div>
               <div className={compact ? "mt-2.5" : "mt-3.5"}>
                 <SizeChartButton product={product} sizes={row.chart} label={`${row.label} chart`} />
@@ -162,7 +181,9 @@ export function ProductPurchase({
         <div className={compact ? "mt-3" : "mt-5"}>
           <p className="text-sm font-medium text-[var(--foreground)]">Size</p>
           <div className="mt-2 flex flex-wrap gap-2">
-            {sizes.map((item) => sizeButton(item, item, item === activeSize))}
+            {sizes.map((item) =>
+              sizeButton(item, item === activeSize, (findVariant(variants, item, activeColor)?.stock ?? 0) > 0, () => setSize(item))
+            )}
           </div>
           <div className={compact ? "mt-2.5" : "mt-3.5"}>
             <SizeChartButton product={product} sizes={allSizes} />
