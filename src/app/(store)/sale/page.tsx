@@ -4,7 +4,7 @@ import { getActiveProducts } from "@/lib/catalog";
 import { breadcrumbJsonLd, collectionJsonLd } from "@/lib/seo";
 import { pageMeta } from "@/lib/site";
 import { isSold } from "@/lib/variants";
-import { onSale } from "@/lib/sale";
+import { onSale, saleLeadFirst } from "@/lib/sale";
 
 export const metadata = pageMeta({
   title: "Sale",
@@ -14,8 +14,8 @@ export const metadata = pageMeta({
 
 export default async function SalePage() {
   const all = (await getActiveProducts()).filter(onSale);
-  // Pieces you can still buy first, sold-out ones after.
-  const products = [...all.filter((product) => !isSold(product)), ...all.filter(isSold)];
+  // The sale lead first, then pieces you can still buy, sold-out ones after.
+  const products = saleLeadFirst([...all.filter((product) => !isSold(product)), ...all.filter(isSold)]);
 
   return (
     <div className="mx-auto max-w-[90rem] px-4 py-10 sm:px-6">

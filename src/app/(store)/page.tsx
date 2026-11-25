@@ -12,7 +12,7 @@ import { ShopTheLook } from "@/components/showcase/ShopTheLook";
 import { buildLooks, differentArticles, isLingerie, orbitPieces, sectionPieces, womenFirst, wornBy } from "@/lib/showcase";
 import type { Product } from "@/types";
 import { isSold } from "@/lib/variants";
-import { onSale } from "@/lib/sale";
+import { onSale, saleLeadFirst } from "@/lib/sale";
 import { sameType } from "@/lib/productTypes";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { AboutUs } from "@/components/AboutUs";
@@ -40,7 +40,7 @@ export default async function HomePage() {
   // Women's pieces lead every section on the home page.
   const catalog = womenFirst(await getActiveProducts());
   const newProducts = catalog.filter((product) => product.new);
-  const saleProducts = catalog.filter((product) => product.salePercent);
+  const saleProducts = saleLeadFirst(catalog.filter((product) => product.salePercent));
   const styles = styleCards(catalog);
   const spotlight =
     catalog.find((product) => product.slug === "gym-suit" && !isSold(product)) ??

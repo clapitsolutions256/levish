@@ -29,3 +29,11 @@ export function promoDiscount(promo: { type: "percent" | "fixed"; value: number 
 export function onSale(product: Product) {
   return Boolean(product.salePercent) || (product.compareAtPrice ?? 0) > product.price;
 }
+
+// The piece that opens every sale listing (Seamless Push-Up Bra).
+const SALE_LEAD = "seamless-crisscross-back-push-up-bra-comfortable-breathable";
+
+/** The same list with the sale lead moved to the front, when it is in the list. */
+export function saleLeadFirst<T extends { slug: string }>(products: T[]) {
+  return [...products.filter((product) => product.slug === SALE_LEAD), ...products.filter((product) => product.slug !== SALE_LEAD)];
+}
