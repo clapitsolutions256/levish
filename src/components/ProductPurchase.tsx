@@ -42,9 +42,17 @@ export function ProductPurchase({
   const firstInStock = (list: string[], forColor: string) =>
     list.find((item) => (findVariant(variants, item, forColor)?.stock ?? 0) > 0) ?? list[0] ?? "";
   const [size, setSize] = useState(() => firstInStock(sizes, color));
-  // Sets: the shopper picks the top size and the bottom size separately, and must pick both.
+  // Sets: the shopper picks the top size and the bottom size separately; any top goes with any bottom.
+  // Both open on medium (M, and a 30 waist for numbered bottoms).
   const paired = hasPairedSizes(variants);
-  const [pair, setPair] = useState({ top: "", bottom: "" });
+  const [pair, setPair] = useState(() => {
+    const halves = sizes.map(splitPairedSize);
+    const medium = (list: string[], wanted: string) =>
+      list.find((value) => value.toUpperCase() === wanted) ?? list[Math.floor((list.length - 1) / 2)] ?? "";
+    const tops = [...new Set(halves.map((half) => half.top))];
+    const bottoms = [...new Set(halves.map((half) => half.bottom))];
+    return { top: medium(tops, "M"), bottom: medium(bottoms, bottoms.includes("30") ? "30" : "M") };
+  });
   const activeSize = paired
     ? pair.top && pair.bottom
       ? joinPairedSize(pair.top, pair.bottom)
