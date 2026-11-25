@@ -36,6 +36,8 @@ const nextConfig = {
       { source: "/shoes/:gender(women|men)", destination: "/shoes?gender=:gender", permanent: true },
       // The shoe post went when shoes left the shop.
       { source: "/blog/the-shoe-that-finishes-the-outfit", destination: "/blog", permanent: true },
+      // Bodysuits and co-ord sets are listed under Lingerie now.
+      { source: "/:style(bodysuits|bodysuit|co-ord-sets|co-ord-set)", destination: "/undergarments", permanent: true },
       // One-colour products merged into one product with colour options. Most old links redirect on the
       // product page (slug + "-" + colour); these old slugs don't follow that pattern.
       ...[
