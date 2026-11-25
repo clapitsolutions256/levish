@@ -22,6 +22,7 @@ const styles = [
   { path: "/bodysuits", type: "bodysuit" },
   { path: "/co-ord-sets", type: "Co-ord Sets" },
   { path: "/polos-and-tees", type: "Polos & Tees" },
+  { path: "/outfits", type: "Outfits" },
 ];
 
 // Levish is women's only; men's pieces are on Empulse.

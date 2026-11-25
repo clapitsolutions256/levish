@@ -40,6 +40,7 @@ const stylePages: Record<string, { heading: string; subcategory: string; search?
   trouser: { heading: "Trousers", subcategory: "trouser" },
   jeans: { heading: "Jeans", subcategory: "jeans" },
   "polos-and-tees": { heading: "Polo's & Tees", subcategory: "Polos & Tees" },
+  outfits: { heading: "Outfits", subcategory: "Outfits", womenOnly: true },
 };
 
 const styleCanonical: Record<string, string> = {
