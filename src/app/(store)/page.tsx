@@ -9,7 +9,7 @@ import { Spotlight } from "@/components/showcase/Spotlight";
 import { StackedSections, type StackPanel } from "@/components/showcase/StackedSections";
 import { OrbitShowcase } from "@/components/showcase/OrbitShowcase";
 import { ShopTheLook } from "@/components/showcase/ShopTheLook";
-import { buildLooks, differentArticles, orbitPieces, sectionPieces, womenFirst, wornBy } from "@/lib/showcase";
+import { buildLooks, differentArticles, isLingerie, orbitPieces, sectionPieces, womenFirst, wornBy } from "@/lib/showcase";
 import type { Product } from "@/types";
 import { isSold } from "@/lib/variants";
 import { onSale } from "@/lib/sale";
@@ -57,7 +57,6 @@ export default async function HomePage() {
   );
   const pieces = (list: Product[]) => list.map(({ id, slug, name, image }) => ({ id, slug, name, image }));
   // These panels show clothing only: no lingerie photos anywhere in them.
-  const isLingerie = (product: Product) => sameType(product.subcategory, "undergarments") || sameType(product.subcategory, "bodysuit");
   const isTee = (product: Product) => wornBy("women")(product) && sameType(product.subcategory, "Polos & Tees");
   // Tees have their own panel, so the Women panel shows the rest of the clothing.
   const clothing = (product: Product) => wornBy("women")(product) && !isLingerie(product) && !isTee(product);

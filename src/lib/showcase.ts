@@ -23,9 +23,14 @@ function ofTypes(products: Product[], types: string[]) {
   return products.filter((product) => types.some((type) => sameType(product.subcategory, type)));
 }
 
+/** Bras, shapewear and bodysuits: kept out of the home page showcases, which show clothing. */
+export function isLingerie(product: Product) {
+  return sameType(product.subcategory, "undergarments") || sameType(product.subcategory, "bodysuit");
+}
+
 /** Up to `count` pieces for the orbit, one per type first so the run feels varied. */
 export function orbitPieces(products: Product[], count = 6) {
-  const pool = products.filter((product) => !isSold(product) && product.categoryId !== "shoes");
+  const pool = products.filter((product) => !isSold(product) && product.categoryId !== "shoes" && !isLingerie(product));
   const picked: Product[] = [];
   for (const type of [...TOPS, ...BOTTOMS]) {
     const match = pool.find((product) => sameType(product.subcategory, type) && !picked.includes(product));
