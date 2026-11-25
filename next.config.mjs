@@ -46,6 +46,7 @@ const nextConfig = {
         ["dark-green-croppsy-sweatshirt", "oversized-croppsy-sweatshirt", "Green"],
         ["lacoste-paris-embossed-sweatshirt-stone", "lacoste-paris-embossed-sweatshirt", "Sand Gray"],
         ["trouser-croppsy-dark-green", "trouser-croppsy", "Green"],
+        ["the-overrun-co-women-s-t-shirt-blue", "the-overrun-co-women-s-t-shirt", "Pastel Blue"],
       ].map(([from, to, color]) => ({
         source: `/product/${from}`,
         destination: `/product/${to}?color=${encodeURIComponent(color)}`,
