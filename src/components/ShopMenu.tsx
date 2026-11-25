@@ -11,6 +11,13 @@ type Section = "women" | "men";
 // Levish is women's only; men's pieces are on Empulse.
 const sections: { id: Section; label: string }[] = [{ id: "women", label: "Women" }];
 
+// Plain links next to the Women menu. "path" marks the link as the page you're on
+// (New in lives on /women, which already lights up Women).
+const pageLinks = [
+  { label: "New in", href: "/women?filter=new", path: null },
+  { label: "Sale", href: "/sale", path: "/sale" },
+];
+
 function sectionFor(pathname: string): Section | null {
   for (const section of ["women", "men"] as const) {
     if (pathname === `/${section}` || pathname.startsWith(`/${section}/`) || pathname.startsWith(`/shoes/${section}`)) return section;
@@ -197,6 +204,18 @@ export function ShopMenu({ thumbs }: { thumbs?: MenuThumbs }) {
             </li>
           );
         })}
+        {pageLinks.map((link) => (
+          <li key={link.href}>
+            <Link
+              href={link.href}
+              className={`flex items-center rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors duration-300 ${
+                !open && pathname === link.path ? "clay-ink" : "text-[var(--foreground)]/80 hover:text-[var(--foreground)]"
+              }`}
+            >
+              {link.label}
+            </Link>
+          </li>
+        ))}
       </ul>
 
       {open && (

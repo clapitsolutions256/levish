@@ -164,7 +164,7 @@ export function MobileShopSheet({
               <div className="mt-5 grid grid-cols-2 gap-2">
                 {[
                   { label: "New in", href: `/${section}?filter=new` },
-                  { label: "Search", href: "/search" },
+                  { label: "Sale", href: "/sale" },
                 ].map((item) => (
                   <Link key={item.href} href={item.href} onClick={onClose} className="skeuo rounded-2xl py-3 text-center text-xs font-semibold [&:hover]:!text-[var(--foreground)]">
                     {item.label}

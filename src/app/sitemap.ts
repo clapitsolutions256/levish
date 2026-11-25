@@ -65,6 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
   const shoes = products.filter((product) => product.categoryId === "shoes");
   add("/deals", dealProducts(products), 0.8);
+  add("/sale", products.filter((product) => Boolean(product.salePercent) || (product.compareAtPrice ?? 0) > product.price), 0.8);
   add("/shoes?gender=women", shoes.filter((product) => product.subcategory?.toLowerCase() === "woman"), 0.7);
   for (const style of styles) {
     const all = products.filter((product) => sameType(product.subcategory, style.type));
