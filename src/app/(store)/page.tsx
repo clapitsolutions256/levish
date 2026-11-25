@@ -56,9 +56,11 @@ export default async function HomePage() {
       .map((product) => [product.slug, { name: product.name, image: product.image }])
   );
   const pieces = (list: Product[]) => list.map(({ id, slug, name, image }) => ({ id, slug, name, image }));
-  // Lingerie gets its own panel, so the Women panel shows clothing.
+  // These panels show clothing only: no lingerie photos anywhere in them.
   const isLingerie = (product: Product) => sameType(product.subcategory, "undergarments") || sameType(product.subcategory, "bodysuit");
-  const clothing = (product: Product) => wornBy("women")(product) && !isLingerie(product);
+  const isTee = (product: Product) => wornBy("women")(product) && sameType(product.subcategory, "Polos & Tees");
+  // Tees have their own panel, so the Women panel shows the rest of the clothing.
+  const clothing = (product: Product) => wornBy("women")(product) && !isLingerie(product) && !isTee(product);
   const panels: StackPanel[] = [
     {
       word: "Women",
@@ -74,15 +76,15 @@ export default async function HomePage() {
       tone: "sage",
     },
     {
-      word: "Lingerie",
-      href: "/undergarments",
-      line: "Bras, shapewear and bodysuits made for everyday comfort.",
-      count: catalog.filter(isLingerie).length,
+      word: "Tees",
+      href: "/polos-and-tees",
+      line: "Soft cotton tees in easy colours, made to wear every day.",
+      count: catalog.filter(isTee).length,
       links: [
-        { label: "Bras & shapewear", href: "/undergarments" },
-        { label: "Bodysuits", href: "/bodysuits" },
+        { label: "Polos & Tees", href: "/polos-and-tees" },
+        { label: "New in", href: "/women?filter=new" },
       ],
-      pieces: pieces(sectionPieces(catalog, isLingerie)),
+      pieces: pieces(sectionPieces(catalog, isTee)),
       tone: "ink",
     },
     {
@@ -94,7 +96,7 @@ export default async function HomePage() {
         { label: "New in", href: "/women?filter=new" },
         { label: "Deals", href: "/deals" },
       ],
-      pieces: pieces(sectionPieces(catalog, onSale)),
+      pieces: pieces(sectionPieces(catalog, (product) => onSale(product) && !isLingerie(product))),
       tone: "paper",
     },
   ].filter((panel) => panel.count > 0) as StackPanel[];
