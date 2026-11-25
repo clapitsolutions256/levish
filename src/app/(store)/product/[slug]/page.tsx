@@ -8,7 +8,7 @@ import { ProductsPausedNotice } from "@/components/ComingSoon";
 import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbJsonLd, categoryLabel, productJsonLd, productSummary } from "@/lib/seo";
 import { pageMeta, SITE_NAME } from "@/lib/site";
-import { articleKey, differentArticles } from "@/lib/showcase";
+import { articleKey, differentArticles, isLingerie } from "@/lib/showcase";
 import { ProductDetail } from "./ProductDetail";
 import { ProductReviews } from "@/components/ProductReviews";
 import { getProductReviews } from "@/lib/reviews";
@@ -75,9 +75,16 @@ export default async function ProductPage({ params }: Props) {
   const productReviews = await getProductReviews(product.slug);
 
   // Other pieces, not this one in other colours: its colours are already on the page.
+  // Lingerie is only suggested next to lingerie.
   const article = articleKey(product);
+  const lingerieOk = isLingerie(product);
   const related = differentArticles(
-    (await getActiveProducts()).filter((item) => item.categoryId === product.categoryId && articleKey(item) !== article),
+    (await getActiveProducts()).filter(
+      (item) =>
+        item.categoryId === product.categoryId &&
+        articleKey(item) !== article &&
+        (lingerieOk || !isLingerie(item))
+    ),
     4
   );
 
