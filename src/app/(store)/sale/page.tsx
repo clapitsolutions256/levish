@@ -14,8 +14,14 @@ export const metadata = pageMeta({
 
 export default async function SalePage() {
   const all = (await getActiveProducts()).filter(onSale);
-  // The sale lead first, then pieces you can still buy, sold-out ones after.
-  const products = saleLeadFirst([...all.filter((product) => !isSold(product)), ...all.filter(isSold)]);
+  // The sale lead first, then pieces with a sale percent set in admin, then the rest you can still buy,
+  // sold-out ones last.
+  const inStock = all.filter((product) => !isSold(product));
+  const products = saleLeadFirst([
+    ...inStock.filter((product) => product.salePercent),
+    ...inStock.filter((product) => !product.salePercent),
+    ...all.filter(isSold),
+  ]);
 
   return (
     <div className="mx-auto max-w-[90rem] px-4 py-10 sm:px-6">
