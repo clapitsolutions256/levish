@@ -24,3 +24,8 @@ export function promoDiscount(promo: { type: "percent" | "fixed"; value: number 
   const amount = promo.type === "percent" ? Math.round((subtotal * promo.value) / 100) : promo.value;
   return Math.max(0, Math.min(subtotal, amount));
 }
+
+/** On sale: a sale percent is set, or the price is below the crossed-out price (the card shows "% off" for both). */
+export function onSale(product: Product) {
+  return Boolean(product.salePercent) || (product.compareAtPrice ?? 0) > product.price;
+}

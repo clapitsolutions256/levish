@@ -12,6 +12,8 @@ import { ShopTheLook } from "@/components/showcase/ShopTheLook";
 import { buildLooks, differentArticles, orbitPieces, sectionPieces, womenFirst, wornBy } from "@/lib/showcase";
 import type { Product } from "@/types";
 import { isSold } from "@/lib/variants";
+import { onSale } from "@/lib/sale";
+import { sameType } from "@/lib/productTypes";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { AboutUs } from "@/components/AboutUs";
 import { Reviews } from "@/components/Reviews";
@@ -54,21 +56,48 @@ export default async function HomePage() {
       .map((product) => [product.slug, { name: product.name, image: product.image }])
   );
   const pieces = (list: Product[]) => list.map(({ id, slug, name, image }) => ({ id, slug, name, image }));
+  // Lingerie gets its own panel, so the Women panel shows clothing.
+  const isLingerie = (product: Product) => sameType(product.subcategory, "undergarments") || sameType(product.subcategory, "bodysuit");
+  const clothing = (product: Product) => wornBy("women")(product) && !isLingerie(product);
   const panels: StackPanel[] = [
     {
       word: "Women",
       href: "/women",
       line: "Relaxed sweatshirts, wide-leg denim and everyday layers, all original.",
-      count: catalog.filter(wornBy("women")).length,
+      count: catalog.filter(clothing).length,
       links: [
         { label: "Sweatshirts", href: "/sweatshirts?gender=women" },
         { label: "Trousers", href: "/trousers?gender=women" },
-        { label: "Lingerie", href: "/undergarments?gender=women" },
+        { label: "Co-ord sets", href: "/co-ord-sets" },
       ],
-      pieces: pieces(sectionPieces(catalog, wornBy("women"))),
+      pieces: pieces(sectionPieces(catalog, clothing)),
       tone: "sage",
     },
-  ];
+    {
+      word: "Lingerie",
+      href: "/undergarments",
+      line: "Bras, shapewear and bodysuits made for everyday comfort.",
+      count: catalog.filter(isLingerie).length,
+      links: [
+        { label: "Bras & shapewear", href: "/undergarments" },
+        { label: "Bodysuits", href: "/bodysuits" },
+      ],
+      pieces: pieces(sectionPieces(catalog, isLingerie)),
+      tone: "ink",
+    },
+    {
+      word: "Sale",
+      href: "/sale",
+      line: "Original pieces at lower prices, while stock lasts.",
+      count: catalog.filter(onSale).length,
+      links: [
+        { label: "New in", href: "/women?filter=new" },
+        { label: "Deals", href: "/deals" },
+      ],
+      pieces: pieces(sectionPieces(catalog, onSale)),
+      tone: "paper",
+    },
+  ].filter((panel) => panel.count > 0) as StackPanel[];
 
   return (
     <div className="grain-overlay">

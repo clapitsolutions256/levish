@@ -4,18 +4,13 @@ import { getActiveProducts } from "@/lib/catalog";
 import { breadcrumbJsonLd, collectionJsonLd } from "@/lib/seo";
 import { pageMeta } from "@/lib/site";
 import { isSold } from "@/lib/variants";
-import type { Product } from "@/types";
+import { onSale } from "@/lib/sale";
 
 export const metadata = pageMeta({
   title: "Sale",
   description: "Women's clothing and lingerie on sale at Levish. Cash on delivery across Pakistan.",
   path: "/sale",
 });
-
-// On sale: a sale percent is set, or the price is below the crossed-out price (the card shows "% off" for both).
-function onSale(product: Product) {
-  return Boolean(product.salePercent) || (product.compareAtPrice ?? 0) > product.price;
-}
 
 export default async function SalePage() {
   const all = (await getActiveProducts()).filter(onSale);

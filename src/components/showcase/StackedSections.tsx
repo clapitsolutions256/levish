@@ -60,9 +60,11 @@ function Panel({ panel, index, total, stack }: { panel: StackPanel; index: numbe
   const { scrollYProgress: arrive } = useScroll({ target: ref, offset: ["start end", "start start"] });
   const spread = useTransform(arrive, [0.25, 1], still ? [1, 1] : [0, 1]);
   const wordX = useTransform(arrive, [0, 1], still ? ["0%", "0%"] : ["-12%", "0%"]);
-  // Once later panels cover this one, it sinks back.
+  // Once later panels cover this one, it sinks back. The last panel is never covered, so it keeps
+  // its size (shrinking it made a lone panel jump between sizes, as its scroll range is zero).
   const start = index / total;
-  const scale = useTransform(stack, [start, 1], still ? [1, 1] : [1, 1 - (total - index) * 0.05]);
+  const sink = still ? 0 : (total - 1 - index) * 0.05;
+  const scale = useTransform(stack, [start, 1], [1, 1 - sink]);
   const dim = useTransform(stack, [start, Math.min(1, start + 1 / total)], [0, index === total - 1 ? 0 : 0.35]);
 
   return (
