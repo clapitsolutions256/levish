@@ -26,7 +26,25 @@ export function normalizeVariants(input: unknown): ProductVariant[] {
     if (existing) existing.stock = Math.min(9999, existing.stock + stock);
     else merged.set(key, { size, color, stock });
   }
-  return [...merged.values()].slice(0, 120);
+  // Room for a set: 7 colours x 6 top sizes x 6 bottom sizes.
+  return [...merged.values()].slice(0, 300);
+}
+
+// Sets sell a top and a bottom together. Each size is stored as "Top / Bottom" (e.g. "M / 30")
+// and shoppers pick the two halves separately.
+const PAIR = " / ";
+
+export function hasPairedSizes(variants: ProductVariant[] | undefined) {
+  return Boolean(variants?.length) && variants!.every((variant) => variant.size.includes(PAIR));
+}
+
+export function splitPairedSize(size: string) {
+  const [top = "", bottom = ""] = size.split(PAIR);
+  return { top: top.trim(), bottom: bottom.trim() };
+}
+
+export function joinPairedSize(top: string, bottom: string) {
+  return `${top}${PAIR}${bottom}`;
 }
 
 export function colorLabel(variants: ProductVariant[], fallback = "") {

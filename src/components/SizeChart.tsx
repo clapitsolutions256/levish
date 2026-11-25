@@ -250,7 +250,7 @@ function SizeChartModal({
   );
 }
 
-export function SizeChartButton({ product, sizes }: { product: Product; sizes: string[] }) {
+export function SizeChartButton({ product, sizes, label }: { product: Product; sizes: string[]; label?: string }) {
   const [open, setOpen] = useState(false);
   const close = useCallback(() => setOpen(false), []);
   const chart = chartFor(product, sizes);
@@ -268,8 +268,8 @@ export function SizeChartButton({ product, sizes }: { product: Product; sizes: s
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M3 8.5h18v7H3v-7Zm4 0v3m3.5-3v2m3.5-2v3m3.5-3v2" />
           </svg>
         </span>
-        <span className="font-semibold">Size chart</span>
-        <span className="hidden text-[var(--muted)] min-[380px]:inline">· Find your perfect fit</span>
+        <span className="font-semibold">{label ?? "Size chart"}</span>
+        {label ? null : <span className="hidden text-[var(--muted)] min-[380px]:inline">· Find your perfect fit</span>}
         <svg className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 6l6 6-6 6" />
         </svg>

@@ -7,7 +7,7 @@ import type { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { flyProductToCart } from "@/lib/flyToCart";
 import { ProductQuickView } from "@/components/ProductQuickView";
-import { findVariant, galleryFor, isSold, uniqueValues } from "@/lib/variants";
+import { findVariant, galleryFor, hasPairedSizes, isSold, uniqueValues } from "@/lib/variants";
 import { SoldBadge } from "@/components/SoldBadge";
 import { SaleTag } from "@/components/SaleTag";
 import { RatingLine } from "@/components/RatingLine";
@@ -366,6 +366,11 @@ export function ProductCard({ product, index = 0, priority = false }: ProductCar
           <CardActions
             product={product}
             onAdd={(event) => {
+              // Sets need a top size and a bottom size: the quick view has both rows.
+              if (hasPairedSizes(product.variants)) {
+                setDetailsOpen(true);
+                return;
+              }
               if (tracked) {
                 // One size left to buy: add it straight away; otherwise ask which size.
                 const open = (product.variants ?? []).filter((variant) => variant.stock > 0);

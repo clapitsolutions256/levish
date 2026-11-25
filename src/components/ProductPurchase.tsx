@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { flyProductToCart } from "@/lib/flyToCart";
-import { findVariant, galleryFor, uniqueValues } from "@/lib/variants";
+import { findVariant, galleryFor, hasPairedSizes, joinPairedSize, splitPairedSize, uniqueValues } from "@/lib/variants";
 import { trackAddToCart } from "@/lib/metaPixel";
 import { SizeChartButton } from "@/components/SizeChart";
 
@@ -53,6 +53,41 @@ export function ProductPurchase({
   const atLimit = tracked && inCart >= stock && stock > 0;
   const out = tracked && stock < 1;
   const [message, setMessage] = useState("");
+
+  // Sets: the top and the bottom are sized separately, in two rows.
+  const paired = hasPairedSizes(variants);
+  const tops = useMemo(() => [...new Set(sizes.map((item) => splitPairedSize(item).top))], [sizes]);
+  const bottoms = useMemo(() => [...new Set(sizes.map((item) => splitPairedSize(item).bottom))], [sizes]);
+  const activePair = splitPairedSize(activeSize);
+  // The size a half's button would pick: the other half stays when that pair exists.
+  const pairWith = (half: "top" | "bottom", value: string) => {
+    const exact = half === "top" ? joinPairedSize(value, activePair.bottom) : joinPairedSize(activePair.top, value);
+    return sizes.includes(exact) ? exact : sizes.find((item) => splitPairedSize(item)[half] === value) ?? exact;
+  };
+
+  function sizeButton(label: string, value: string, isActive: boolean) {
+    const unavailable = (findVariant(variants, value, activeColor)?.stock ?? 0) < 1;
+    return (
+      <button
+        key={label}
+        type="button"
+        disabled={unavailable}
+        aria-label={unavailable ? `${label}, out of stock` : label}
+        aria-pressed={isActive}
+        onClick={() => {
+          setSize(value);
+          setMessage("");
+        }}
+        className={`min-w-11 rounded-lg border px-3 py-2 text-sm ${
+          isActive && !unavailable
+            ? "border-[var(--accent)] bg-[var(--sage-tint)] text-[var(--accent)]"
+            : "border-[var(--border)] bg-white text-[var(--foreground)]"
+        } ${unavailable ? "cursor-not-allowed line-through opacity-40" : ""}`}
+      >
+        {label}
+      </button>
+    );
+  }
 
   function chooseColor(next: string) {
     setColor(next);
@@ -106,33 +141,28 @@ export function ProductPurchase({
         </div>
       ) : null}
 
-      {sizes.length > 0 ? (
+      {paired ? (
+        <>
+          {[
+            { half: "top" as const, label: "Top size", values: tops, chart: tops },
+            { half: "bottom" as const, label: "Bottom size", values: bottoms, chart: bottoms },
+          ].map((row) => (
+            <div key={row.half} className={compact ? "mt-3" : "mt-5"}>
+              <p className="text-sm font-medium text-[var(--foreground)]">{row.label}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {row.values.map((value) => sizeButton(value, pairWith(row.half, value), activePair[row.half] === value))}
+              </div>
+              <div className={compact ? "mt-2.5" : "mt-3.5"}>
+                <SizeChartButton product={product} sizes={row.chart} label={`${row.label} chart`} />
+              </div>
+            </div>
+          ))}
+        </>
+      ) : sizes.length > 0 ? (
         <div className={compact ? "mt-3" : "mt-5"}>
           <p className="text-sm font-medium text-[var(--foreground)]">Size</p>
           <div className="mt-2 flex flex-wrap gap-2">
-            {sizes.map((item) => {
-              const option = findVariant(variants, item, activeColor);
-              const unavailable = (option?.stock ?? 0) < 1;
-              return (
-                <button
-                  key={item}
-                  type="button"
-                  disabled={unavailable}
-                  aria-label={unavailable ? `${item}, out of stock` : item}
-                  onClick={() => {
-                    setSize(item);
-                    setMessage("");
-                  }}
-                  className={`min-w-11 rounded-lg border px-3 py-2 text-sm ${
-                    item === activeSize && !unavailable
-                      ? "border-[var(--accent)] bg-[var(--sage-tint)] text-[var(--accent)]"
-                      : "border-[var(--border)] bg-white text-[var(--foreground)]"
-                  } ${unavailable ? "cursor-not-allowed line-through opacity-40" : ""}`}
-                >
-                  {item}
-                </button>
-              );
-            })}
+            {sizes.map((item) => sizeButton(item, item, item === activeSize))}
           </div>
           <div className={compact ? "mt-2.5" : "mt-3.5"}>
             <SizeChartButton product={product} sizes={allSizes} />
