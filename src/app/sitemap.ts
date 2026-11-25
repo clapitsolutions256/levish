@@ -23,7 +23,8 @@ const styles = [
   { path: "/polos-and-tees", type: "Polos & Tees" },
 ];
 
-const genders = ["women", "men"] as const;
+// Levish is women's only; men's pieces are on Empulse.
+const genders = ["women"] as const;
 
 function entry(path: string, priority: number, lastModified?: Date): MetadataRoute.Sitemap[number] {
   return {
@@ -64,7 +65,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
   const shoes = products.filter((product) => product.categoryId === "shoes");
   add("/deals", dealProducts(products), 0.8);
-  add("/shoes?gender=men", shoes.filter((product) => product.subcategory?.toLowerCase() === "men"), 0.7);
   add("/shoes?gender=women", shoes.filter((product) => product.subcategory?.toLowerCase() === "woman"), 0.7);
   for (const style of styles) {
     const all = products.filter((product) => sameType(product.subcategory, style.type));

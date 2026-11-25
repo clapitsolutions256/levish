@@ -6,7 +6,7 @@ export const SITE_NAME = "Levish";
 export const SITE_TITLE = "Levish | Bras, Lingerie & Women's Fashion in Pakistan";
 
 export const SITE_DESCRIPTION =
-  "Shop bras, lingerie, shapewear, gym wear and original women's fashion at Levish, plus a men's edit. Cash on delivery across Pakistan, free shipping over Rs. 5,000.";
+  "Shop bras, lingerie, shapewear, gym wear and original women's fashion at Levish. Cash on delivery across Pakistan, free shipping over Rs. 5,000.";
 
 // Link preview for shared pages. Page metadata replaces the root openGraph object, so pages repeat it.
 export const SHARE_IMAGE = {

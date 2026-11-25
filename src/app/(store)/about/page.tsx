@@ -84,7 +84,7 @@ export default function AboutPage() {
                 Syed Mudasir Hussain Shah leads Levish from Lahore, bringing a clear
                 vision for accessible, quality fashion. Levish has grown around the
                 idea of cozy, always — offering thoughtful, original clothing and
-                accessories for men and women.
+                accessories for women.
               </p>
               <p className="type-copy mt-3 text-[var(--muted)]">
                 From Lahore to the rest of Pakistan, the focus is on making everyday

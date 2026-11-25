@@ -144,7 +144,7 @@ export function FloatingNav({ thumbs }: { thumbs: MenuThumbs }) {
           </li>
         </ul>
       </nav>
-      {sheetUsed ? <MobileShopSheet open={sheetOpen} onClose={closeSheet} thumbs={thumbs} initial={pathname.startsWith("/men") ? "men" : "women"} /> : null}
+      {sheetUsed ? <MobileShopSheet open={sheetOpen} onClose={closeSheet} thumbs={thumbs} initial="women" /> : null}
     </>
   );
 }

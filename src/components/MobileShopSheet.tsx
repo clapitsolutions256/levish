@@ -4,14 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useDragControls, useReducedMotion } from "motion/react";
-import { menNavCategories, navCategories, type Gender } from "@/data/categories";
+import { navCategories, type Gender } from "@/data/categories";
 import type { MenuThumbs } from "@/lib/showcase";
 
 export { OPEN_SHOP_SHEET } from "@/lib/shopSheet";
 
+// Levish is women's only; men's pieces are on Empulse. The Women / Men tabs show only with more than one section.
 const sections: { id: Gender; label: string; title: string; links: { id: string; name: string; slug: string }[] }[] = [
   { id: "women", label: "Women", title: "The women’s edit", links: navCategories },
-  { id: "men", label: "Men", title: "The men’s edit", links: menNavCategories },
 ];
 
 /** Phone shop menu: a bottom sheet with Women / Men tabs and photo cards for every category. */
@@ -91,7 +91,7 @@ export function MobileShopSheet({
                   </svg>
                 </button>
               </div>
-              <div className="clay mt-4 grid grid-cols-2 rounded-full p-1" role="tablist" aria-label="Section">
+              <div className={`clay mt-4 grid grid-cols-2 rounded-full p-1 ${sections.length < 2 ? "hidden" : ""}`} role="tablist" aria-label="Section">
                 {sections.map((item) => {
                   const selected = item.id === section;
                   return (

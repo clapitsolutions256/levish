@@ -68,19 +68,6 @@ export default async function HomePage() {
       pieces: pieces(sectionPieces(catalog, wornBy("women"))),
       tone: "sage",
     },
-    {
-      word: "Men",
-      href: "/men",
-      line: "Jackets, hoodies and denim from Lacoste, Polo Ralph Lauren, Levi's and more.",
-      count: catalog.filter(wornBy("men")).length,
-      links: [
-        { label: "Jackets", href: "/jackets?gender=men" },
-        { label: "Hoodies", href: "/hoodies?gender=men" },
-        { label: "Jeans", href: "/jeans?gender=men" },
-      ],
-      pieces: pieces(sectionPieces(catalog, wornBy("men"))),
-      tone: "ink",
-    },
   ];
 
   return (

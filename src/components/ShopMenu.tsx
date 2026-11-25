@@ -8,10 +8,8 @@ import type { MenuThumbs } from "@/lib/showcase";
 
 type Section = "women" | "men";
 
-const sections: { id: Section; label: string }[] = [
-  { id: "women", label: "Women" },
-  { id: "men", label: "Men" },
-];
+// Levish is women's only; men's pieces are on Empulse.
+const sections: { id: Section; label: string }[] = [{ id: "women", label: "Women" }];
 
 function sectionFor(pathname: string): Section | null {
   for (const section of ["women", "men"] as const) {
